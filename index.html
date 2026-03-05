@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>연말정산 행동 추천기 | 3분 컷 절세 액션</title>
+  <meta name="description" content="연 소득과 간단한 체크 3개로 올해 남은 기간에 실행할 연말정산 행동 가이드를 3분 안에 추천합니다." />
+  <meta name="keywords" content="연말정산,연말정산 추천,연금저축,IRP,ISA,현금영수증,절세 체크리스트" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:title" content="연말정산 행동 추천기" />
+  <meta property="og:description" content="정확한 환급액 계산 대신 올해 남은 기간의 행동 가이드를 제공합니다." />
+  <meta property="og:url" content="https://moneyback.pages.dev/" />
+  <link rel="canonical" href="https://moneyback.pages.dev/" />
+  <link rel="stylesheet" href="./style.css" />
+  <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"WebSite",
+      "name":"연말정산 행동 추천기",
+      "url":"https://moneyback.pages.dev/",
+      "inLanguage":"ko-KR",
+      "description":"입력 3분으로 확인하는 연말정산 행동 가이드"
+    }
+  </script>
+  <script type="application/ld+json" id="faq-jsonld"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <p class="badge">3분 컷</p>
+      <h1>연말정산 행동 추천기</h1>
+      <p class="subtitle">정확한 환급액 계산 대신, 올해 남은 기간에 바로 실행할 카드/연금/ISA 액션을 간단히 추천합니다.</p>
+    </header>
+
+    <section class="ad-wrap" aria-label="상단 광고 자리">
+      <div class="ad-slot ad-banner">광고 영역 Placeholder · 상단 광고</div>
+    </section>
+
+    <section class="card">
+      <form id="recommend-form" novalidate>
+        <label for="income">연 소득(총급여, 원)</label>
+        <input id="income" name="income" inputmode="numeric" placeholder="예: 45,000,000" />
+
+        <div class="toggles">
+          <label><input type="checkbox" id="isWorker" checked />근로소득(직장인)입니다</label>
+          <label><input type="checkbox" id="hasPension" />연금저축/IRP를 이미 하고 있어요</label>
+          <label><input type="checkbox" id="highCardSpend" />카드 소비가 많은 편이에요</label>
+        </div>
+
+        <p id="error" class="error" aria-live="polite"></p>
+        <button type="submit" class="cta">추천 받기</button>
+      </form>
+    </section>
+
+    <section id="result" class="result hidden" aria-live="polite">
+      <div id="tone" class="tone"></div>
+      <div id="cards" class="result-grid"></div>
+      <section class="card">
+        <h3>오늘 할 일 3개</h3>
+        <ul id="todoList" class="todo-list"></ul>
+      </section>
+    </section>
+
+    <section class="ad-wrap" aria-label="하단 광고 자리">
+      <div class="ad-slot ad-rect">광고 영역 Placeholder · 하단 광고</div>
+    </section>
+
+    <section class="faq-block">
+      <h2>자주 묻는 질문</h2>
+      <p>연말정산 준비 시 많이 검색하는 질문을 간단히 정리했습니다.</p>
+      <div id="faqList"></div>
+    </section>
+  </main>
+
+  <aside class="notice">본 서비스는 참고용 시뮬레이션이며, 실제 공제는 개인 상황 및 세법 적용 시점에 따라 달라질 수 있습니다.</aside>
+  <script src="./main.js"></script>
+</body>
+</html>
