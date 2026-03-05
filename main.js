@@ -22,6 +22,11 @@ const resultEl = document.getElementById('result');
 const toneEl = document.getElementById('tone');
 const cardsEl = document.getElementById('cards');
 const todoListEl = document.getElementById('todoList');
+const detailForm = document.getElementById('detail-form');
+const detailResultEl = document.getElementById('detailResult');
+const detailErrorEl = document.getElementById('detailError');
+
+let latestIncome = 0;
 
 function getBand(income) {
   if (income < 30000000) return 'low';
@@ -31,6 +36,99 @@ function getBand(income) {
 
 function moneyToManwon(value) {
   return `${Math.round(value / 10000)}만원`;
+}
+
+function numberWithComma(value) {
+  return Number(value).toLocaleString('ko-KR');
+}
+
+function parseNumberFromInput(value) {
+  const digits = String(value || '').replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : 0;
+}
+
+function cardBaseLimitByIncome(income) {
+  if (income <= 70000000) return 3000000;
+  if (income <= 120000000) return 2500000;
+  return 2000000;
+}
+
+function computeCardAndCashGuide(input) {
+  const threshold = input.income * 0.25;
+  const totalSpend = input.credit + input.cash + input.market + input.transit;
+  const eligibleSpend = Math.max(0, totalSpend - threshold);
+
+  const weights = {
+    credit: input.credit / totalSpend || 0,
+    cash: input.cash / totalSpend || 0,
+    market: input.market / totalSpend || 0,
+    transit: input.transit / totalSpend || 0
+  };
+
+  const eligibleByType = {
+    credit: eligibleSpend * weights.credit,
+    cash: eligibleSpend * weights.cash,
+    market: eligibleSpend * weights.market,
+    transit: eligibleSpend * weights.transit
+  };
+
+  const rawDeduction = {
+    credit: eligibleByType.credit * 0.15,
+    cash: eligibleByType.cash * 0.3,
+    market: eligibleByType.market * 0.4,
+    transit: eligibleByType.transit * 0.4
+  };
+
+  const baseLimit = cardBaseLimitByIncome(input.income);
+  const baseApplied = Math.min(baseLimit, rawDeduction.credit + rawDeduction.cash);
+  const marketApplied = Math.min(1000000, rawDeduction.market);
+  const transitApplied = Math.min(1000000, rawDeduction.transit);
+
+  return {
+    threshold,
+    totalSpend,
+    eligibleSpend,
+    rawDeduction,
+    applied: {
+      base: baseApplied,
+      market: marketApplied,
+      transit: transitApplied,
+      total: baseApplied + marketApplied + transitApplied
+    },
+    limits: {
+      base: baseLimit,
+      marketExtra: 1000000,
+      transitExtra: 1000000
+    }
+  };
+}
+
+function computePersonalDeductionGuide(input) {
+  const base = input.baseDependents * 1500000;
+  const senior = input.seniorCount * 1000000;
+  const disabled = input.disabledCount * 2000000;
+  const singleParent = input.singleParent ? 1000000 : 0;
+
+  return {
+    base,
+    senior,
+    disabled,
+    singleParent,
+    total: base + senior + disabled + singleParent
+  };
+}
+
+function renderDetailGuide(cardGuide, personalGuide) {
+  detailResultEl.innerHTML = [
+    `<p><strong>카드/현금 공제 기준 사용액:</strong> 총급여의 25% 초과분만 반영 (기준액 ${numberWithComma(Math.round(cardGuide.threshold))}원)</p>`,
+    `<p><strong>반영 가능 사용액(가이드):</strong> ${numberWithComma(Math.round(cardGuide.eligibleSpend))}원</p>`,
+    `<p><strong>카드/현금 소득공제(한도 적용 후):</strong> ${numberWithComma(Math.round(cardGuide.applied.total))}원</p>`,
+    `<p>기본한도 ${numberWithComma(cardGuide.limits.base)}원 + 전통시장 추가한도 ${numberWithComma(cardGuide.limits.marketExtra)}원 + 대중교통 추가한도 ${numberWithComma(cardGuide.limits.transitExtra)}원</p>`,
+    `<p><strong>인적공제 예상 소득공제액(가이드):</strong> ${numberWithComma(Math.round(personalGuide.total))}원</p>`,
+    `<p>세부: 기본공제 ${numberWithComma(personalGuide.base)}원, 경로우대 ${numberWithComma(personalGuide.senior)}원, 장애인 ${numberWithComma(personalGuide.disabled)}원, 한부모 ${numberWithComma(personalGuide.singleParent)}원</p>`,
+    '<p>주의: 실제 공제액은 부양가족 요건, 소득요건, 중복공제 제한, 해당 과세연도 세법에 따라 달라질 수 있습니다.</p>'
+  ].join('');
+  detailResultEl.classList.remove('hidden');
 }
 
 function getRecommend(input) {
@@ -210,6 +308,13 @@ incomeInput.addEventListener('input', (e) => {
   e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
 });
 
+document.querySelectorAll('input[data-number]').forEach((inputEl) => {
+  inputEl.addEventListener('input', (e) => {
+    const digits = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+  });
+});
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = incomeInput.value.replace(/,/g, '');
@@ -232,9 +337,61 @@ form.addEventListener('submit', (e) => {
   toneEl.textContent = data.tone;
   renderCards(data.cards);
   renderTodos(data.todos);
+  latestIncome = income;
 
   resultEl.classList.remove('hidden');
   resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+detailForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  if (!latestIncome) {
+    detailErrorEl.textContent = '먼저 상단에서 연 소득을 입력하고 추천 받기를 실행해 주세요.';
+    detailResultEl.classList.add('hidden');
+    return;
+  }
+
+  const credit = parseNumberFromInput(document.getElementById('creditSpend').value);
+  const cash = parseNumberFromInput(document.getElementById('cashSpend').value);
+  const market = parseNumberFromInput(document.getElementById('marketSpend').value);
+  const transit = parseNumberFromInput(document.getElementById('transitSpend').value);
+  const baseDependents = parseNumberFromInput(document.getElementById('baseDependents').value);
+  const seniorCount = parseNumberFromInput(document.getElementById('seniorCount').value);
+  const disabledCount = parseNumberFromInput(document.getElementById('disabledCount').value);
+  const singleParent = document.getElementById('singleParent').checked;
+
+  if (baseDependents < 1) {
+    detailErrorEl.textContent = '기본공제 대상 인원은 최소 1명(본인) 이상으로 입력해 주세요.';
+    detailResultEl.classList.add('hidden');
+    return;
+  }
+
+  if (credit + cash + market + transit <= 0) {
+    detailErrorEl.textContent = '카드/현금 사용액을 1개 이상 입력해 주세요.';
+    detailResultEl.classList.add('hidden');
+    return;
+  }
+
+  detailErrorEl.textContent = '';
+
+  const cardGuide = computeCardAndCashGuide({
+    income: latestIncome,
+    credit,
+    cash,
+    market,
+    transit
+  });
+
+  const personalGuide = computePersonalDeductionGuide({
+    baseDependents,
+    seniorCount,
+    disabledCount,
+    singleParent
+  });
+
+  renderDetailGuide(cardGuide, personalGuide);
+  detailResultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
 renderFaq();

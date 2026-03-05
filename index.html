@@ -6,6 +6,7 @@
   <title>연말정산 행동 추천기 | 3분 컷 절세 액션</title>
   <meta name="description" content="연 소득과 간단한 체크 3개로 올해 남은 기간에 실행할 연말정산 행동 가이드를 3분 안에 추천합니다." />
   <meta name="keywords" content="연말정산,연말정산 추천,연금저축,IRP,ISA,현금영수증,절세 체크리스트" />
+  <meta name="google-adsense-account" content="ca-pub-7104324664246128" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:title" content="연말정산 행동 추천기" />
@@ -13,6 +14,8 @@
   <meta property="og:url" content="https://moneyback.pages.dev/" />
   <link rel="canonical" href="https://moneyback.pages.dev/" />
   <link rel="stylesheet" href="./style.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7104324664246128"
+    crossorigin="anonymous"></script>
   <script type="application/ld+json">
     {
       "@context":"https://schema.org",
@@ -59,6 +62,45 @@
       <section class="card">
         <h3>오늘 할 일 3개</h3>
         <ul id="todoList" class="todo-list"></ul>
+      </section>
+
+      <section class="card detail-card">
+        <h3>심화 점검(선택): 카드/현금 공제한도 + 인적공제</h3>
+        <p class="detail-help">아래 입력은 가이드 계산입니다. 실제 적용은 요건/세법 변경 여부를 반드시 확인하세요.</p>
+        <form id="detail-form" class="detail-form" novalidate>
+          <div class="detail-grid">
+            <label for="creditSpend">신용카드 사용액(연간, 원)</label>
+            <input id="creditSpend" data-number placeholder="예: 12,000,000" />
+
+            <label for="cashSpend">체크카드/현금영수증 사용액(연간, 원)</label>
+            <input id="cashSpend" data-number placeholder="예: 8,000,000" />
+
+            <label for="marketSpend">전통시장 사용액(연간, 원)</label>
+            <input id="marketSpend" data-number placeholder="예: 1,200,000" />
+
+            <label for="transitSpend">대중교통 사용액(연간, 원)</label>
+            <input id="transitSpend" data-number placeholder="예: 900,000" />
+          </div>
+
+          <hr />
+
+          <div class="detail-grid">
+            <label for="baseDependents">기본공제 대상 인원(본인 포함)</label>
+            <input id="baseDependents" data-number value="1" />
+
+            <label for="seniorCount">경로우대(70세 이상) 인원</label>
+            <input id="seniorCount" data-number value="0" />
+
+            <label for="disabledCount">장애인 공제 인원</label>
+            <input id="disabledCount" data-number value="0" />
+          </div>
+
+          <label class="single-check"><input type="checkbox" id="singleParent" /> 한부모 공제 해당</label>
+          <p id="detailError" class="error" aria-live="polite"></p>
+          <button type="submit" class="cta">심화 계산하기</button>
+        </form>
+
+        <div id="detailResult" class="detail-result hidden"></div>
       </section>
     </section>
 
