@@ -1,286 +1,350 @@
-const faqItems = [
-  { q: '연금저축 vs IRP, 뭐가 먼저인가요?', a: '둘 다 활용 가능하지만 시작은 수수료/운용 편의성을 보고 한 계좌부터 자동이체를 거는 방식이 현실적입니다.' },
-  { q: '현금영수증 등록은 왜 중요한가요?', a: '결제 누락을 줄여 연말정산 확인 시간을 줄일 수 있습니다. 홈택스 등록 여부를 먼저 점검하세요.' },
-  { q: 'ISA는 꼭 해야 하나요?', a: '필수는 아니지만 중장기 자금 관리에 유용합니다. 생활비를 해치지 않는 범위에서 소액으로 시작해도 충분합니다.' },
-  { q: '소득이 낮아도 연금계좌를 시작할 가치가 있나요?', a: '절세 체감이 크지 않을 수 있어도 자동이체 습관을 만들면 내년 전략 수립이 쉬워집니다.' },
-  { q: '카드 사용을 연말에 몰아서 늘리면 유리한가요?', a: '무리한 추가 소비는 비효율일 수 있습니다. 사용 확대보다 증빙 누락 방지가 더 안전합니다.' },
-  { q: '연금저축을 이미 하고 있으면 뭘 점검하나요?', a: '자동이체 금액, 납입일, 남은 개월 수 기준 월 페이스를 먼저 점검하세요.' },
-  { q: 'IRP는 직장인만 가능한가요?', a: '세부 자격/상품 조건은 금융사마다 다를 수 있습니다. 실제 가입 요건은 별도 확인이 필요합니다.' },
-  { q: '월 납입 금액은 고정해야 하나요?', a: '필수는 아닙니다. 지출이 큰 달에는 낮추고 여유가 있는 달에 높이는 방식이 현실적입니다.' },
-  { q: '정확한 환급액 계산도 해주나요?', a: '아니요. 이 페이지는 3분 내 실행할 행동을 제안하는 가이드입니다.' },
-  { q: '근로소득이 아니어도 써도 되나요?', a: '가능하지만 공제 항목이 달라질 수 있습니다. 핵심은 누락 방지와 자동이체 습관입니다.' },
-  { q: '연말 전에 가장 먼저 할 일은?', a: '현금영수증 등록 확인, 연금계좌 자동이체 점검, 고정지출 결제수단 점검 3가지를 먼저 끝내세요.' },
-  { q: '절세형 플랜이 항상 좋은가요?', a: '현금흐름을 해치면 지속되지 않습니다. 보수적 플랜으로 시작해 유지 가능한 범위에서만 확대하세요.' }
+const LAST_RULE_UPDATE = '2026-03-05';
+
+// 세법/가정 숫자 상수: 연도별 변경 가능성이 있어 수정 가능하게 분리
+const TAX_CONSTANTS = {
+  card: {
+    deductionStartRate: 0.25, // 총급여의 25% 초과 사용분부터 공제 대상 가정
+    rates: {
+      credit: 0.15,
+      checkCash: 0.3,
+      traditionalMarket: 0.4,
+      transit: 0.4
+    },
+    baseLimitByIncome: [
+      { maxIncome: 70000000, limit: 3000000 },
+      { maxIncome: 120000000, limit: 2500000 },
+      { maxIncome: Infinity, limit: 2000000 }
+    ],
+    extraLimitTraditionalMarket: 1000000,
+    extraLimitTransit: 1000000
+  },
+  personal: {
+    baseDeductionPerPerson: 1500000,
+    seniorAdditionalPerPerson: 1000000,
+    disabledAdditionalPerPerson: 2000000,
+    singleParentAdditional: 1000000
+  },
+  pension: {
+    pensionSavingAnnualLimit: 6000000, // 연금저축 단독 기준 가정
+    combinedAnnualLimit: 9000000 // 연금저축+IRP 합산 기준 가정
+  },
+  isa: {
+    // ISA는 단정적 절세 계산 대신 운용 목표 가이드 수치만 사용
+    note: '연도별 한도/비과세 요건은 변경될 수 있어 최신 공시 확인 필요'
+  },
+  scenario: {
+    simple: {
+      title: '심플(귀찮음 최소)',
+      summary: '이것만 하면 손해를 크게 보기 어렵게, 최소 행동에 집중합니다.',
+      coverage: 0.7,
+      maxSpendShare: 0.35,
+      mix: { credit: 0.68, checkCash: 0.25, traditionalMarket: 0.04, transit: 0.03 },
+      pensionConservativeMonthly: 70000,
+      pensionAggressiveMonthly: 180000,
+      isaMonthly: 80000,
+      riskTone: 'low'
+    },
+    balanced: {
+      title: '균형(현금흐름/편의)',
+      summary: '무리 없이 효율을 노리는 기본형 시나리오입니다.',
+      coverage: 0.9,
+      maxSpendShare: 0.45,
+      mix: { credit: 0.55, checkCash: 0.3, traditionalMarket: 0.08, transit: 0.07 },
+      pensionConservativeMonthly: 130000,
+      pensionAggressiveMonthly: 300000,
+      isaMonthly: 200000,
+      riskTone: 'mid'
+    },
+    max: {
+      title: '절세 극대화(적극)',
+      summary: '가능하면 여기까지를 목표로, 납입/소비 패턴을 적극 조정합니다.',
+      coverage: 1.05,
+      maxSpendShare: 0.55,
+      mix: { credit: 0.4, checkCash: 0.32, traditionalMarket: 0.15, transit: 0.13 },
+      pensionConservativeMonthly: 220000,
+      pensionAggressiveMonthly: 550000,
+      isaMonthly: 350000,
+      riskTone: 'high'
+    }
+  }
+};
+
+const FAQ_ITEMS = [
+  { q: '카드 공제는 무조건 많이 쓰면 좋은가요?', a: '추가 소비를 억지로 늘리기보다, 계획된 지출을 공제 효율이 높은 방식으로 관리하는 것이 안전합니다.' },
+  { q: '체크카드와 현금영수증 비중을 올려야 하나요?', a: '일반적으로 신용카드보다 공제율이 높게 적용되는 경우가 많아, 생활 패턴 내에서 비중 조정이 유리할 수 있습니다.' },
+  { q: '전통시장/대중교통은 꼭 분리 입력해야 하나요?', a: '정확한 분리 입력이 어려우면 0으로 두고 시작해도 됩니다. 분리할수록 목표 가이드가 더 구체화됩니다.' },
+  { q: '연금저축과 IRP는 둘 다 해야 하나요?', a: '필수는 아닙니다. 현금흐름을 해치지 않는 선에서 자동이체를 유지하는 것이 우선입니다.' },
+  { q: '연금저축 600, 합산 900은 확정 수치인가요?', a: '안내에서 자주 쓰이는 기준이지만 연도별 정책 변경 가능성이 있어 반드시 최신 정보를 확인해야 합니다.' },
+  { q: 'ISA는 어떤 상품을 사야 하나요?', a: '이 서비스는 특정 상품을 추천하지 않습니다. 리스크 톤에 맞춰 예금/채권형/혼합형 비중을 정하는 수준으로 안내합니다.' },
+  { q: '인적공제 인원은 어떻게 입력하나요?', a: '본인을 포함한 기본공제 대상 인원을 입력하고, 경로우대/장애인/한부모 해당 여부를 추가하면 됩니다.' },
+  { q: '정확한 환급액 계산은 왜 안 하나요?', a: '정확 계산에는 상세 소득/공제 자료가 더 필요합니다. 이 페이지는 실행 가능한 목표치와 행동 가이드에 집중합니다.' },
+  { q: '현재 사용액을 안 넣어도 되나요?', a: '가능합니다. 입력하지 않으면 0 기준으로 목표치를 제시합니다.' },
+  { q: '시나리오는 어떤 기준으로 고르면 되나요?', a: '현금흐름이 불안하면 심플, 유지 가능하면 균형, 여유가 크면 절세 극대화 시나리오를 추천합니다.' },
+  { q: '카드 공제 한도는 소득에 따라 달라지나요?', a: '네. 일반적으로 총급여 구간에 따라 기본 한도 가정이 달라지므로, 소득 입력값에 따라 목표치가 달라집니다.' },
+  { q: '결과를 저장할 수 있나요?', a: '체크리스트 상태는 브라우저 로컬 저장소에 저장됩니다.' }
 ];
 
-const STORAGE_KEY = 'moneyback-todos-v1';
+const TODO_STORAGE_KEY = 'moneyback-scenario-todos-v2';
 
-const form = document.getElementById('recommend-form');
-const incomeInput = document.getElementById('income');
-const errorEl = document.getElementById('error');
-const resultEl = document.getElementById('result');
-const toneEl = document.getElementById('tone');
-const cardsEl = document.getElementById('cards');
-const todoListEl = document.getElementById('todoList');
-const detailForm = document.getElementById('detail-form');
-const detailResultEl = document.getElementById('detailResult');
-const detailErrorEl = document.getElementById('detailError');
+const form = document.getElementById('planner-form');
+const formError = document.getElementById('formError');
+const results = document.getElementById('results');
+const ruleUpdateDate = document.getElementById('ruleUpdateDate');
+const personalSummary = document.getElementById('personalSummary');
+const scenarioCard = document.getElementById('scenarioCard');
+const todoList = document.getElementById('todoList');
 
-let latestIncome = 0;
+let scenarioResults = [];
+let activeScenarioId = 'simple';
 
-function getBand(income) {
-  if (income < 30000000) return 'low';
-  if (income <= 70000000) return 'mid';
-  return 'high';
-}
-
-function moneyToManwon(value) {
-  return `${Math.round(value / 10000)}만원`;
-}
-
-function numberWithComma(value) {
-  return Number(value).toLocaleString('ko-KR');
-}
-
-function parseNumberFromInput(value) {
-  const digits = String(value || '').replace(/[^0-9]/g, '');
+function toNumber(raw) {
+  const digits = String(raw || '').replace(/[^0-9]/g, '');
   return digits ? Number(digits) : 0;
 }
 
-function cardBaseLimitByIncome(income) {
-  if (income <= 70000000) return 3000000;
-  if (income <= 120000000) return 2500000;
-  return 2000000;
+function formatMoney(value) {
+  return Number(Math.round(value)).toLocaleString('ko-KR');
 }
 
-function computeCardAndCashGuide(input) {
-  const threshold = input.income * 0.25;
-  const totalSpend = input.credit + input.cash + input.market + input.transit;
-  const eligibleSpend = Math.max(0, totalSpend - threshold);
+function getMonthsLeft() {
+  const now = new Date();
+  return Math.max(1, 12 - now.getMonth());
+}
 
-  const weights = {
-    credit: input.credit / totalSpend || 0,
-    cash: input.cash / totalSpend || 0,
-    market: input.market / totalSpend || 0,
-    transit: input.transit / totalSpend || 0
-  };
+function getBaseCardLimit(income) {
+  return TAX_CONSTANTS.card.baseLimitByIncome.find((item) => income <= item.maxIncome).limit;
+}
 
-  const eligibleByType = {
-    credit: eligibleSpend * weights.credit,
-    cash: eligibleSpend * weights.cash,
-    market: eligibleSpend * weights.market,
-    transit: eligibleSpend * weights.transit
-  };
+function getRiskToneText(riskTone) {
+  if (riskTone === 'low') return '낮음: 예금/채권형 중심의 변동성 낮은 구성';
+  if (riskTone === 'mid') return '중간: 채권형+혼합형 중심, 주식혼합 소량 포함';
+  return '높음: 혼합형/주식혼합 비중을 높이되 분할 매수 유지';
+}
 
-  const rawDeduction = {
-    credit: eligibleByType.credit * 0.15,
-    cash: eligibleByType.cash * 0.3,
-    market: eligibleByType.market * 0.4,
-    transit: eligibleByType.transit * 0.4
-  };
+function computePersonalSummary(input) {
+  const base = input.dependentsCount * TAX_CONSTANTS.personal.baseDeductionPerPerson;
+  const senior = input.seniorCount * TAX_CONSTANTS.personal.seniorAdditionalPerPerson;
+  const disabled = input.disabledCount * TAX_CONSTANTS.personal.disabledAdditionalPerPerson;
+  const singleParent = input.isSingleParent ? TAX_CONSTANTS.personal.singleParentAdditional : 0;
+  const total = base + senior + disabled + singleParent;
 
-  const baseLimit = cardBaseLimitByIncome(input.income);
-  const baseApplied = Math.min(baseLimit, rawDeduction.credit + rawDeduction.cash);
-  const marketApplied = Math.min(1000000, rawDeduction.market);
-  const transitApplied = Math.min(1000000, rawDeduction.transit);
+  return { base, senior, disabled, singleParent, total };
+}
+
+function buildScenario(input, key) {
+  const conf = TAX_CONSTANTS.scenario[key];
+  const threshold = input.annualIncome * TAX_CONSTANTS.card.deductionStartRate;
+  const baseLimit = getBaseCardLimit(input.annualIncome);
+
+  const weightedRate =
+    conf.mix.credit * TAX_CONSTANTS.card.rates.credit +
+    conf.mix.checkCash * TAX_CONSTANTS.card.rates.checkCash +
+    conf.mix.traditionalMarket * TAX_CONSTANTS.card.rates.traditionalMarket +
+    conf.mix.transit * TAX_CONSTANTS.card.rates.transit;
+
+  const eligibleNeeded = (baseLimit / weightedRate) * conf.coverage;
+  const annualTarget = Math.max(
+    threshold + input.annualIncome * 0.03,
+    Math.min(threshold + eligibleNeeded, input.annualIncome * conf.maxSpendShare)
+  );
+
+  const targetCredit = annualTarget * conf.mix.credit;
+  const targetCheckCash = annualTarget * conf.mix.checkCash;
+  const targetTraditionalMarket = annualTarget * conf.mix.traditionalMarket;
+  const targetTransit = annualTarget * conf.mix.transit;
+
+  const currentTotal =
+    input.currentCreditCard +
+    input.currentCheckCash +
+    input.currentTraditionalMarket +
+    input.currentTransit;
+
+  const remainingTotal = Math.max(0, annualTarget - currentTotal);
+  const monthsLeft = getMonthsLeft();
+
+  const incomeFactor = input.annualIncome < 30000000 ? 0.75 : input.annualIncome > 70000000 ? 1.15 : 1;
+  const pensionConservative = conf.pensionConservativeMonthly * incomeFactor;
+  const pensionAggressiveRaw = conf.pensionAggressiveMonthly * incomeFactor;
+  const pensionAggressive = Math.min(
+    pensionAggressiveRaw,
+    TAX_CONSTANTS.pension.combinedAnnualLimit / 12
+  );
+
+  const isaMonthly = conf.isaMonthly * incomeFactor;
 
   return {
-    threshold,
-    totalSpend,
-    eligibleSpend,
-    rawDeduction,
-    applied: {
-      base: baseApplied,
-      market: marketApplied,
-      transit: transitApplied,
-      total: baseApplied + marketApplied + transitApplied
-    },
-    limits: {
-      base: baseLimit,
-      marketExtra: 1000000,
-      transitExtra: 1000000
-    }
-  };
-}
-
-function computePersonalDeductionGuide(input) {
-  const base = input.baseDependents * 1500000;
-  const senior = input.seniorCount * 1000000;
-  const disabled = input.disabledCount * 2000000;
-  const singleParent = input.singleParent ? 1000000 : 0;
-
-  return {
-    base,
-    senior,
-    disabled,
-    singleParent,
-    total: base + senior + disabled + singleParent
-  };
-}
-
-function renderDetailGuide(cardGuide, personalGuide) {
-  detailResultEl.innerHTML = [
-    `<p><strong>카드/현금 공제 기준 사용액:</strong> 총급여의 25% 초과분만 반영 (기준액 ${numberWithComma(Math.round(cardGuide.threshold))}원)</p>`,
-    `<p><strong>반영 가능 사용액(가이드):</strong> ${numberWithComma(Math.round(cardGuide.eligibleSpend))}원</p>`,
-    `<p><strong>카드/현금 소득공제(한도 적용 후):</strong> ${numberWithComma(Math.round(cardGuide.applied.total))}원</p>`,
-    `<p>기본한도 ${numberWithComma(cardGuide.limits.base)}원 + 전통시장 추가한도 ${numberWithComma(cardGuide.limits.marketExtra)}원 + 대중교통 추가한도 ${numberWithComma(cardGuide.limits.transitExtra)}원</p>`,
-    `<p><strong>인적공제 예상 소득공제액(가이드):</strong> ${numberWithComma(Math.round(personalGuide.total))}원</p>`,
-    `<p>세부: 기본공제 ${numberWithComma(personalGuide.base)}원, 경로우대 ${numberWithComma(personalGuide.senior)}원, 장애인 ${numberWithComma(personalGuide.disabled)}원, 한부모 ${numberWithComma(personalGuide.singleParent)}원</p>`,
-    '<p>주의: 실제 공제액은 부양가족 요건, 소득요건, 중복공제 제한, 해당 과세연도 세법에 따라 달라질 수 있습니다.</p>'
-  ].join('');
-  detailResultEl.classList.remove('hidden');
-}
-
-function getRecommend(input) {
-  const band = getBand(input.income);
-  const monthlyMap = {
-    low: { conservative: 50000, taxFocused: 150000 },
-    mid: { conservative: 80000, taxFocused: 220000 },
-    high: { conservative: 100000, taxFocused: 300000 }
-  };
-  const monthly = monthlyMap[band];
-
-  const toneMap = {
-    low: '올해는 무리한 납입보다 누락 방지와 기본 공제 점검이 더 중요합니다.',
-    mid: '연금계좌 중심으로 페이스를 잡으면 절세 체감 가능성이 높아집니다.',
-    high: '연금계좌 납입 페이스를 강하게 가져가되 현금흐름을 함께 관리하는 전략이 유리합니다.'
-  };
-
-  const workerNote = input.isWorker
-    ? '근로소득 기준 체크리스트 중심으로 추천했습니다.'
-    : '근로소득 외 소득 구조는 공제 항목이 달라질 수 있어 세부 확인이 필요합니다.';
-
-  const pensionBullets = input.hasPension
-    ? [
-        '이미 하고 있다면 자동이체 금액과 납입일을 먼저 점검하세요.',
-        '남은 개월 수 기준으로 월 납입 페이스를 재설정하세요.',
-        '월 납입 후 생활비 압박이 생기면 보수적 플랜으로 즉시 낮추세요.'
-      ]
-    : [
-        '연금저축 또는 IRP 중 하나부터 소액 자동이체로 시작하세요.',
-        '이번 달 계좌 개설 후 다음 달부터 자동이체를 켜두는 흐름이 간단합니다.',
-        '한 번에 크게 넣기보다 월별 분할 납입이 부담을 줄입니다.'
-      ];
-
-  return {
-    tone: `${toneMap[band]} ${workerNote}`,
-    cards: [
-      {
-        title: '💳 카드/현금 전략',
-        bullets: [
-          input.highCardSpend ? '추가 소비보다 현금영수증/영수증 누락 방지에 집중하세요.' : '고정지출 결제수단을 정리해 공제 누락 가능성을 줄이세요.',
-          '이번 달 안에 홈택스 현금영수증 발급수단 등록 여부를 확인하세요.',
-          '연말 몰아쓰기보다 월별 분산 관리가 유리합니다.'
-        ],
-        planA: '보수적 플랜: 추가 소비 유도 없이 증빙 관리에 집중',
-        planB: '절세형 플랜: 월 지출 리뷰 시간을 2회 확보해 누락 가능성 최소화',
-        rationale: [
-          '카드 사용액을 인위적으로 늘리는 전략은 효율이 떨어질 수 있습니다.',
-          '증빙 정리와 결제수단 점검만으로도 실수 비용을 줄이는 데 도움이 됩니다.'
-        ]
-      },
-      {
-        title: '🏦 연금저축/IRP 전략',
-        bullets: pensionBullets,
-        planA: `보수적 플랜: 월 ${moneyToManwon(monthly.conservative)} 자동이체`,
-        planB: `절세형 플랜: 월 ${moneyToManwon(monthly.taxFocused)} 자동이체`,
-        rationale: [
-          '소득 구간별 체감은 다르지만 월 자동이체 전략은 실행 난도가 낮습니다.',
-          '개인 현금흐름을 우선하고 무리하지 않는 선에서 조정하는 것이 핵심입니다.'
-        ]
-      },
-      {
-        title: '📈 ISA 전략',
-        bullets: [
-          'ISA는 단기 환급보다 중장기 자금 관리 통장으로 접근하세요.',
-          '입출금 여유자금 범위 안에서만 월 납입을 설정하세요.',
-          input.highCardSpend ? '소비가 큰 달엔 ISA 납입을 줄이고 여유 달에 늘리세요.' : '월급일 다음날 소액 자동이체로 시작하면 지속성이 높습니다.'
-        ],
-        planA: `보수적 플랜: 월 ${moneyToManwon(Math.round(monthly.conservative * 0.6))} 적립`,
-        planB: `절세형 플랜: 월 ${moneyToManwon(Math.round(monthly.taxFocused * 0.7))} 적립`,
-        rationale: [
-          'ISA는 즉시 환급액 계산보다 자산 형성 흐름 유지에 의미가 있습니다.',
-          '연말정산 대비와 장기 투자 루틴을 동시에 고려하는 보조 축으로 활용하세요.'
-        ]
+    id: key,
+    title: conf.title,
+    summary: conf.summary,
+    cardPlan: {
+      targetEligibleSpend: annualTarget,
+      targetCredit,
+      targetCheckCash,
+      targetTraditionalMarket,
+      targetTransit,
+      remainingTotal,
+      monthlyTargets: {
+        total: annualTarget / 12,
+        credit: targetCredit / 12,
+        checkCash: targetCheckCash / 12,
+        traditionalMarket: targetTraditionalMarket / 12,
+        transit: targetTransit / 12,
+        additionalNeededByYearEnd: remainingTotal / monthsLeft
       }
+    },
+    pensionPlan: {
+      conservativeMonthly: pensionConservative,
+      aggressiveMonthly: pensionAggressive,
+      note: `연금저축/IRP 합산 가이드 상수(연 ${formatMoney(TAX_CONSTANTS.pension.combinedAnnualLimit)}원)는 연도별 변경 가능성 있음`
+    },
+    isaPlan: {
+      monthly: isaMonthly,
+      yearly: isaMonthly * 12,
+      riskTone: conf.riskTone,
+      note: TAX_CONSTANTS.isa.note
+    },
+    todo: [
+      '이번 주 안에 카드/현금영수증 사용내역 누락 여부 확인하기',
+      `월 ${formatMoney(Math.round(pensionConservative))}원 연금 자동이체 먼저 설정하기`,
+      `ISA 월 ${formatMoney(Math.round(isaMonthly))}원 목표를 캘린더에 등록하기`
     ],
-    todos: [
-      '홈택스에서 현금영수증 발급수단 등록 상태 확인하기',
-      '연금저축/IRP 자동이체 금액과 이체일 캘린더에 등록하기',
-      '이번 달 고정지출 결제수단 3개만 먼저 점검하기'
+    rationale: [
+      `카드 공제 가정은 총급여의 ${Math.round(TAX_CONSTANTS.card.deductionStartRate * 100)}% 초과 사용분부터 시작했습니다.`,
+      '시나리오별 결제수단 비중(신용/체크·현금/전통시장/대중교통)을 다르게 설정해 목표치를 만들었습니다.',
+      `기본 카드 공제 한도는 총급여 구간별 가정(현재 입력 기준 ${formatMoney(baseLimit)}원)으로 반영했습니다.`,
+      '실제 공제/세액은 연도별 세법, 공제 요건, 증빙 여부에 따라 달라질 수 있습니다.'
     ]
   };
 }
 
-function renderCards(cards) {
-  cardsEl.innerHTML = cards
-    .map((card, idx) => `
-      <article class="result-card">
-        <h3 class="result-title">${card.title}</h3>
-        <ul>${card.bullets.map((line) => `<li>${line}</li>`).join('')}</ul>
-        <div class="plan">
-          <span>${card.planA}</span>
-          <strong>${card.planB}</strong>
-          <em>개인 상황에 따라 무리하지 않는 선에서 조정하세요.</em>
-        </div>
-        <button type="button" class="toggle-rationale" data-target="rationale-${idx}" aria-expanded="false">근거 펼치기</button>
-        <div id="rationale-${idx}" class="rationale hidden">${card.rationale.map((line) => `<p>${line}</p>`).join('')}</div>
-      </article>
+function generateScenarios(input) {
+  return ['simple', 'balanced', 'max'].map((key) => buildScenario(input, key));
+}
+
+function renderPersonalSummary(summary, income) {
+  personalSummary.innerHTML = [
+    `<p><strong>입력 연봉:</strong> ${formatMoney(income)}원</p>`,
+    `<p><strong>인적공제 가이드 합계:</strong> ${formatMoney(summary.total)}원 (기본 ${formatMoney(summary.base)} / 경로우대 ${formatMoney(summary.senior)} / 장애인 ${formatMoney(summary.disabled)} / 한부모 ${formatMoney(summary.singleParent)})</p>`,
+    '<p>위 금액은 참고용 입력 가이드이며, 실제 인정 여부는 개인 요건 및 증빙 기준을 확인해야 합니다.</p>'
+  ].join('');
+}
+
+function loadTodoState() {
+  try {
+    return JSON.parse(localStorage.getItem(TODO_STORAGE_KEY) || '{}');
+  } catch (_) {
+    return {};
+  }
+}
+
+function saveTodoState(state) {
+  localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(state));
+}
+
+function renderTodo(scenario) {
+  const state = loadTodoState();
+  const currentState = state[scenario.id] || scenario.todo.map(() => false);
+
+  todoList.innerHTML = scenario.todo
+    .map((item, idx) => `
+      <li>
+        <input type="checkbox" id="todo-${scenario.id}-${idx}" ${currentState[idx] ? 'checked' : ''} />
+        <label for="todo-${scenario.id}-${idx}" class="${currentState[idx] ? 'done' : ''}">${item}</label>
+      </li>
     `)
     .join('');
 
-  document.querySelectorAll('.toggle-rationale').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-target');
-      const target = document.getElementById(id);
-      const open = !target.classList.contains('hidden');
-      target.classList.toggle('hidden');
-      btn.setAttribute('aria-expanded', String(!open));
-      btn.textContent = open ? '근거 펼치기' : '근거 접기';
-    });
-  });
-}
-
-function loadTodoState(length) {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    if (Array.isArray(parsed) && parsed.length === length) return parsed;
-  } catch (e) {}
-  return new Array(length).fill(false);
-}
-
-function renderTodos(todos) {
-  const state = loadTodoState(todos.length);
-
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  todoListEl.innerHTML = todos
-    .map(
-      (todo, idx) => `
-        <li>
-          <input type="checkbox" id="todo-${idx}" ${state[idx] ? 'checked' : ''} />
-          <label for="todo-${idx}" class="${state[idx] ? 'done' : ''}">${todo}</label>
-        </li>
-      `
-    )
-    .join('');
-
-  todos.forEach((_, idx) => {
-    const checkbox = document.getElementById(`todo-${idx}`);
-    const label = document.querySelector(`label[for="todo-${idx}"]`);
+  scenario.todo.forEach((_, idx) => {
+    const checkbox = document.getElementById(`todo-${scenario.id}-${idx}`);
+    const label = document.querySelector(`label[for="todo-${scenario.id}-${idx}"]`);
     checkbox.addEventListener('change', () => {
-      state[idx] = checkbox.checked;
+      const next = loadTodoState();
+      const base = next[scenario.id] || scenario.todo.map(() => false);
+      base[idx] = checkbox.checked;
+      next[scenario.id] = base;
+      saveTodoState(next);
       label.classList.toggle('done', checkbox.checked);
-      save();
     });
   });
+}
+
+function renderScenario(scenario) {
+  const plan = scenario.cardPlan;
+
+  scenarioCard.innerHTML = `
+    <h3>${scenario.title}</h3>
+    <p>${scenario.summary}</p>
+
+    <section class="block">
+      <h4>A. 카드/현금 목표 사용액(가이드)</h4>
+      <ul>
+        <li>연간 목표 사용액: ${formatMoney(plan.targetEligibleSpend)}원</li>
+        <li>월 평균 목표: ${formatMoney(plan.monthlyTargets.total)}원</li>
+        <li>현재 입력 기준 남은 기간 추가 목표: ${formatMoney(plan.remainingTotal)}원 (월 약 ${formatMoney(plan.monthlyTargets.additionalNeededByYearEnd)}원)</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h4>B. 카테고리별 목표</h4>
+      <ul>
+        <li>신용카드 목표: 연 ${formatMoney(plan.targetCredit)}원 / 월 ${formatMoney(plan.monthlyTargets.credit)}원</li>
+        <li>체크·현금영수증 목표: 연 ${formatMoney(plan.targetCheckCash)}원 / 월 ${formatMoney(plan.monthlyTargets.checkCash)}원</li>
+        <li>전통시장 목표: 연 ${formatMoney(plan.targetTraditionalMarket)}원 / 월 ${formatMoney(plan.monthlyTargets.traditionalMarket)}원</li>
+        <li>대중교통 목표: 연 ${formatMoney(plan.targetTransit)}원 / 월 ${formatMoney(plan.monthlyTargets.transit)}원</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h4>C. 연금저축/IRP 월 납입</h4>
+      <ul>
+        <li>보수적: 월 ${formatMoney(scenario.pensionPlan.conservativeMonthly)}원</li>
+        <li>적극: 월 ${formatMoney(scenario.pensionPlan.aggressiveMonthly)}원</li>
+      </ul>
+      <p>${scenario.pensionPlan.note}</p>
+    </section>
+
+    <section class="block">
+      <h4>D. ISA 운용 가이드</h4>
+      <ul>
+        <li>월 목표: ${formatMoney(scenario.isaPlan.monthly)}원</li>
+        <li>연 목표: ${formatMoney(scenario.isaPlan.yearly)}원</li>
+        <li>리스크 톤: ${getRiskToneText(scenario.isaPlan.riskTone)}</li>
+      </ul>
+      <p>${scenario.isaPlan.note}</p>
+    </section>
+
+    <button type="button" class="accordion-btn" id="rationaleBtn">근거/가정 펼치기</button>
+    <div class="accordion-content hidden" id="rationaleBody">
+      ${scenario.rationale.map((line) => `<p>${line}</p>`).join('')}
+    </div>
+  `;
+
+  const rationaleBtn = document.getElementById('rationaleBtn');
+  const rationaleBody = document.getElementById('rationaleBody');
+  rationaleBtn.addEventListener('click', () => {
+    const opened = !rationaleBody.classList.contains('hidden');
+    rationaleBody.classList.toggle('hidden');
+    rationaleBtn.textContent = opened ? '근거/가정 펼치기' : '근거/가정 접기';
+  });
+
+  renderTodo(scenario);
+}
+
+function activateTab(id) {
+  activeScenarioId = id;
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    const active = btn.getAttribute('data-tab') === id;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  const scenario = scenarioResults.find((item) => item.id === id);
+  if (scenario) renderScenario(scenario);
 }
 
 function renderFaq() {
   const faqList = document.getElementById('faqList');
-  faqList.innerHTML = faqItems
+  faqList.innerHTML = FAQ_ITEMS
     .map(
       (item) => `
         <details class="faq-item">
@@ -294,7 +358,7 @@ function renderFaq() {
   const faqLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqItems.map((item) => ({
+    mainEntity: FAQ_ITEMS.map((item) => ({
       '@type': 'Question',
       name: item.q,
       acceptedAnswer: { '@type': 'Answer', text: item.a }
@@ -303,95 +367,59 @@ function renderFaq() {
   document.getElementById('faq-jsonld').textContent = JSON.stringify(faqLd);
 }
 
-incomeInput.addEventListener('input', (e) => {
-  const digits = e.target.value.replace(/[^0-9]/g, '');
-  e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
-});
-
-document.querySelectorAll('input[data-number]').forEach((inputEl) => {
-  inputEl.addEventListener('input', (e) => {
-    const digits = e.target.value.replace(/[^0-9]/g, '');
-    e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+function setupMoneyInputs() {
+  document.querySelectorAll('input[data-money]').forEach((input) => {
+    input.addEventListener('input', (e) => {
+      const digits = e.target.value.replace(/[^0-9]/g, '');
+      e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+    });
   });
-});
+}
+
+function getInputValue(id) {
+  return toNumber(document.getElementById(id).value);
+}
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const raw = incomeInput.value.replace(/,/g, '');
-  const income = Number(raw);
 
-  if (!raw || Number.isNaN(income) || income <= 0) {
-    errorEl.textContent = '연 소득(총급여)을 숫자로 입력해 주세요.';
+  const annualIncome = getInputValue('annualIncome');
+  if (!annualIncome) {
+    formError.textContent = '연봉(총급여)을 입력해 주세요.';
     return;
   }
 
-  errorEl.textContent = '';
+  const dependentsCount = getInputValue('dependentsCount');
+  if (dependentsCount < 1) {
+    formError.textContent = '기본공제 대상 인원은 본인 포함 1명 이상이어야 합니다.';
+    return;
+  }
 
-  const data = getRecommend({
-    income,
-    isWorker: document.getElementById('isWorker').checked,
-    hasPension: document.getElementById('hasPension').checked,
-    highCardSpend: document.getElementById('highCardSpend').checked
-  });
+  formError.textContent = '';
 
-  toneEl.textContent = data.tone;
-  renderCards(data.cards);
-  renderTodos(data.todos);
-  latestIncome = income;
+  const input = {
+    annualIncome,
+    dependentsCount,
+    seniorCount: getInputValue('seniorCount'),
+    disabledCount: getInputValue('disabledCount'),
+    isSingleParent: document.getElementById('isSingleParent').checked,
+    currentCreditCard: getInputValue('currentCreditCard'),
+    currentCheckCash: getInputValue('currentCheckCash'),
+    currentTraditionalMarket: getInputValue('currentTraditionalMarket'),
+    currentTransit: getInputValue('currentTransit')
+  };
 
-  resultEl.classList.remove('hidden');
-  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scenarioResults = generateScenarios(input);
+  renderPersonalSummary(computePersonalSummary(input), annualIncome);
+  activateTab(activeScenarioId);
+  results.classList.remove('hidden');
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-detailForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  if (!latestIncome) {
-    detailErrorEl.textContent = '먼저 상단에서 연 소득을 입력하고 추천 받기를 실행해 주세요.';
-    detailResultEl.classList.add('hidden');
-    return;
-  }
-
-  const credit = parseNumberFromInput(document.getElementById('creditSpend').value);
-  const cash = parseNumberFromInput(document.getElementById('cashSpend').value);
-  const market = parseNumberFromInput(document.getElementById('marketSpend').value);
-  const transit = parseNumberFromInput(document.getElementById('transitSpend').value);
-  const baseDependents = parseNumberFromInput(document.getElementById('baseDependents').value);
-  const seniorCount = parseNumberFromInput(document.getElementById('seniorCount').value);
-  const disabledCount = parseNumberFromInput(document.getElementById('disabledCount').value);
-  const singleParent = document.getElementById('singleParent').checked;
-
-  if (baseDependents < 1) {
-    detailErrorEl.textContent = '기본공제 대상 인원은 최소 1명(본인) 이상으로 입력해 주세요.';
-    detailResultEl.classList.add('hidden');
-    return;
-  }
-
-  if (credit + cash + market + transit <= 0) {
-    detailErrorEl.textContent = '카드/현금 사용액을 1개 이상 입력해 주세요.';
-    detailResultEl.classList.add('hidden');
-    return;
-  }
-
-  detailErrorEl.textContent = '';
-
-  const cardGuide = computeCardAndCashGuide({
-    income: latestIncome,
-    credit,
-    cash,
-    market,
-    transit
-  });
-
-  const personalGuide = computePersonalDeductionGuide({
-    baseDependents,
-    seniorCount,
-    disabledCount,
-    singleParent
-  });
-
-  renderDetailGuide(cardGuide, personalGuide);
-  detailResultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+document.querySelectorAll('.tab-btn').forEach((btn) => {
+  btn.addEventListener('click', () => activateTab(btn.getAttribute('data-tab')));
 });
 
+ruleUpdateDate.textContent = LAST_RULE_UPDATE;
+setupMoneyInputs();
 renderFaq();

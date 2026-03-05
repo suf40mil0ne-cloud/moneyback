@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>연말정산 행동 추천기 | 3분 컷 절세 액션</title>
-  <meta name="description" content="연 소득과 간단한 체크 3개로 올해 남은 기간에 실행할 연말정산 행동 가이드를 3분 안에 추천합니다." />
-  <meta name="keywords" content="연말정산,연말정산 추천,연금저축,IRP,ISA,현금영수증,절세 체크리스트" />
+  <title>연말정산 행동 추천기 | 3가지 시나리오 가이드</title>
+  <meta name="description" content="연봉과 최소 입력만으로 카드/현금 목표, 연금저축·IRP, ISA 실행 가이드를 3가지 시나리오로 추천합니다." />
+  <meta name="keywords" content="연말정산,카드 공제 한도,연금저축 IRP,ISA,절세 가이드,직장인 절세" />
   <meta name="google-adsense-account" content="ca-pub-7104324664246128" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:title" content="연말정산 행동 추천기" />
-  <meta property="og:description" content="정확한 환급액 계산 대신 올해 남은 기간의 행동 가이드를 제공합니다." />
+  <meta property="og:description" content="정확한 환급액 계산 대신, 놓치지 않기 위한 목표치와 실행 플랜을 제시합니다." />
   <meta property="og:url" content="https://moneyback.pages.dev/" />
   <link rel="canonical" href="https://moneyback.pages.dev/" />
   <link rel="stylesheet" href="./style.css" />
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7104324664246128"
-    crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7104324664246128" crossorigin="anonymous"></script>
+
   <script type="application/ld+json">
-    {
-      "@context":"https://schema.org",
-      "@type":"WebSite",
-      "name":"연말정산 행동 추천기",
-      "url":"https://moneyback.pages.dev/",
-      "inLanguage":"ko-KR",
-      "description":"입력 3분으로 확인하는 연말정산 행동 가이드"
-    }
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"연말정산 행동 추천기",
+    "url":"https://moneyback.pages.dev/",
+    "inLanguage":"ko-KR"
+  }
   </script>
   <script type="application/ld+json" id="faq-jsonld"></script>
 </head>
@@ -33,7 +32,7 @@
     <header class="hero">
       <p class="badge">3분 컷</p>
       <h1>연말정산 행동 추천기</h1>
-      <p class="subtitle">정확한 환급액 계산 대신, 올해 남은 기간에 바로 실행할 카드/연금/ISA 액션을 간단히 추천합니다.</p>
+      <p class="subtitle">정확한 환급액 계산이 아니라, 올해 놓치지 않기 위한 목표/실행 가이드를 빠르게 제시합니다.</p>
     </header>
 
     <section class="ad-wrap" aria-label="상단 광고 자리">
@@ -41,66 +40,72 @@
     </section>
 
     <section class="card">
-      <form id="recommend-form" novalidate>
-        <label for="income">연 소득(총급여, 원)</label>
-        <input id="income" name="income" inputmode="numeric" placeholder="예: 45,000,000" />
-
-        <div class="toggles">
-          <label><input type="checkbox" id="isWorker" checked />근로소득(직장인)입니다</label>
-          <label><input type="checkbox" id="hasPension" />연금저축/IRP를 이미 하고 있어요</label>
-          <label><input type="checkbox" id="highCardSpend" />카드 소비가 많은 편이에요</label>
+      <h2>입력</h2>
+      <form id="planner-form" novalidate>
+        <div class="grid two-col">
+          <div>
+            <label for="annualIncome">연봉(총급여, 원) *</label>
+            <input id="annualIncome" data-money placeholder="예: 55,000,000" />
+          </div>
         </div>
 
-        <p id="error" class="error" aria-live="polite"></p>
+        <h3>기본 공제(간단)</h3>
+        <div class="grid two-col">
+          <div>
+            <label for="dependentsCount">기본공제 대상 인원(본인 포함)</label>
+            <input id="dependentsCount" data-money value="1" />
+          </div>
+          <div>
+            <label for="seniorCount">70세 이상 인원</label>
+            <input id="seniorCount" data-money value="0" />
+          </div>
+          <div>
+            <label for="disabledCount">장애인 인원</label>
+            <input id="disabledCount" data-money value="0" />
+          </div>
+          <label class="inline-check"><input type="checkbox" id="isSingleParent" />한부모 공제 해당</label>
+        </div>
+
+        <h3>현재 사용액(선택, 입력 없으면 0)</h3>
+        <div class="grid two-col">
+          <div>
+            <label for="currentCreditCard">올해 누적 신용카드</label>
+            <input id="currentCreditCard" data-money placeholder="0" />
+          </div>
+          <div>
+            <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
+            <input id="currentCheckCash" data-money placeholder="0" />
+          </div>
+          <div>
+            <label for="currentTraditionalMarket">올해 누적 전통시장</label>
+            <input id="currentTraditionalMarket" data-money placeholder="0" />
+          </div>
+          <div>
+            <label for="currentTransit">올해 누적 대중교통</label>
+            <input id="currentTransit" data-money placeholder="0" />
+          </div>
+        </div>
+
+        <p id="formError" class="error" aria-live="polite"></p>
         <button type="submit" class="cta">추천 받기</button>
       </form>
     </section>
 
-    <section id="result" class="result hidden" aria-live="polite">
-      <div id="tone" class="tone"></div>
-      <div id="cards" class="result-grid"></div>
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="meta-line">마지막 규칙 업데이트: <span id="ruleUpdateDate"></span></div>
+      <div id="personalSummary" class="summary-box"></div>
+
+      <div class="tab-list" role="tablist" aria-label="시나리오 선택">
+        <button class="tab-btn active" type="button" data-tab="simple" role="tab" aria-selected="true">심플</button>
+        <button class="tab-btn" type="button" data-tab="balanced" role="tab" aria-selected="false">균형</button>
+        <button class="tab-btn" type="button" data-tab="max" role="tab" aria-selected="false">절세 극대화</button>
+      </div>
+
+      <article id="scenarioCard" class="scenario-card"></article>
+
       <section class="card">
         <h3>오늘 할 일 3개</h3>
         <ul id="todoList" class="todo-list"></ul>
-      </section>
-
-      <section class="card detail-card">
-        <h3>심화 점검(선택): 카드/현금 공제한도 + 인적공제</h3>
-        <p class="detail-help">아래 입력은 가이드 계산입니다. 실제 적용은 요건/세법 변경 여부를 반드시 확인하세요.</p>
-        <form id="detail-form" class="detail-form" novalidate>
-          <div class="detail-grid">
-            <label for="creditSpend">신용카드 사용액(연간, 원)</label>
-            <input id="creditSpend" data-number placeholder="예: 12,000,000" />
-
-            <label for="cashSpend">체크카드/현금영수증 사용액(연간, 원)</label>
-            <input id="cashSpend" data-number placeholder="예: 8,000,000" />
-
-            <label for="marketSpend">전통시장 사용액(연간, 원)</label>
-            <input id="marketSpend" data-number placeholder="예: 1,200,000" />
-
-            <label for="transitSpend">대중교통 사용액(연간, 원)</label>
-            <input id="transitSpend" data-number placeholder="예: 900,000" />
-          </div>
-
-          <hr />
-
-          <div class="detail-grid">
-            <label for="baseDependents">기본공제 대상 인원(본인 포함)</label>
-            <input id="baseDependents" data-number value="1" />
-
-            <label for="seniorCount">경로우대(70세 이상) 인원</label>
-            <input id="seniorCount" data-number value="0" />
-
-            <label for="disabledCount">장애인 공제 인원</label>
-            <input id="disabledCount" data-number value="0" />
-          </div>
-
-          <label class="single-check"><input type="checkbox" id="singleParent" /> 한부모 공제 해당</label>
-          <p id="detailError" class="error" aria-live="polite"></p>
-          <button type="submit" class="cta">심화 계산하기</button>
-        </form>
-
-        <div id="detailResult" class="detail-result hidden"></div>
       </section>
     </section>
 
@@ -110,12 +115,12 @@
 
     <section class="faq-block">
       <h2>자주 묻는 질문</h2>
-      <p>연말정산 준비 시 많이 검색하는 질문을 간단히 정리했습니다.</p>
+      <p>자주 검색되는 질문을 짧게 정리했습니다.</p>
       <div id="faqList"></div>
     </section>
   </main>
 
-  <aside class="notice">본 서비스는 참고용 시뮬레이션이며, 실제 공제는 개인 상황 및 세법 적용 시점에 따라 달라질 수 있습니다.</aside>
+  <aside class="notice">본 서비스는 참고용 가이드이며, 실제 공제/세액은 개인 상황과 세법 적용 시점에 따라 달라질 수 있습니다.</aside>
   <script src="./main.js"></script>
 </body>
 </html>
