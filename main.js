@@ -24,6 +24,11 @@ const TAX_CONSTANTS = {
     disabledAdditionalPerPerson: 2000000,
     singleParentAdditional: 1000000
   },
+  childTaxCredit: {
+    // 자녀세액공제는 실제 금액 단정 계산 대신 "검토 대상"만 안내
+    minimumAge: 8,
+    note: '자녀세액공제는 8세 이상 자녀 기준 등 요건 확인이 필요하며, 본 서비스는 금액 계산을 제공하지 않습니다.'
+  },
   pension: {
     pensionSavingAnnualLimit: 6000000, // 연금저축 단독 기준 가정
     combinedAnnualLimit: 9000000 // 연금저축+IRP 합산 기준 가정
@@ -75,6 +80,7 @@ const FAQ_ITEMS = [
   { q: '전통시장/대중교통은 꼭 분리 입력해야 하나요?', a: '정확한 분리 입력이 어려우면 0으로 두고 시작해도 됩니다. 분리할수록 목표 가이드가 더 구체화됩니다.' },
   { q: '연금저축과 IRP는 둘 다 해야 하나요?', a: '필수는 아닙니다. 현금흐름을 해치지 않는 선에서 자동이체를 유지하는 것이 우선입니다.' },
   { q: '연금저축 600, 합산 900은 확정 수치인가요?', a: '안내에서 자주 쓰이는 기준이지만 연도별 정책 변경 가능성이 있어 반드시 최신 정보를 확인해야 합니다.' },
+  { q: '자녀세액공제는 어떻게 보나요?', a: '이 페이지는 8세 이상 자녀 수를 기준으로 검토 대상 배지만 보여줍니다. 실제 공제금액 계산은 제공하지 않습니다.' },
   { q: 'ISA는 어떤 상품을 사야 하나요?', a: '이 서비스는 특정 상품을 추천하지 않습니다. 리스크 톤에 맞춰 예금/채권형/혼합형 비중을 정하는 수준으로 안내합니다.' },
   { q: '인적공제 인원은 어떻게 입력하나요?', a: '본인은 자동 포함됩니다. 배우자, 미성년 자녀(만 20세 이하), 부모/조부모(만 60세 이상)만 입력하면 간편하게 반영됩니다.' },
   { q: '정확한 환급액 계산은 왜 안 하나요?', a: '정확 계산에는 상세 소득/공제 자료가 더 필요합니다. 이 페이지는 실행 가능한 목표치와 행동 가이드에 집중합니다.' },
@@ -141,7 +147,8 @@ function computePersonalSummary(input) {
     disabled,
     singleParent,
     total,
-    isDependentIncomeEligible: input.isDependentIncomeEligible
+    isDependentIncomeEligible: input.isDependentIncomeEligible,
+    childTaxCreditEligibleCount: input.childTaxCreditEligibleCount
   };
 }
 
@@ -236,13 +243,20 @@ function generateScenarios(input) {
 }
 
 function renderPersonalSummary(summary, income) {
+  const childTaxBadge =
+    summary.childTaxCreditEligibleCount > 0
+      ? `<p><span class="summary-badge">자녀세액공제 참고: 8세 이상 자녀 ${summary.childTaxCreditEligibleCount}명 검토 대상</span></p>`
+      : '<p><span class="summary-badge muted">자녀세액공제 참고: 해당 없음(입력 기준)</span></p>';
+
   personalSummary.innerHTML = [
     `<p><strong>입력 연봉:</strong> ${formatMoney(income)}원</p>`,
     `<p><strong>기본공제 인원(간편 계산):</strong> ${summary.baseDependentsCount}명 (본인 자동 포함)</p>`,
     `<p><strong>인적공제 가이드 합계:</strong> ${formatMoney(summary.total)}원 (기본 ${formatMoney(summary.base)} / 경로우대 ${formatMoney(summary.senior)} / 장애인 ${formatMoney(summary.disabled)} / 한부모 ${formatMoney(summary.singleParent)})</p>`,
+    childTaxBadge,
     summary.isDependentIncomeEligible
       ? '<p>부양가족 소득요건 충족 가정으로 반영했습니다.</p>'
       : '<p>부양가족 소득요건 체크가 꺼져 있어, 공제 적용 전 요건 확인이 필요합니다.</p>',
+    `<p>${TAX_CONSTANTS.childTaxCredit.note}</p>`,
     '<p>위 금액은 참고용 입력 가이드이며, 실제 인정 여부는 개인 요건 및 증빙 기준을 확인해야 합니다.</p>'
   ].join('');
 }
@@ -408,6 +422,7 @@ form.addEventListener('submit', (e) => {
   }
 
   const minorChildrenCount = getInputValue('minorChildrenCount');
+  const childTaxCreditEligibleCount = getInputValue('childTaxCreditEligibleCount');
   const elderFamilyCount = getInputValue('elderFamilyCount');
   const seniorCount = getInputValue('seniorCount');
   const disabledCount = getInputValue('disabledCount');
@@ -422,6 +437,10 @@ form.addEventListener('submit', (e) => {
     formError.textContent = '장애인 인원은 기본공제 인원 범위 안에서 입력해 주세요.';
     return;
   }
+  if (childTaxCreditEligibleCount > minorChildrenCount) {
+    formError.textContent = '8세 이상 자녀 수는 미성년 자녀 수(만 20세 이하)를 넘을 수 없습니다.';
+    return;
+  }
 
   formError.textContent = '';
 
@@ -429,6 +448,7 @@ form.addEventListener('submit', (e) => {
     annualIncome,
     hasSpouse,
     minorChildrenCount,
+    childTaxCreditEligibleCount,
     elderFamilyCount,
     seniorCount,
     disabledCount,
