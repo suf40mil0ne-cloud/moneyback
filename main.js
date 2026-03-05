@@ -76,7 +76,7 @@ const FAQ_ITEMS = [
   { q: '연금저축과 IRP는 둘 다 해야 하나요?', a: '필수는 아닙니다. 현금흐름을 해치지 않는 선에서 자동이체를 유지하는 것이 우선입니다.' },
   { q: '연금저축 600, 합산 900은 확정 수치인가요?', a: '안내에서 자주 쓰이는 기준이지만 연도별 정책 변경 가능성이 있어 반드시 최신 정보를 확인해야 합니다.' },
   { q: 'ISA는 어떤 상품을 사야 하나요?', a: '이 서비스는 특정 상품을 추천하지 않습니다. 리스크 톤에 맞춰 예금/채권형/혼합형 비중을 정하는 수준으로 안내합니다.' },
-  { q: '인적공제 인원은 어떻게 입력하나요?', a: '본인을 포함한 기본공제 대상 인원을 입력하고, 경로우대/장애인/한부모 해당 여부를 추가하면 됩니다.' },
+  { q: '인적공제 인원은 어떻게 입력하나요?', a: '본인은 자동 포함됩니다. 배우자, 미성년 자녀(만 20세 이하), 부모/조부모(만 60세 이상)만 입력하면 간편하게 반영됩니다.' },
   { q: '정확한 환급액 계산은 왜 안 하나요?', a: '정확 계산에는 상세 소득/공제 자료가 더 필요합니다. 이 페이지는 실행 가능한 목표치와 행동 가이드에 집중합니다.' },
   { q: '현재 사용액을 안 넣어도 되나요?', a: '가능합니다. 입력하지 않으면 0 기준으로 목표치를 제시합니다.' },
   { q: '시나리오는 어떤 기준으로 고르면 되나요?', a: '현금흐름이 불안하면 심플, 유지 가능하면 균형, 여유가 크면 절세 극대화 시나리오를 추천합니다.' },
@@ -122,13 +122,27 @@ function getRiskToneText(riskTone) {
 }
 
 function computePersonalSummary(input) {
-  const base = input.dependentsCount * TAX_CONSTANTS.personal.baseDeductionPerPerson;
+  const baseDependentsCount =
+    1 + // 본인 자동 포함
+    (input.hasSpouse ? 1 : 0) +
+    input.minorChildrenCount +
+    input.elderFamilyCount;
+
+  const base = baseDependentsCount * TAX_CONSTANTS.personal.baseDeductionPerPerson;
   const senior = input.seniorCount * TAX_CONSTANTS.personal.seniorAdditionalPerPerson;
   const disabled = input.disabledCount * TAX_CONSTANTS.personal.disabledAdditionalPerPerson;
   const singleParent = input.isSingleParent ? TAX_CONSTANTS.personal.singleParentAdditional : 0;
   const total = base + senior + disabled + singleParent;
 
-  return { base, senior, disabled, singleParent, total };
+  return {
+    baseDependentsCount,
+    base,
+    senior,
+    disabled,
+    singleParent,
+    total,
+    isDependentIncomeEligible: input.isDependentIncomeEligible
+  };
 }
 
 function buildScenario(input, key) {
@@ -224,7 +238,11 @@ function generateScenarios(input) {
 function renderPersonalSummary(summary, income) {
   personalSummary.innerHTML = [
     `<p><strong>입력 연봉:</strong> ${formatMoney(income)}원</p>`,
+    `<p><strong>기본공제 인원(간편 계산):</strong> ${summary.baseDependentsCount}명 (본인 자동 포함)</p>`,
     `<p><strong>인적공제 가이드 합계:</strong> ${formatMoney(summary.total)}원 (기본 ${formatMoney(summary.base)} / 경로우대 ${formatMoney(summary.senior)} / 장애인 ${formatMoney(summary.disabled)} / 한부모 ${formatMoney(summary.singleParent)})</p>`,
+    summary.isDependentIncomeEligible
+      ? '<p>부양가족 소득요건 충족 가정으로 반영했습니다.</p>'
+      : '<p>부양가족 소득요건 체크가 꺼져 있어, 공제 적용 전 요건 확인이 필요합니다.</p>',
     '<p>위 금액은 참고용 입력 가이드이며, 실제 인정 여부는 개인 요건 및 증빙 기준을 확인해야 합니다.</p>'
   ].join('');
 }
@@ -389,9 +407,19 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
-  const dependentsCount = getInputValue('dependentsCount');
-  if (dependentsCount < 1) {
-    formError.textContent = '기본공제 대상 인원은 본인 포함 1명 이상이어야 합니다.';
+  const minorChildrenCount = getInputValue('minorChildrenCount');
+  const elderFamilyCount = getInputValue('elderFamilyCount');
+  const seniorCount = getInputValue('seniorCount');
+  const disabledCount = getInputValue('disabledCount');
+  const hasSpouse = document.getElementById('hasSpouse').checked;
+  const baseDependentsCount = 1 + (hasSpouse ? 1 : 0) + minorChildrenCount + elderFamilyCount;
+
+  if (seniorCount > elderFamilyCount + (hasSpouse ? 1 : 0)) {
+    formError.textContent = '70세 이상 인원은 배우자+부모/조부모 입력 수를 넘지 않게 입력해 주세요.';
+    return;
+  }
+  if (disabledCount > baseDependentsCount) {
+    formError.textContent = '장애인 인원은 기본공제 인원 범위 안에서 입력해 주세요.';
     return;
   }
 
@@ -399,10 +427,13 @@ form.addEventListener('submit', (e) => {
 
   const input = {
     annualIncome,
-    dependentsCount,
-    seniorCount: getInputValue('seniorCount'),
-    disabledCount: getInputValue('disabledCount'),
+    hasSpouse,
+    minorChildrenCount,
+    elderFamilyCount,
+    seniorCount,
+    disabledCount,
     isSingleParent: document.getElementById('isSingleParent').checked,
+    isDependentIncomeEligible: document.getElementById('isDependentIncomeEligible').checked,
     currentCreditCard: getInputValue('currentCreditCard'),
     currentCheckCash: getInputValue('currentCheckCash'),
     currentTraditionalMarket: getInputValue('currentTraditionalMarket'),

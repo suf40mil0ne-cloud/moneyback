@@ -49,11 +49,17 @@
           </div>
         </div>
 
-        <h3>기본 공제(간단)</h3>
+        <h3>인적공제(간편 입력)</h3>
         <div class="grid two-col">
+          <label class="inline-check"><input type="checkbox" id="hasSpouse" />배우자 있음</label>
+          <div></div>
           <div>
-            <label for="dependentsCount">기본공제 대상 인원(본인 포함)</label>
-            <input id="dependentsCount" data-money value="1" />
+            <label for="minorChildrenCount">미성년 자녀 수(만 20세 이하)</label>
+            <input id="minorChildrenCount" data-money value="0" />
+          </div>
+          <div>
+            <label for="elderFamilyCount">부모/조부모 수(만 60세 이상)</label>
+            <input id="elderFamilyCount" data-money value="0" />
           </div>
           <div>
             <label for="seniorCount">70세 이상 인원</label>
@@ -64,7 +70,9 @@
             <input id="disabledCount" data-money value="0" />
           </div>
           <label class="inline-check"><input type="checkbox" id="isSingleParent" />한부모 공제 해당</label>
+          <label class="inline-check"><input type="checkbox" id="isDependentIncomeEligible" />부양가족 소득요건 충족(가정)</label>
         </div>
+        <p class="hint">본인은 자동 포함됩니다. 미성년 자녀(만 20세 이하), 부모/조부모(만 60세 이상)는 간편 입력용 가정 기준입니다.</p>
 
         <h3>현재 사용액(선택, 입력 없으면 0)</h3>
         <div class="grid two-col">

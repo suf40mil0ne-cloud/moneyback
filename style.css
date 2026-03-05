@@ -85,6 +85,7 @@ input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
   color: #334155;
 }
 .inline-check input { width: 16px; height: 16px; }
+.hint { margin: 8px 0 0; color: #64748b; font-size: 12px; }
 
 .error { min-height: 20px; margin: 8px 0 0; color: #e11d48; font-size: 13px; }
 
