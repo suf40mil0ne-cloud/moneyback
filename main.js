@@ -80,7 +80,10 @@ const RULES = {
 const state = {
   inputMode: {
     spendMode: 'monthly',
-    incomeMode: 'quick'
+    incomeMode: 'quick',
+    coupleSpendMode: 'monthly',
+    coupleIncomeModeA: 'quick',
+    coupleIncomeModeB: 'quick'
   },
   income: {
     quickBand: '5000',
@@ -165,6 +168,24 @@ const spendInputMode = document.getElementById('spendInputMode');
 const monthlySpendWrap = document.getElementById('monthlySpendWrap');
 const cumulativeSpendWrap = document.getElementById('cumulativeSpendWrap');
 const estimationPreview = document.getElementById('estimationPreview');
+const coupleSpendInputMode = document.getElementById('coupleSpendInputMode');
+const coupleEstimationPreview = document.getElementById('coupleEstimationPreview');
+
+const aIncomeInputMode = document.getElementById('aIncomeInputMode');
+const aIncomeQuickBand = document.getElementById('aIncomeQuickBand');
+const aQuickIncomeWrap = document.getElementById('aQuickIncomeWrap');
+const aQuickIncomeValueText = document.getElementById('aQuickIncomeValueText');
+const aIncomeInput = document.getElementById('aIncome');
+const bIncomeInputMode = document.getElementById('bIncomeInputMode');
+const bIncomeQuickBand = document.getElementById('bIncomeQuickBand');
+const bQuickIncomeWrap = document.getElementById('bQuickIncomeWrap');
+const bQuickIncomeValueText = document.getElementById('bQuickIncomeValueText');
+const bIncomeInput = document.getElementById('bIncome');
+
+const aMonthlySpendWrap = document.getElementById('aMonthlySpendWrap');
+const aCumulativeSpendWrap = document.getElementById('aCumulativeSpendWrap');
+const bMonthlySpendWrap = document.getElementById('bMonthlySpendWrap');
+const bCumulativeSpendWrap = document.getElementById('bCumulativeSpendWrap');
 
 let activeMode = 'single';
 let activeScenarioId = 'simple';
@@ -553,12 +574,35 @@ function setIncomeByQuickBand() {
   quickIncomeValueText.textContent = `${formatMoney(mapped)}원`;
 }
 
+function setCoupleIncomeByQuickBand(spouse) {
+  const isA = spouse === 'A';
+  const bandEl = isA ? aIncomeQuickBand : bIncomeQuickBand;
+  const inputEl = isA ? aIncomeInput : bIncomeInput;
+  const textEl = isA ? aQuickIncomeValueText : bQuickIncomeValueText;
+  const mapped = RULES.ui.defaultIncomeBandValue[bandEl.value] || RULES.ui.defaultIncomeBandValue['5000'];
+  inputEl.value = formatMoney(mapped);
+  textEl.textContent = `${formatMoney(mapped)}원`;
+}
+
 function updateIncomeModeUI() {
   state.inputMode.incomeMode = incomeInputMode.value;
   const isQuick = incomeInputMode.value === 'quick';
   quickIncomeWrap.classList.toggle('hidden', !isQuick);
   annualIncomeInput.readOnly = isQuick;
   if (isQuick) setIncomeByQuickBand();
+}
+
+function updateCoupleIncomeModeUI(spouse) {
+  const isA = spouse === 'A';
+  const modeEl = isA ? aIncomeInputMode : bIncomeInputMode;
+  const quickWrapEl = isA ? aQuickIncomeWrap : bQuickIncomeWrap;
+  const inputEl = isA ? aIncomeInput : bIncomeInput;
+  const mode = modeEl.value;
+  const isQuick = mode === 'quick';
+  quickWrapEl.classList.toggle('hidden', !isQuick);
+  inputEl.readOnly = isQuick;
+  if (isQuick) setCoupleIncomeByQuickBand(spouse);
+  state.inputMode[isA ? 'coupleIncomeModeA' : 'coupleIncomeModeB'] = mode;
 }
 
 function updateSpendModeUI() {
@@ -568,6 +612,17 @@ function updateSpendModeUI() {
   cumulativeSpendWrap.classList.toggle('hidden', isMonthly);
   estimationPreview.classList.toggle('hidden', !isMonthly);
   if (isMonthly) refreshEstimationPreview();
+}
+
+function updateCoupleSpendModeUI() {
+  const isMonthly = coupleSpendInputMode.value === 'monthly';
+  state.inputMode.coupleSpendMode = coupleSpendInputMode.value;
+  aMonthlySpendWrap.classList.toggle('hidden', !isMonthly);
+  bMonthlySpendWrap.classList.toggle('hidden', !isMonthly);
+  aCumulativeSpendWrap.classList.toggle('hidden', isMonthly);
+  bCumulativeSpendWrap.classList.toggle('hidden', isMonthly);
+  coupleEstimationPreview.classList.toggle('hidden', !isMonthly);
+  if (isMonthly) refreshCoupleEstimationPreview();
 }
 
 function refreshEstimationPreview() {
@@ -591,6 +646,47 @@ function refreshEstimationPreview() {
     <p>연말 예상 총사용액: ${formatMoney(projection.yearEndEstimate)}원</p>
     <p>남은 ${projection.remainingMonths}개월 예상 사용액: ${formatMoney(projection.remainingEstimate)}원</p>
     <p class="hint">현재 월평균 패턴을 그대로 유지한다고 가정한 예상/추정 값입니다.</p>
+  `;
+}
+
+function calculateCategoryProjectionByPrefix(prefix) {
+  const monthlyCredit = getMoneyInputValue(`${prefix}MonthlyCredit`);
+  const monthlyCheck = getMoneyInputValue(`${prefix}MonthlyCheckCash`);
+  const monthlyMarket = getMoneyInputValue(`${prefix}MonthlyMarket`);
+  const monthlyTransit = getMoneyInputValue(`${prefix}MonthlyTransit`);
+  const pCredit = computeMonthlyProjection(monthlyCredit);
+  const pCheck = computeMonthlyProjection(monthlyCheck);
+  const pMarket = computeMonthlyProjection(monthlyMarket);
+  const pTransit = computeMonthlyProjection(monthlyTransit);
+
+  return {
+    credit: pCredit.currentEstimate,
+    checkCash: pCheck.currentEstimate,
+    market: pMarket.currentEstimate,
+    transit: pTransit.currentEstimate,
+    projection: {
+      elapsedMonths: pCredit.elapsedMonths,
+      remainingMonths: pCredit.remainingMonths,
+      currentEstimate: pCredit.currentEstimate + pCheck.currentEstimate + pMarket.currentEstimate + pTransit.currentEstimate,
+      yearEndEstimate: pCredit.yearEndEstimate + pCheck.yearEndEstimate + pMarket.yearEndEstimate + pTransit.yearEndEstimate,
+      remainingEstimate: pCredit.remainingEstimate + pCheck.remainingEstimate + pMarket.remainingEstimate + pTransit.remainingEstimate,
+      monthlyTotal: monthlyCredit + monthlyCheck + monthlyMarket + monthlyTransit
+    }
+  };
+}
+
+function refreshCoupleEstimationPreview() {
+  const a = calculateCategoryProjectionByPrefix('a');
+  const b = calculateCategoryProjectionByPrefix('b');
+  const houseYearEnd = a.projection.yearEndEstimate + b.projection.yearEndEstimate;
+  const houseRemaining = a.projection.remainingEstimate + b.projection.remainingEstimate;
+
+  coupleEstimationPreview.innerHTML = `
+    <p><strong>맞벌이 월평균 입력 기준 추정</strong></p>
+    <p>A 연말 예상: ${formatMoney(a.projection.yearEndEstimate)}원 / B 연말 예상: ${formatMoney(b.projection.yearEndEstimate)}원</p>
+    <p>가구 연말 예상 총사용액: ${formatMoney(houseYearEnd)}원</p>
+    <p>남은 ${a.projection.remainingMonths}개월 가구 추정 사용액: ${formatMoney(houseRemaining)}원</p>
+    <p class="hint">현재 월평균 패턴 유지 기준의 추정치이며, 실제 신고값이 아닌 행동 가이드용입니다.</p>
   `;
 }
 
@@ -688,15 +784,69 @@ function collectSingleInput() {
 }
 
 function collectCoupleInput() {
+  const spendMode = coupleSpendInputMode.value;
+  const aMonthlyProjection = calculateCategoryProjectionByPrefix('a');
+  const bMonthlyProjection = calculateCategoryProjectionByPrefix('b');
+  const remainingMonths = aMonthlyProjection.projection.remainingMonths;
+
+  const spouseAUsage =
+    spendMode === 'monthly'
+      ? {
+          credit: aMonthlyProjection.credit,
+          checkCash: aMonthlyProjection.checkCash,
+          market: aMonthlyProjection.market,
+          transit: aMonthlyProjection.transit
+        }
+      : {
+          credit: getMoneyInputValue('aCredit'),
+          checkCash: getMoneyInputValue('aCheckCash'),
+          market: getMoneyInputValue('aMarket'),
+          transit: getMoneyInputValue('aTransit')
+        };
+
+  const spouseBUsage =
+    spendMode === 'monthly'
+      ? {
+          credit: bMonthlyProjection.credit,
+          checkCash: bMonthlyProjection.checkCash,
+          market: bMonthlyProjection.market,
+          transit: bMonthlyProjection.transit
+        }
+      : {
+          credit: getMoneyInputValue('bCredit'),
+          checkCash: getMoneyInputValue('bCheckCash'),
+          market: getMoneyInputValue('bMarket'),
+          transit: getMoneyInputValue('bTransit')
+        };
+
+  const projection =
+    spendMode === 'monthly'
+      ? {
+          mode: 'monthly',
+          remainingMonths,
+          yearEndEstimate: aMonthlyProjection.projection.yearEndEstimate + bMonthlyProjection.projection.yearEndEstimate,
+          remainingEstimate: aMonthlyProjection.projection.remainingEstimate + bMonthlyProjection.projection.remainingEstimate,
+          a: aMonthlyProjection.projection,
+          b: bMonthlyProjection.projection
+        }
+      : {
+          mode: 'cumulative',
+          remainingMonths: getNowMonths().remainingMonths,
+          yearEndEstimate: spouseAUsage.credit + spouseAUsage.checkCash + spouseAUsage.market + spouseAUsage.transit + spouseBUsage.credit + spouseBUsage.checkCash + spouseBUsage.market + spouseBUsage.transit,
+          remainingEstimate: 0
+        };
+
   return {
     mode: 'couple',
+    spendMode,
+    projection,
     isMarriedRegistered: document.getElementById('isMarriedRegistered').checked,
     spouseA: {
       income: getMoneyInputValue('aIncome'),
-      credit: getMoneyInputValue('aCredit'),
-      checkCash: getMoneyInputValue('aCheckCash'),
-      market: getMoneyInputValue('aMarket'),
-      transit: getMoneyInputValue('aTransit'),
+      credit: spouseAUsage.credit,
+      checkCash: spouseAUsage.checkCash,
+      market: spouseAUsage.market,
+      transit: spouseAUsage.transit,
       pension: getMoneyInputValue('aPension'),
       irp: getMoneyInputValue('aIrp'),
       rent: getMoneyInputValue('aRent'),
@@ -705,10 +855,10 @@ function collectCoupleInput() {
     },
     spouseB: {
       income: getMoneyInputValue('bIncome'),
-      credit: getMoneyInputValue('bCredit'),
-      checkCash: getMoneyInputValue('bCheckCash'),
-      market: getMoneyInputValue('bMarket'),
-      transit: getMoneyInputValue('bTransit'),
+      credit: spouseBUsage.credit,
+      checkCash: spouseBUsage.checkCash,
+      market: spouseBUsage.market,
+      transit: spouseBUsage.transit,
       pension: getMoneyInputValue('bPension'),
       irp: getMoneyInputValue('bIrp'),
       rent: getMoneyInputValue('bRent'),
@@ -886,6 +1036,29 @@ function renderSpendEstimationSummary(input, card) {
     <p><strong>소비 추정 요약</strong></p>
     <p>입력 기준: ${p.mode === 'monthly' ? '월평균 입력' : '누적 입력'}</p>
     <p>연말 예상 총사용액: ${formatMoney(p.yearEndEstimate)}원</p>
+    <p>남은 기간 추정 사용액: ${formatMoney(p.remainingEstimate)}원</p>
+    <p>${actionText}</p>
+  `;
+}
+
+function renderCoupleSpendEstimationSummary(input, cardStats) {
+  if (!input.projection) {
+    spendEstimationSummary.innerHTML = '<p>맞벌이 소비 추정 요약 없음</p>';
+    return;
+  }
+
+  const preferred = getPreferredCardHolder(cardStats.aCard, cardStats.bCard);
+  const preferredShortfall = preferred === '배우자 A' ? cardStats.aCard.shortfall : cardStats.bCard.shortfall;
+  const p = input.projection;
+  const actionText =
+    p.mode === 'monthly' && p.remainingMonths > 0
+      ? `${preferred} 기준으로 남은 ${p.remainingMonths}개월 동안 월 약 ${formatMoney(preferredShortfall / p.remainingMonths)}원 수준의 체크카드/현금영수증 전환을 검토해 보세요.`
+      : `${preferred} 부족 구간을 먼저 채우고, 추가 소비보다 결제수단과 귀속 점검을 우선하세요.`;
+
+  spendEstimationSummary.innerHTML = `
+    <p><strong>소비 추정 요약</strong></p>
+    <p>입력 기준: ${p.mode === 'monthly' ? '월평균 입력' : '누적 입력'}</p>
+    <p>가구 연말 예상 총사용액: ${formatMoney(p.yearEndEstimate)}원</p>
     <p>남은 기간 추정 사용액: ${formatMoney(p.remainingEstimate)}원</p>
     <p>${actionText}</p>
   `;
@@ -1095,9 +1268,15 @@ function buildCoupleRecommendation(input) {
       ? `자녀 ${input.children.length}명은 ${recommendedChildOwner === '균형 배분' ? '배우자 A 우선(동률)' : recommendedChildOwner} 귀속이 유리할 가능성이 높습니다.`
       : '자녀 입력이 없어 카드·월세·의료비 중심으로 점검했습니다.';
 
+  const preferredShortfall = preferredCardHolder === '배우자 A' ? aCard.shortfall : bCard.shortfall;
+  const monthlySwitchAction =
+    input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+      ? `남은 ${input.projection.remainingMonths}개월 동안 ${preferredCardHolder} 기준 월 ${formatMoney(preferredShortfall / input.projection.remainingMonths)}원 수준으로 체크카드/현금영수증 전환을 검토해 보세요.`
+      : `카드 추가 사용은 ${preferredCardHolder} 명의 체크카드/현금영수증 위주 배치가 적합합니다.`;
+
   const summary = [
     firstSummary,
-    `카드 추가 사용은 ${preferredCardHolder} 명의 체크카드/현금영수증 위주 배치가 적합합니다.`,
+    monthlySwitchAction,
     '월세는 세액공제와 현금영수증 중 하나만 선택해 중복을 피해야 합니다.',
     warnings.some((line) => line.includes('의료비'))
       ? '자녀 의료비에서 결제자/귀속 엇갈림으로 누락 위험이 있습니다.'
@@ -1127,7 +1306,9 @@ function buildCoupleRecommendation(input) {
       ? `${input.children[0].name} 교육비를 기본공제 받을 배우자 기준으로 점검하기`
       : '자녀 귀속자가 확정됐다면 교육비/의료비/보험료 귀속도 같은 기준으로 맞추기',
     '월세는 세액공제로 갈지 현금영수증으로 갈지 하나만 선택하기',
-    `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`
+    input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+      ? `${preferredCardHolder} 체크카드/현금영수증으로 월 ${formatMoney(preferredShortfall / input.projection.remainingMonths)}원 전환 계획 세우기`
+      : `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`
   ];
 
   return {
@@ -1257,7 +1438,7 @@ function renderAll(result, input) {
     renderSpendEstimationSummary(input, result.cardStats.self);
   } else {
     renderPersonalSummary(null, 'couple');
-    spendEstimationSummary.innerHTML = '<p>맞벌이 모드는 부부 배분표를 중심으로 확인해 주세요.</p>';
+    renderCoupleSpendEstimationSummary(input, result.cardStats);
   }
 
   results.classList.remove('hidden');
@@ -1428,6 +1609,17 @@ spendInputMode.addEventListener('change', updateSpendModeUI);
   if (el) el.addEventListener('input', refreshEstimationPreview);
 });
 
+coupleSpendInputMode.addEventListener('change', updateCoupleSpendModeUI);
+['aMonthlyCredit', 'aMonthlyCheckCash', 'aMonthlyMarket', 'aMonthlyTransit', 'bMonthlyCredit', 'bMonthlyCheckCash', 'bMonthlyMarket', 'bMonthlyTransit'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', refreshCoupleEstimationPreview);
+});
+
+aIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
+aIncomeQuickBand.addEventListener('change', () => setCoupleIncomeByQuickBand('A'));
+bIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
+bIncomeQuickBand.addEventListener('change', () => setCoupleIncomeByQuickBand('B'));
+
 ruleUpdateDate.textContent = RULES.meta.updatedAt;
 setupMoneyInputs();
 setupTabsKeyboard();
@@ -1438,3 +1630,7 @@ updateSpouseEligibilityText();
 updateIncomeModeUI();
 updateSpendModeUI();
 refreshEstimationPreview();
+updateCoupleIncomeModeUI('A');
+updateCoupleIncomeModeUI('B');
+updateCoupleSpendModeUI();
+refreshCoupleEstimationPreview();

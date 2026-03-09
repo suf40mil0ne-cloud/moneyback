@@ -243,6 +243,16 @@
         <section id="coupleModeSection" class="hidden">
           <h3>맞벌이 부부 입력</h3>
           <p class="hint">선택 입력은 비워두면 0으로 처리됩니다. 주민등록번호, 상세 주소 등 민감정보는 입력하지 않습니다.</p>
+          <div class="input-mode-block">
+            <label for="coupleSpendInputMode">맞벌이 소비 입력 방식</label>
+            <select id="coupleSpendInputMode">
+              <option value="monthly" selected>월평균 입력(권장)</option>
+              <option value="cumulative">올해 누적 입력</option>
+            </select>
+          </div>
+          <div id="coupleEstimationPreview" class="summary-box">
+            <p>맞벌이 월평균 입력 기준 자동 추정이 여기에 표시됩니다.</p>
+          </div>
 
           <div class="accordion-group">
             <div class="accordion-item">
@@ -250,9 +260,52 @@
               <div id="spouseASection" class="accordion-panel">
                 <div class="grid two-col">
                   <div>
+                    <label for="aIncomeInputMode">연봉 입력 방식</label>
+                    <select id="aIncomeInputMode">
+                      <option value="quick" selected>대략 입력(빠른 선택)</option>
+                      <option value="exact">정확히 입력(직접 숫자)</option>
+                    </select>
+                  </div>
+                  <div id="aQuickIncomeWrap">
+                    <label for="aIncomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
+                    <select id="aIncomeQuickBand">
+                      <option value="3000">3천만원대</option>
+                      <option value="4000">4천만원대</option>
+                      <option value="5000" selected>5천만원대</option>
+                      <option value="6000">6천만원대</option>
+                      <option value="7000">7천만원대</option>
+                      <option value="8000">8천만원대</option>
+                      <option value="9000">9천만원대</option>
+                      <option value="10000+">1억 이상</option>
+                    </select>
+                    <p class="hint">기준금액: <strong id="aQuickIncomeValueText">55,000,000원</strong></p>
+                  </div>
+                  <div>
                     <label for="aIncome">연봉(총급여) *</label>
                     <input id="aIncome" data-money inputmode="numeric" placeholder="0" />
                   </div>
+                </div>
+
+                <div id="aMonthlySpendWrap" class="grid two-col">
+                  <div>
+                    <label for="aMonthlyCredit">월평균 신용카드</label>
+                    <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aMonthlyCheckCash">월평균 체크카드+현금영수증</label>
+                    <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aMonthlyMarket">월평균 전통시장</label>
+                    <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aMonthlyTransit">월평균 대중교통</label>
+                    <input id="aMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                </div>
+
+                <div id="aCumulativeSpendWrap" class="grid two-col hidden">
                   <div>
                     <label for="aCredit">올해 누적 신용카드</label>
                     <input id="aCredit" data-money inputmode="numeric" placeholder="0" />
@@ -269,6 +322,8 @@
                     <label for="aTransit">올해 누적 대중교통</label>
                     <input id="aTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
+                </div>
+                <div class="grid two-col">
                   <div>
                     <label for="aPension">연금저축 납입액(선택)</label>
                     <input id="aPension" data-money inputmode="numeric" placeholder="0" />
@@ -298,9 +353,52 @@
               <div id="spouseBSection" class="accordion-panel hidden">
                 <div class="grid two-col">
                   <div>
+                    <label for="bIncomeInputMode">연봉 입력 방식</label>
+                    <select id="bIncomeInputMode">
+                      <option value="quick" selected>대략 입력(빠른 선택)</option>
+                      <option value="exact">정확히 입력(직접 숫자)</option>
+                    </select>
+                  </div>
+                  <div id="bQuickIncomeWrap">
+                    <label for="bIncomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
+                    <select id="bIncomeQuickBand">
+                      <option value="3000">3천만원대</option>
+                      <option value="4000">4천만원대</option>
+                      <option value="5000" selected>5천만원대</option>
+                      <option value="6000">6천만원대</option>
+                      <option value="7000">7천만원대</option>
+                      <option value="8000">8천만원대</option>
+                      <option value="9000">9천만원대</option>
+                      <option value="10000+">1억 이상</option>
+                    </select>
+                    <p class="hint">기준금액: <strong id="bQuickIncomeValueText">55,000,000원</strong></p>
+                  </div>
+                  <div>
                     <label for="bIncome">연봉(총급여) *</label>
                     <input id="bIncome" data-money inputmode="numeric" placeholder="0" />
                   </div>
+                </div>
+
+                <div id="bMonthlySpendWrap" class="grid two-col">
+                  <div>
+                    <label for="bMonthlyCredit">월평균 신용카드</label>
+                    <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bMonthlyCheckCash">월평균 체크카드+현금영수증</label>
+                    <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bMonthlyMarket">월평균 전통시장</label>
+                    <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bMonthlyTransit">월평균 대중교통</label>
+                    <input id="bMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                </div>
+
+                <div id="bCumulativeSpendWrap" class="grid two-col hidden">
                   <div>
                     <label for="bCredit">올해 누적 신용카드</label>
                     <input id="bCredit" data-money inputmode="numeric" placeholder="0" />
@@ -317,6 +415,8 @@
                     <label for="bTransit">올해 누적 대중교통</label>
                     <input id="bTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
+                </div>
+                <div class="grid two-col">
                   <div>
                     <label for="bPension">연금저축 납입액(선택)</label>
                     <input id="bPension" data-money inputmode="numeric" placeholder="0" />

@@ -160,6 +160,10 @@ input:focus, select:focus, button:focus {
   margin-top: 10px;
 }
 
+#coupleEstimationPreview {
+  margin-top: 10px;
+}
+
 #spendEstimationSummary {
   margin-bottom: 10px;
   border-color: #bae6fd;
