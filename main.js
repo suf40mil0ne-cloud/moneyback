@@ -6,6 +6,47 @@ const RULES = {
     modeLabelCouple: '맞벌이 부부 최적화'
   },
   ui: {
+    incomeBands: {
+      3000: { label: '3천만원대', default: 35000000, options: [30000000, 32000000, 34000000, 36000000, 38000000] },
+      4000: { label: '4천만원대', default: 45000000, options: [40000000, 42000000, 44000000, 46000000, 48000000] },
+      5000: { label: '5천만원대', default: 55000000, options: [50000000, 52000000, 54000000, 56000000, 58000000] },
+      6000: { label: '6천만원대', default: 65000000, options: [60000000, 62000000, 64000000, 66000000, 68000000] },
+      7000: { label: '7천만원대', default: 75000000, options: [70000000, 72000000, 74000000, 76000000, 78000000] },
+      8000: { label: '8천만원대', default: 85000000, options: [80000000, 82000000, 84000000, 86000000, 88000000] },
+      9000: { label: '9천만원대', default: 95000000, options: [90000000, 92000000, 94000000, 96000000, 98000000] },
+      '10000+': { label: '1억원 이상', default: 110000000, options: [100000000, 105000000, 110000000, 115000000, 120000000] }
+    },
+    spendBands: {
+      standard: {
+        none: { label: '거의 없음', default: 0, options: [0] },
+        u10: { label: '10만원 미만', default: 50000, options: [30000, 50000, 70000, 90000] },
+        '10-30': { label: '10~30만원', default: 200000, options: [100000, 150000, 200000, 250000, 300000] },
+        '30-50': { label: '30~50만원', default: 400000, options: [300000, 350000, 400000, 450000, 500000] },
+        '50-70': { label: '50~70만원', default: 600000, options: [500000, 550000, 600000, 650000, 700000] },
+        '70-100': { label: '70~100만원', default: 850000, options: [700000, 800000, 900000, 1000000] },
+        '100-150': { label: '100~150만원', default: 1250000, options: [1000000, 1100000, 1200000, 1300000, 1400000, 1500000] },
+        '150p': { label: '150만원 이상', default: 1700000, options: [1500000, 1700000, 1900000, 2100000] },
+        direct: { label: '직접 입력', default: 0, options: [] }
+      },
+      market: {
+        none: { label: '거의 없음', default: 0, options: [0] },
+        u10: { label: '10만원 미만', default: 50000, options: [30000, 50000, 70000, 90000] },
+        '10-30': { label: '10~30만원', default: 200000, options: [100000, 150000, 200000, 250000, 300000] },
+        '30-50': { label: '30~50만원', default: 400000, options: [300000, 350000, 400000, 450000, 500000] },
+        '50-70': { label: '50~70만원', default: 600000, options: [500000, 550000, 600000, 650000, 700000] },
+        '70p': { label: '70만원 이상', default: 800000, options: [700000, 800000, 900000, 1000000] },
+        direct: { label: '직접 입력', default: 0, options: [] }
+      },
+      transit: {
+        none: { label: '거의 없음', default: 0, options: [0] },
+        u5: { label: '5만원 미만', default: 30000, options: [20000, 30000, 40000, 50000] },
+        '5-10': { label: '5~10만원', default: 70000, options: [50000, 60000, 70000, 80000, 90000, 100000] },
+        '10-20': { label: '10~20만원', default: 150000, options: [100000, 120000, 150000, 180000, 200000] },
+        '20-30': { label: '20~30만원', default: 250000, options: [200000, 220000, 250000, 280000, 300000] },
+        '30p': { label: '30만원 이상', default: 350000, options: [300000, 350000, 400000, 450000] },
+        direct: { label: '직접 입력', default: 0, options: [] }
+      }
+    },
     defaultIncomeBandValue: {
       3000: 35000000,
       4000: 45000000,
@@ -86,10 +127,17 @@ const state = {
     coupleIncomeModeB: 'quick'
   },
   income: {
+    mode: 'quickBand',
     quickBand: '5000',
+    subBandValue: null,
     exactAnnualIncome: 55000000
   },
   spending: {
+    mode: 'monthly-select',
+    creditCard: { band: '10-30', subValue: null, exactValue: null },
+    checkCash: { band: '10-30', subValue: null, exactValue: null },
+    traditionalMarket: { band: 'u10', subValue: null, exactValue: null },
+    transit: { band: 'u5', subValue: null, exactValue: null },
     monthlyCreditCard: 0,
     monthlyCheckCash: 0,
     monthlyTraditionalMarket: 0,
@@ -100,6 +148,7 @@ const state = {
     currentTransit: 0
   },
   family: {
+    dependents: [],
     simpleInputs: {},
     detailedPersonalDeductions: {
       worker: {},
@@ -177,6 +226,8 @@ const detailHasSpouseInput = document.getElementById('detailHasSpouse');
 
 const incomeInputMode = document.getElementById('incomeInputMode');
 const incomeQuickBand = document.getElementById('incomeQuickBand');
+const incomeQuickSubBand = document.getElementById('incomeQuickSubBand');
+const incomeUseDirect = document.getElementById('incomeUseDirect');
 const quickIncomeWrap = document.getElementById('quickIncomeWrap');
 const quickIncomeValueText = document.getElementById('quickIncomeValueText');
 const annualIncomeInput = document.getElementById('annualIncome');
@@ -190,11 +241,15 @@ const coupleEstimationPreview = document.getElementById('coupleEstimationPreview
 
 const aIncomeInputMode = document.getElementById('aIncomeInputMode');
 const aIncomeQuickBand = document.getElementById('aIncomeQuickBand');
+const aIncomeQuickSubBand = document.getElementById('aIncomeQuickSubBand');
+const aIncomeUseDirect = document.getElementById('aIncomeUseDirect');
 const aQuickIncomeWrap = document.getElementById('aQuickIncomeWrap');
 const aQuickIncomeValueText = document.getElementById('aQuickIncomeValueText');
 const aIncomeInput = document.getElementById('aIncome');
 const bIncomeInputMode = document.getElementById('bIncomeInputMode');
 const bIncomeQuickBand = document.getElementById('bIncomeQuickBand');
+const bIncomeQuickSubBand = document.getElementById('bIncomeQuickSubBand');
+const bIncomeUseDirect = document.getElementById('bIncomeUseDirect');
 const bQuickIncomeWrap = document.getElementById('bQuickIncomeWrap');
 const bQuickIncomeValueText = document.getElementById('bQuickIncomeValueText');
 const bIncomeInput = document.getElementById('bIncome');
@@ -217,9 +272,59 @@ function formatMoney(value) {
   return Number(Math.max(0, Math.round(value))).toLocaleString('ko-KR');
 }
 
+function labelIncomeMode(mode) {
+  if (mode === 'exact') return '직접 입력';
+  if (mode === 'subBand') return '세부 선택';
+  return '구간 선택';
+}
+
+function labelSpendMode(mode) {
+  if (mode === 'cumulative') return '누적 입력';
+  if (mode === 'monthly-direct') return '직접 입력';
+  return '선택형 입력';
+}
+
 function getMoneyInputValue(id) {
   const el = document.getElementById(id);
   return el ? sanitizeNumber(el.value) : 0;
+}
+
+function getIncomeByPriority({ directInputEl, subSelectEl, bandSelectEl, allowDirect }) {
+  const direct = sanitizeNumber(directInputEl.value);
+  if (allowDirect && direct > 0) return { value: direct, mode: 'exact' };
+  const sub = sanitizeNumber(subSelectEl.value);
+  if (sub > 0) return { value: sub, mode: 'subBand' };
+  const band = bandSelectEl.value;
+  const base = RULES.ui.incomeBands[band]?.default || RULES.ui.defaultIncomeBandValue[band] || 0;
+  return { value: base, mode: 'quickBand' };
+}
+
+function getBandRulesForSpend(kind) {
+  if (kind === 'traditionalMarket') return RULES.ui.spendBands.market;
+  if (kind === 'transit') return RULES.ui.spendBands.transit;
+  return RULES.ui.spendBands.standard;
+}
+
+function fillSubOptions(selectEl, values) {
+  selectEl.innerHTML = `<option value="">기본값</option>${values
+    .map((v) => `<option value="${v}">${formatMoney(v)}원</option>`)
+    .join('')}`;
+}
+
+function resolveSpendValue(kind, bandEl, subEl, directInputEl, directToggleEl) {
+  const direct = sanitizeNumber(directInputEl.value);
+  const bandKey = bandEl.value;
+  const rules = getBandRulesForSpend(kind);
+  const bandInfo = rules[bandKey] || rules.none;
+
+  if (bandKey === 'direct' || directToggleEl.checked) {
+    return { value: direct, mode: 'monthly-direct', band: bandKey, subValue: null, exactValue: direct };
+  }
+  const sub = sanitizeNumber(subEl.value);
+  if (sub > 0) {
+    return { value: sub, mode: 'monthly-select', band: bandKey, subValue: sub, exactValue: null };
+  }
+  return { value: bandInfo.default, mode: 'monthly-select', band: bandKey, subValue: null, exactValue: null };
 }
 
 function getNowMonths() {
@@ -284,10 +389,28 @@ function computeIncomeEligible(annualIncome, wageOnly, totalPay) {
 }
 
 function getAgeFromQuick(dep) {
+  if (dep.ageMode === 'exactAge' && dep.age) return dep.age;
+  if (dep.ageMode === 'birthYear' && dep.birthYear) return yearsOldFromBirthYear(dep.birthYear);
+  if (dep.ageMode === 'ageBand') {
+    if (dep.ageBand === 'u60') return 55;
+    if (dep.ageBand === '60s') return 65;
+    if (dep.ageBand === '70p') return 72;
+  }
+  if (dep.ageMode === 'lifeStage') {
+    if (dep.lifeStage === 'infant') return 2;
+    if (dep.lifeStage === 'preschool') return 6;
+    if (dep.lifeStage === 'elementary') return 10;
+    if (dep.lifeStage === 'middle') return 14;
+    if (dep.lifeStage === 'high') return 17;
+    if (dep.lifeStage === 'adult') return 22;
+  }
   if (dep.birthYear) return yearsOldFromBirthYear(dep.birthYear);
   if (dep.age) return dep.age;
+  if (dep.lifeStage === 'infant') return 2;
   if (dep.lifeStage === 'preschool') return 6;
   if (dep.lifeStage === 'elementary') return 10;
+  if (dep.lifeStage === 'middle') return 14;
+  if (dep.lifeStage === 'high') return 17;
   if (dep.lifeStage === 'middlehigh') return 15;
   if (dep.lifeStage === 'adult') return 22;
   if (dep.ageBand === 'u60') return 55;
@@ -315,8 +438,31 @@ function createChildCard(data = {}) {
         <input data-field="name" value="${data.name || ''}" placeholder="자녀${index}" />
       </div>
       <div>
-        <label>출생연도</label>
+        <label>나이 입력 방식(권장: 생활단계)</label>
+        <select data-field="ageMode">
+          <option value="lifeStage" ${(data.ageMode || 'lifeStage') === 'lifeStage' ? 'selected' : ''}>생활단계 선택</option>
+          <option value="birthYear" ${data.ageMode === 'birthYear' ? 'selected' : ''}>출생연도 선택</option>
+          <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>나이 직접 입력</option>
+        </select>
+      </div>
+      <div>
+        <label>생활단계</label>
+        <select data-field="lifeStage">
+          <option value="infant" ${data.lifeStage === 'infant' ? 'selected' : ''}>영유아</option>
+          <option value="preschool" ${data.lifeStage === 'preschool' ? 'selected' : ''}>미취학</option>
+          <option value="elementary" ${(data.lifeStage || 'elementary') === 'elementary' ? 'selected' : ''}>초등학생</option>
+          <option value="middle" ${data.lifeStage === 'middle' ? 'selected' : ''}>중학생</option>
+          <option value="high" ${data.lifeStage === 'high' ? 'selected' : ''}>고등학생</option>
+          <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인(대학생 포함)</option>
+        </select>
+      </div>
+      <div>
+        <label>출생연도(보조)</label>
         <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
+      </div>
+      <div>
+        <label>나이 직접 입력(보조)</label>
+        <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="예: 14" />
       </div>
       <div>
         <label>교육비 지출액</label>
@@ -374,11 +520,28 @@ function createDependentCard(data = {}) {
         <input data-field="relation" value="${data.relation || ''}" placeholder="부, 모, 조부모 등" />
       </div>
       <div>
-        <label>나이</label>
-        <input data-field="age" data-money inputmode="numeric" value="${data.age || ''}" placeholder="0" />
+        <label>연령 입력 방식</label>
+        <select data-field="ageMode">
+          <option value="ageBand" ${(data.ageMode || 'ageBand') === 'ageBand' ? 'selected' : ''}>연령구간 선택</option>
+          <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>정확한 나이 입력</option>
+        </select>
+      </div>
+      <div>
+        <label>연령구간</label>
+        <select data-field="ageBand">
+          <option value="u60" ${data.ageBand === 'u60' ? 'selected' : ''}>60세 미만</option>
+          <option value="60s" ${(data.ageBand || '60s') === '60s' ? 'selected' : ''}>60~69세</option>
+          <option value="70p" ${data.ageBand === '70p' ? 'selected' : ''}>70세 이상</option>
+        </select>
+      </div>
+      <div>
+        <label>정확한 나이(보조)</label>
+        <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="0" />
       </div>
       <label class="inline-check"><input type="checkbox" data-field="incomeEligible" ${data.incomeEligible ? 'checked' : ''} />소득요건 충족 여부</label>
       <label class="inline-check"><input type="checkbox" data-field="disabled" ${data.disabled ? 'checked' : ''} />장애인 여부</label>
+      <label class="inline-check"><input type="checkbox" data-field="coResident" ${data.coResident ? 'checked' : ''} />동거 여부</label>
+      <label class="inline-check"><input type="checkbox" data-field="livesTogether" ${data.livesTogether ? 'checked' : ''} />생계 같이함</label>
       <label class="inline-check"><input type="checkbox" data-field="senior70" ${data.senior70 ? 'checked' : ''} />70세 이상 여부</label>
       <div></div>
       <div>
@@ -443,7 +606,16 @@ function createPersonalDependentCard(data = {}) {
         </select>
       </div>
       <div>
-        <label>연령대 빠른 선택</label>
+        <label>나이 입력 방식</label>
+        <select data-field="ageMode">
+          <option value="lifeStage" ${(data.ageMode || 'lifeStage') === 'lifeStage' ? 'selected' : ''}>생활단계 선택</option>
+          <option value="ageBand" ${data.ageMode === 'ageBand' ? 'selected' : ''}>연령구간 선택</option>
+          <option value="birthYear" ${data.ageMode === 'birthYear' ? 'selected' : ''}>출생연도 입력</option>
+          <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>정확한 나이 입력</option>
+        </select>
+      </div>
+      <div>
+        <label>연령구간 선택</label>
         <select data-field="ageBand">
           <option value="">선택 안 함</option>
           <option value="u60" ${data.ageBand === 'u60' ? 'selected' : ''}>60세 미만</option>
@@ -455,18 +627,21 @@ function createPersonalDependentCard(data = {}) {
         <label>자녀 생활단계</label>
         <select data-field="lifeStage">
           <option value="">선택 안 함</option>
+          <option value="infant" ${data.lifeStage === 'infant' ? 'selected' : ''}>영유아</option>
           <option value="preschool" ${data.lifeStage === 'preschool' ? 'selected' : ''}>미취학</option>
           <option value="elementary" ${data.lifeStage === 'elementary' ? 'selected' : ''}>초등</option>
-          <option value="middlehigh" ${data.lifeStage === 'middlehigh' ? 'selected' : ''}>중고등</option>
+          <option value="middle" ${data.lifeStage === 'middle' ? 'selected' : ''}>중학생</option>
+          <option value="high" ${data.lifeStage === 'high' ? 'selected' : ''}>고등학생</option>
+          <option value="middlehigh" ${data.lifeStage === 'middlehigh' ? 'selected' : ''}>중고등(통합)</option>
           <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인</option>
         </select>
       </div>
       <div>
-        <label>출생연도(선택)</label>
+        <label>출생연도(보조)</label>
         <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
       </div>
       <div>
-        <label>나이(선택)</label>
+        <label>나이 직접 입력(보조)</label>
         <input data-field="age" data-money inputmode="numeric" value="${data.age || ''}" placeholder="직접 입력" />
       </div>
       <label class="inline-check"><input type="checkbox" data-field="coResident" ${data.coResident ? 'checked' : ''} />동거 여부</label>
@@ -526,12 +701,19 @@ function syncChildrenCount() {
 function parseChildCards() {
   return Array.from(childList.children).map((card, idx) => {
     const read = (field) => card.querySelector(`[data-field="${field}"]`);
+    const ageMode = read('ageMode').value;
     const birthYear = sanitizeNumber(read('birthYear').value);
+    const exactAge = sanitizeNumber(read('exactAge').value);
+    const lifeStage = read('lifeStage').value;
+    const age = getAgeFromQuick({ ageMode, birthYear, age: exactAge, lifeStage });
     return {
       name: read('name').value.trim() || `자녀${idx + 1}`,
+      ageMode,
+      lifeStage,
       birthYear,
-      isMinor: isMinor(birthYear),
-      is8Plus: isChildCreditEligibleAge(yearsOldFromBirthYear(birthYear)),
+      exactAge,
+      isMinor: age != null ? age <= RULES.personalDeduction.childBasicMaxAge : null,
+      is8Plus: isChildCreditEligibleAge(age),
       education: sanitizeNumber(read('education').value),
       medical: sanitizeNumber(read('medical').value),
       insurance: sanitizeNumber(read('insurance').value),
@@ -545,11 +727,20 @@ function parseChildCards() {
 function parseDependentCards() {
   return Array.from(dependentList.children).map((card, idx) => {
     const read = (field) => card.querySelector(`[data-field="${field}"]`);
+    const ageMode = read('ageMode').value;
+    const ageBand = read('ageBand').value;
+    const exactAge = sanitizeNumber(read('exactAge').value);
+    const age = getAgeFromQuick({ ageMode, ageBand, age: exactAge });
     return {
       relation: read('relation').value.trim() || `부양가족${idx + 1}`,
-      age: sanitizeNumber(read('age').value),
+      ageMode,
+      ageBand,
+      exactAge,
+      age,
       incomeEligible: read('incomeEligible').checked,
       disabled: read('disabled').checked,
+      coResident: read('coResident').checked,
+      livesTogether: read('livesTogether').checked,
       senior70: read('senior70').checked,
       medical: sanitizeNumber(read('medical').value),
       donation: sanitizeNumber(read('donation').value),
@@ -566,6 +757,7 @@ function parsePersonalDependentCards() {
     return {
       name: read('name').value.trim() || `가족${idx + 1}`,
       relation: read('relation').value,
+      ageMode: read('ageMode').value,
       ageBand: read('ageBand').value,
       lifeStage: read('lifeStage').value,
       birthYear: sanitizeNumber(read('birthYear').value),
@@ -584,20 +776,27 @@ function parsePersonalDependentCards() {
 
 function setIncomeByQuickBand() {
   const band = incomeQuickBand.value;
-  const mapped = RULES.ui.defaultIncomeBandValue[band] || RULES.ui.defaultIncomeBandValue['5000'];
+  const bandRule = RULES.ui.incomeBands[band] || RULES.ui.incomeBands['5000'];
+  const mapped = bandRule.default;
+  fillSubOptions(incomeQuickSubBand, bandRule.options);
   state.income.quickBand = band;
+  state.income.subBandValue = sanitizeNumber(incomeQuickSubBand.value) || null;
   state.income.exactAnnualIncome = mapped;
-  annualIncomeInput.value = formatMoney(mapped);
+  if (!incomeUseDirect.checked) annualIncomeInput.value = formatMoney(mapped);
   quickIncomeValueText.textContent = `${formatMoney(mapped)}원`;
 }
 
 function setCoupleIncomeByQuickBand(spouse) {
   const isA = spouse === 'A';
   const bandEl = isA ? aIncomeQuickBand : bIncomeQuickBand;
+  const subEl = isA ? aIncomeQuickSubBand : bIncomeQuickSubBand;
+  const directToggle = isA ? aIncomeUseDirect : bIncomeUseDirect;
   const inputEl = isA ? aIncomeInput : bIncomeInput;
   const textEl = isA ? aQuickIncomeValueText : bQuickIncomeValueText;
-  const mapped = RULES.ui.defaultIncomeBandValue[bandEl.value] || RULES.ui.defaultIncomeBandValue['5000'];
-  inputEl.value = formatMoney(mapped);
+  const bandRule = RULES.ui.incomeBands[bandEl.value] || RULES.ui.incomeBands['5000'];
+  const mapped = bandRule.default;
+  fillSubOptions(subEl, bandRule.options);
+  if (!directToggle.checked) inputEl.value = formatMoney(mapped);
   textEl.textContent = `${formatMoney(mapped)}원`;
 }
 
@@ -605,8 +804,15 @@ function updateIncomeModeUI() {
   state.inputMode.incomeMode = incomeInputMode.value;
   const isQuick = incomeInputMode.value === 'quick';
   quickIncomeWrap.classList.toggle('hidden', !isQuick);
-  annualIncomeInput.readOnly = isQuick;
-  if (isQuick) setIncomeByQuickBand();
+  annualIncomeInput.readOnly = isQuick && !incomeUseDirect.checked;
+  if (isQuick) {
+    setIncomeByQuickBand();
+    const sub = sanitizeNumber(incomeQuickSubBand.value);
+    if (sub > 0 && !incomeUseDirect.checked) annualIncomeInput.value = formatMoney(sub);
+    state.income.mode = incomeUseDirect.checked ? 'exact' : sub > 0 ? 'subBand' : 'quickBand';
+  } else {
+    state.income.mode = 'exact';
+  }
 }
 
 function updateCoupleIncomeModeUI(spouse) {
@@ -617,8 +823,14 @@ function updateCoupleIncomeModeUI(spouse) {
   const mode = modeEl.value;
   const isQuick = mode === 'quick';
   quickWrapEl.classList.toggle('hidden', !isQuick);
-  inputEl.readOnly = isQuick;
-  if (isQuick) setCoupleIncomeByQuickBand(spouse);
+  const directToggle = isA ? aIncomeUseDirect : bIncomeUseDirect;
+  const subEl = isA ? aIncomeQuickSubBand : bIncomeQuickSubBand;
+  inputEl.readOnly = isQuick && !directToggle.checked;
+  if (isQuick) {
+    setCoupleIncomeByQuickBand(spouse);
+    const sub = sanitizeNumber(subEl.value);
+    if (sub > 0 && !directToggle.checked) inputEl.value = formatMoney(sub);
+  }
   state.inputMode[isA ? 'coupleIncomeModeA' : 'coupleIncomeModeB'] = mode;
 }
 
@@ -628,7 +840,10 @@ function updateSpendModeUI() {
   monthlySpendWrap.classList.toggle('hidden', !isMonthly);
   cumulativeSpendWrap.classList.toggle('hidden', isMonthly);
   estimationPreview.classList.toggle('hidden', !isMonthly);
-  if (isMonthly) refreshEstimationPreview();
+  if (isMonthly) {
+    applyAllSingleSpendSelections();
+    refreshEstimationPreview();
+  }
 }
 
 function updateCoupleSpendModeUI() {
@@ -639,10 +854,15 @@ function updateCoupleSpendModeUI() {
   aCumulativeSpendWrap.classList.toggle('hidden', isMonthly);
   bCumulativeSpendWrap.classList.toggle('hidden', isMonthly);
   coupleEstimationPreview.classList.toggle('hidden', !isMonthly);
-  if (isMonthly) refreshCoupleEstimationPreview();
+  if (isMonthly) {
+    applyAllCoupleSpendSelections('a');
+    applyAllCoupleSpendSelections('b');
+    refreshCoupleEstimationPreview();
+  }
 }
 
 function refreshEstimationPreview() {
+  applyAllSingleSpendSelections();
   const monthly = {
     credit: getMoneyInputValue('monthlyCreditCard'),
     checkCash: getMoneyInputValue('monthlyCheckCash'),
@@ -693,6 +913,8 @@ function calculateCategoryProjectionByPrefix(prefix) {
 }
 
 function refreshCoupleEstimationPreview() {
+  applyAllCoupleSpendSelections('a');
+  applyAllCoupleSpendSelections('b');
   const a = calculateCategoryProjectionByPrefix('a');
   const b = calculateCategoryProjectionByPrefix('b');
   const houseYearEnd = a.projection.yearEndEstimate + b.projection.yearEndEstimate;
@@ -705,6 +927,65 @@ function refreshCoupleEstimationPreview() {
     <p>남은 ${a.projection.remainingMonths}개월 가구 추정 사용액: ${formatMoney(houseRemaining)}원</p>
     <p class="hint">현재 월평균 패턴 유지 기준의 추정치이며, 실제 신고값이 아닌 행동 가이드용입니다.</p>
   `;
+}
+
+function applySpendSelectionToInput(kind, prefix) {
+  const fieldMapByPrefix = {
+    single: {
+      creditCard: { band: 'singleCreditBand', sub: 'singleCreditSub', direct: 'singleCreditUseDirect', input: 'monthlyCreditCard' },
+      checkCash: { band: 'singleCheckBand', sub: 'singleCheckSub', direct: 'singleCheckUseDirect', input: 'monthlyCheckCash' },
+      traditionalMarket: { band: 'singleMarketBand', sub: 'singleMarketSub', direct: 'singleMarketUseDirect', input: 'monthlyTraditionalMarket' },
+      transit: { band: 'singleTransitBand', sub: 'singleTransitSub', direct: 'singleTransitUseDirect', input: 'monthlyTransit' }
+    },
+    a: {
+      creditCard: { band: 'aCreditBand', sub: 'aCreditSub', direct: 'aCreditUseDirect', input: 'aMonthlyCredit' },
+      checkCash: { band: 'aCheckBand', sub: 'aCheckSub', direct: 'aCheckUseDirect', input: 'aMonthlyCheckCash' },
+      traditionalMarket: { band: 'aMarketBand', sub: 'aMarketSub', direct: 'aMarketUseDirect', input: 'aMonthlyMarket' },
+      transit: { band: 'aTransitBand', sub: 'aTransitSub', direct: 'aTransitUseDirect', input: 'aMonthlyTransit' }
+    },
+    b: {
+      creditCard: { band: 'bCreditBand', sub: 'bCreditSub', direct: 'bCreditUseDirect', input: 'bMonthlyCredit' },
+      checkCash: { band: 'bCheckBand', sub: 'bCheckSub', direct: 'bCheckUseDirect', input: 'bMonthlyCheckCash' },
+      traditionalMarket: { band: 'bMarketBand', sub: 'bMarketSub', direct: 'bMarketUseDirect', input: 'bMonthlyMarket' },
+      transit: { band: 'bTransitBand', sub: 'bTransitSub', direct: 'bTransitUseDirect', input: 'bMonthlyTransit' }
+    }
+  };
+  const fieldMap = fieldMapByPrefix[prefix];
+  if (!fieldMap) return { value: 0, mode: 'monthly-select' };
+  const refs = fieldMap[kind];
+  const bandEl = document.getElementById(refs.band);
+  const subEl = document.getElementById(refs.sub);
+  const directEl = document.getElementById(refs.direct);
+  const inputEl = document.getElementById(refs.input);
+  if (!bandEl || !subEl || !directEl || !inputEl) return { value: 0, mode: 'monthly-select' };
+
+  const rules = getBandRulesForSpend(kind);
+  const bandInfo = rules[bandEl.value] || rules.none;
+  fillSubOptions(subEl, bandInfo.options || []);
+  const resolved = resolveSpendValue(kind, bandEl, subEl, inputEl, directEl);
+  if (!directEl.checked && bandEl.value !== 'direct') inputEl.value = resolved.value ? formatMoney(resolved.value) : '';
+  inputEl.readOnly = !(directEl.checked || bandEl.value === 'direct');
+  state.spending.mode = resolved.mode;
+  state.spending[kind] = {
+    band: resolved.band,
+    subValue: resolved.subValue,
+    exactValue: resolved.exactValue
+  };
+  return resolved;
+}
+
+function applyAllSingleSpendSelections() {
+  applySpendSelectionToInput('creditCard', 'single');
+  applySpendSelectionToInput('checkCash', 'single');
+  applySpendSelectionToInput('traditionalMarket', 'single');
+  applySpendSelectionToInput('transit', 'single');
+}
+
+function applyAllCoupleSpendSelections(prefix) {
+  applySpendSelectionToInput('creditCard', prefix);
+  applySpendSelectionToInput('checkCash', prefix);
+  applySpendSelectionToInput('traditionalMarket', prefix);
+  applySpendSelectionToInput('transit', prefix);
 }
 
 function collectSingleInput() {
@@ -735,6 +1016,12 @@ function collectSingleInput() {
   };
 
   const spendMode = spendInputMode.value;
+  const incomeResolved = getIncomeByPriority({
+    directInputEl: annualIncomeInput,
+    subSelectEl: incomeQuickSubBand,
+    bandSelectEl: incomeQuickBand,
+    allowDirect: incomeInputMode.value === 'exact' || incomeUseDirect.checked
+  });
   let credit;
   let checkCash;
   let market;
@@ -742,10 +1029,14 @@ function collectSingleInput() {
   let projection;
 
   if (spendMode === 'monthly') {
-    const monthlyCredit = getMoneyInputValue('monthlyCreditCard');
-    const monthlyCheck = getMoneyInputValue('monthlyCheckCash');
-    const monthlyMarket = getMoneyInputValue('monthlyTraditionalMarket');
-    const monthlyTransit = getMoneyInputValue('monthlyTransit');
+    const creditResolved = applySpendSelectionToInput('creditCard', 'single');
+    const checkResolved = applySpendSelectionToInput('checkCash', 'single');
+    const marketResolved = applySpendSelectionToInput('traditionalMarket', 'single');
+    const transitResolved = applySpendSelectionToInput('transit', 'single');
+    const monthlyCredit = creditResolved.value;
+    const monthlyCheck = checkResolved.value;
+    const monthlyMarket = marketResolved.value;
+    const monthlyTransit = transitResolved.value;
     const pCredit = computeMonthlyProjection(monthlyCredit);
     const pCheck = computeMonthlyProjection(monthlyCheck);
     const pMarket = computeMonthlyProjection(monthlyMarket);
@@ -785,7 +1076,17 @@ function collectSingleInput() {
 
   return {
     mode: 'single',
-    income: getMoneyInputValue('annualIncome'),
+    income: incomeResolved.value,
+    inputBasis: {
+      income: incomeResolved.mode,
+      spending:
+        spendMode === 'monthly'
+          ? ['singleCreditUseDirect', 'singleCheckUseDirect', 'singleMarketUseDirect', 'singleTransitUseDirect'].some((id) => document.getElementById(id).checked)
+            ? 'monthly-direct'
+            : 'monthly-select'
+          : 'cumulative',
+      family: detailed.dependents.length > 0 ? '생활단계/연령구간 선택 또는 직접 입력 혼합' : '간편 입력'
+    },
     monthlyRent: getMoneyInputValue('singleMonthlyRent'),
     pension: getMoneyInputValue('singlePension'),
     irp: getMoneyInputValue('singleIrp'),
@@ -801,7 +1102,23 @@ function collectSingleInput() {
 }
 
 function collectCoupleInput() {
+  const aIncomeResolved = getIncomeByPriority({
+    directInputEl: aIncomeInput,
+    subSelectEl: aIncomeQuickSubBand,
+    bandSelectEl: aIncomeQuickBand,
+    allowDirect: aIncomeInputMode.value === 'exact' || aIncomeUseDirect.checked
+  });
+  const bIncomeResolved = getIncomeByPriority({
+    directInputEl: bIncomeInput,
+    subSelectEl: bIncomeQuickSubBand,
+    bandSelectEl: bIncomeQuickBand,
+    allowDirect: bIncomeInputMode.value === 'exact' || bIncomeUseDirect.checked
+  });
   const spendMode = coupleSpendInputMode.value;
+  if (spendMode === 'monthly') {
+    applyAllCoupleSpendSelections('a');
+    applyAllCoupleSpendSelections('b');
+  }
   const aMonthlyProjection = calculateCategoryProjectionByPrefix('a');
   const bMonthlyProjection = calculateCategoryProjectionByPrefix('b');
   const remainingMonths = aMonthlyProjection.projection.remainingMonths;
@@ -856,10 +1173,22 @@ function collectCoupleInput() {
   return {
     mode: 'couple',
     spendMode,
+    inputBasis: {
+      incomeA: aIncomeResolved.mode,
+      incomeB: bIncomeResolved.mode,
+      spending:
+        spendMode === 'monthly'
+          ? ['aCreditUseDirect', 'aCheckUseDirect', 'aMarketUseDirect', 'aTransitUseDirect', 'bCreditUseDirect', 'bCheckUseDirect', 'bMarketUseDirect', 'bTransitUseDirect']
+              .some((id) => document.getElementById(id).checked)
+            ? 'monthly-direct'
+            : 'monthly-select'
+          : 'cumulative',
+      family: '생활단계/연령구간 선택 또는 직접 입력 혼합'
+    },
     projection,
     isMarriedRegistered: document.getElementById('isMarriedRegistered').checked,
     spouseA: {
-      income: getMoneyInputValue('aIncome'),
+      income: aIncomeResolved.value,
       credit: spouseAUsage.credit,
       checkCash: spouseAUsage.checkCash,
       market: spouseAUsage.market,
@@ -871,7 +1200,7 @@ function collectCoupleInput() {
       donation: getMoneyInputValue('aDonation')
     },
     spouseB: {
-      income: getMoneyInputValue('bIncome'),
+      income: bIncomeResolved.value,
       credit: spouseBUsage.credit,
       checkCash: spouseBUsage.checkCash,
       market: spouseBUsage.market,
@@ -1054,6 +1383,7 @@ function renderSpendEstimationSummary(input, card) {
     <p>입력 기준: ${p.mode === 'monthly' ? '월평균 입력' : '누적 입력'}</p>
     <p>연말 예상 총사용액: ${formatMoney(p.yearEndEstimate)}원</p>
     <p>남은 기간 추정 사용액: ${formatMoney(p.remainingEstimate)}원</p>
+    <p>현재 결과는 선택형 입력을 기준으로 한 추정 가이드입니다. 정확한 계산이 필요하면 직접 입력을 사용하세요.</p>
     <p>${actionText}</p>
   `;
 }
@@ -1077,6 +1407,7 @@ function renderCoupleSpendEstimationSummary(input, cardStats) {
     <p>입력 기준: ${p.mode === 'monthly' ? '월평균 입력' : '누적 입력'}</p>
     <p>가구 연말 예상 총사용액: ${formatMoney(p.yearEndEstimate)}원</p>
     <p>남은 기간 추정 사용액: ${formatMoney(p.remainingEstimate)}원</p>
+    <p>현재 결과는 선택형 입력을 기준으로 한 추정 가이드입니다. 정확한 계산이 필요하면 직접 입력을 사용하세요.</p>
     <p>${actionText}</p>
   `;
 }
@@ -1099,7 +1430,8 @@ function buildSingleRecommendation(input) {
     input.monthlyRent > 0
       ? '월세는 세액공제와 현금영수증 중 하나만 선택해 점검하는 방식이 안전합니다.'
       : '월세 입력이 없으므로 카드/현금영수증 증빙 누락 점검에 집중하는 전략이 적합합니다.',
-    `인적공제 기준으로는 기본공제 대상 ${personal.baseCount}명, 8세 이상 자녀세액공제 대상 ${personal.childTaxCount}명입니다.`
+    `인적공제 기준으로는 기본공제 대상 ${personal.baseCount}명, 8세 이상 자녀세액공제 대상 ${personal.childTaxCount}명입니다.`,
+    `입력 기준: 연봉 ${labelIncomeMode(input.inputBasis.income)}, 소비 ${labelSpendMode(input.inputBasis.spending)}, 가족 ${input.inputBasis.family}`
   ];
 
   const allocations = [
@@ -1202,7 +1534,7 @@ function buildCoupleRecommendation(input) {
 
     allocations.push({
       item: `기본공제(${child.name})`,
-      current: `출생연도 ${child.birthYear || '-'} / 8세 이상 ${child.is8Plus == null ? '판단불가' : child.is8Plus ? '예' : '아니오'}`,
+      current: `연령입력 ${child.ageMode === 'lifeStage' ? `생활단계(${child.lifeStage || '-'})` : child.ageMode === 'birthYear' ? `출생연도(${child.birthYear || '-'})` : `직접나이(${child.exactAge || '-'})`} / 8세 이상 ${child.is8Plus == null ? '판단불가' : child.is8Plus ? '예' : '아니오'}`,
       target: owner,
       reason: '기본공제 귀속자를 먼저 확정하면 연계 항목 정리가 쉬워집니다.',
       caution: '최종 제출 전 자녀별 귀속 1인 확정 필요'
@@ -1297,7 +1629,8 @@ function buildCoupleRecommendation(input) {
     '월세는 세액공제와 현금영수증 중 하나만 선택해 중복을 피해야 합니다.',
     warnings.some((line) => line.includes('의료비'))
       ? '자녀 의료비에서 결제자/귀속 엇갈림으로 누락 위험이 있습니다.'
-      : '자녀 의료비는 실제 지출자 기준과 귀속자 일치 여부를 최종 점검하세요.'
+      : '자녀 의료비는 실제 지출자 기준과 귀속자 일치 여부를 최종 점검하세요.',
+    `입력 기준: 연봉 A ${labelIncomeMode(input.inputBasis.incomeA)}, 연봉 B ${labelIncomeMode(input.inputBasis.incomeB)}, 소비 ${labelSpendMode(input.inputBasis.spending)}, 가족 ${input.inputBasis.family}`
   ];
 
   const scenarioContent = {
@@ -1608,10 +1941,13 @@ function bootstrapRepeatLists() {
   });
   document.getElementById('syncChildrenBtn').addEventListener('click', syncChildrenCount);
   document.getElementById('addDependentBtn').addEventListener('click', () => createDependentCard());
+  document.getElementById('addParentDependentBtn').addEventListener('click', () => createDependentCard({ relation: '부모', ageMode: 'ageBand', ageBand: '60s' }));
+  document.getElementById('addGrandParentDependentBtn').addEventListener('click', () => createDependentCard({ relation: '조부모', ageMode: 'ageBand', ageBand: '70p' }));
 
   document.getElementById('addPersonalDependentBtn').addEventListener('click', () => createPersonalDependentCard());
-  document.getElementById('addPersonalChildQuickBtn').addEventListener('click', () => createPersonalDependentCard({ relation: 'child', lifeStage: 'elementary' }));
-  document.getElementById('addPersonalParentQuickBtn').addEventListener('click', () => createPersonalDependentCard({ relation: 'parent', ageBand: '70p' }));
+  document.getElementById('addPersonalChildQuickBtn').addEventListener('click', () => createPersonalDependentCard({ relation: 'child', ageMode: 'lifeStage', lifeStage: 'elementary' }));
+  document.getElementById('addPersonalParentQuickBtn').addEventListener('click', () => createPersonalDependentCard({ relation: 'parent', ageMode: 'ageBand', ageBand: '70p' }));
+  document.getElementById('addPersonalGrandParentQuickBtn').addEventListener('click', () => createPersonalDependentCard({ relation: 'grandparent', ageMode: 'ageBand', ageBand: '70p' }));
 }
 
 form.addEventListener('submit', (e) => {
@@ -1645,11 +1981,22 @@ document.getElementById('spouseWageOnly').addEventListener('change', updateSpous
 document.getElementById('spouseTotalPay').addEventListener('input', updateSpouseEligibilityText);
 
 incomeInputMode.addEventListener('change', updateIncomeModeUI);
-incomeQuickBand.addEventListener('change', setIncomeByQuickBand);
+incomeQuickBand.addEventListener('change', updateIncomeModeUI);
+incomeQuickSubBand.addEventListener('change', updateIncomeModeUI);
+incomeUseDirect.addEventListener('change', updateIncomeModeUI);
 spendInputMode.addEventListener('change', updateSpendModeUI);
 ['monthlyCreditCard', 'monthlyCheckCash', 'monthlyTraditionalMarket', 'monthlyTransit'].forEach((id) => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', refreshEstimationPreview);
+});
+[
+  'singleCreditBand', 'singleCreditSub', 'singleCreditUseDirect',
+  'singleCheckBand', 'singleCheckSub', 'singleCheckUseDirect',
+  'singleMarketBand', 'singleMarketSub', 'singleMarketUseDirect',
+  'singleTransitBand', 'singleTransitSub', 'singleTransitUseDirect'
+].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', refreshEstimationPreview);
 });
 
 coupleSpendInputMode.addEventListener('change', updateCoupleSpendModeUI);
@@ -1657,11 +2004,28 @@ coupleSpendInputMode.addEventListener('change', updateCoupleSpendModeUI);
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', refreshCoupleEstimationPreview);
 });
+[
+  'aCreditBand', 'aCreditSub', 'aCreditUseDirect',
+  'aCheckBand', 'aCheckSub', 'aCheckUseDirect',
+  'aMarketBand', 'aMarketSub', 'aMarketUseDirect',
+  'aTransitBand', 'aTransitSub', 'aTransitUseDirect',
+  'bCreditBand', 'bCreditSub', 'bCreditUseDirect',
+  'bCheckBand', 'bCheckSub', 'bCheckUseDirect',
+  'bMarketBand', 'bMarketSub', 'bMarketUseDirect',
+  'bTransitBand', 'bTransitSub', 'bTransitUseDirect'
+].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', refreshCoupleEstimationPreview);
+});
 
 aIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
-aIncomeQuickBand.addEventListener('change', () => setCoupleIncomeByQuickBand('A'));
+aIncomeQuickBand.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
+aIncomeQuickSubBand.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
+aIncomeUseDirect.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
 bIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
-bIncomeQuickBand.addEventListener('change', () => setCoupleIncomeByQuickBand('B'));
+bIncomeQuickBand.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
+bIncomeQuickSubBand.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
+bIncomeUseDirect.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
 
 ruleUpdateDate.textContent = RULES.meta.updatedAt;
 if (footerUpdateDate) footerUpdateDate.textContent = RULES.meta.updatedAt;

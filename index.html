@@ -151,6 +151,11 @@
                 <option value="9000">9천만원대</option>
                 <option value="10000+">1억 이상</option>
               </select>
+              <label for="incomeQuickSubBand">구간 내 세부 선택</label>
+              <select id="incomeQuickSubBand">
+                <option value="">기본 추천값 사용</option>
+              </select>
+              <label class="inline-check"><input type="checkbox" id="incomeUseDirect" />정확한 금액 직접 입력 사용</label>
               <p class="hint">대략 추정 계산용 기준금액: <strong id="quickIncomeValueText">55,000,000원</strong></p>
             </div>
             <div>
@@ -253,6 +258,7 @@
                   <h4>3) 부양가족 반복 입력 카드</h4>
                   <button type="button" id="addPersonalChildQuickBtn" class="ghost-btn">자녀 1명 추가</button>
                   <button type="button" id="addPersonalParentQuickBtn" class="ghost-btn">부모 1명 추가</button>
+                  <button type="button" id="addPersonalGrandParentQuickBtn" class="ghost-btn">조부모 1명 추가</button>
                   <button type="button" id="addPersonalDependentBtn" class="ghost-btn">부양가족 추가</button>
                 </div>
                 <p class="hint">상세 입력이 하나라도 있으면 인적공제 계산은 상세 입력 기준으로 우선 반영됩니다.</p>
@@ -273,22 +279,79 @@
 
           <div id="monthlySpendWrap" class="grid two-col">
             <div>
+              <label for="singleCreditBand">월평균 신용카드(선택형)</label>
+              <select id="singleCreditBand">
+                <option value="none">거의 없음</option>
+                <option value="u10">10만원 미만</option>
+                <option value="10-30" selected>10~30만원</option>
+                <option value="30-50">30~50만원</option>
+                <option value="50-70">50~70만원</option>
+                <option value="70-100">70~100만원</option>
+                <option value="100-150">100~150만원</option>
+                <option value="150p">150만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleCreditSub">세부 선택</label>
+              <select id="singleCreditSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력</label>
               <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
               <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
+              <label for="singleCheckBand">월평균 체크카드+현금영수증(선택형)</label>
+              <select id="singleCheckBand">
+                <option value="none">거의 없음</option>
+                <option value="u10">10만원 미만</option>
+                <option value="10-30" selected>10~30만원</option>
+                <option value="30-50">30~50만원</option>
+                <option value="50-70">50~70만원</option>
+                <option value="70-100">70~100만원</option>
+                <option value="100-150">100~150만원</option>
+                <option value="150p">150만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleCheckSub">세부 선택</label>
+              <select id="singleCheckSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력</label>
               <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
               <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
+              <label for="singleMarketBand">월평균 전통시장(선택형)</label>
+              <select id="singleMarketBand">
+                <option value="none">거의 없음</option>
+                <option value="u10" selected>10만원 미만</option>
+                <option value="10-30">10~30만원</option>
+                <option value="30-50">30~50만원</option>
+                <option value="50-70">50~70만원</option>
+                <option value="70p">70만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleMarketSub">세부 선택</label>
+              <select id="singleMarketSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력</label>
               <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
               <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
+              <label for="singleTransitBand">월평균 대중교통(선택형)</label>
+              <select id="singleTransitBand">
+                <option value="none">거의 없음</option>
+                <option value="u5" selected>5만원 미만</option>
+                <option value="5-10">5~10만원</option>
+                <option value="10-20">10~20만원</option>
+                <option value="20-30">20~30만원</option>
+                <option value="30p">30만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleTransitSub">세부 선택</label>
+              <select id="singleTransitSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력</label>
               <label for="monthlyTransit">월평균 대중교통 사용액</label>
               <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
             </div>
           </div>
+          <p class="hint">선택형 입력값은 추정 계산용 기준값으로 반영됩니다. 정확한 계산이 필요하면 직접 입력을 사용하세요.</p>
 
           <div id="estimationPreview" class="summary-box">
             <p>월평균 입력 기준 자동 추정이 여기에 표시됩니다.</p>
@@ -352,6 +415,9 @@
                       <option value="9000">9천만원대</option>
                       <option value="10000+">1억 이상</option>
                     </select>
+                    <label for="aIncomeQuickSubBand">구간 내 세부 선택</label>
+                    <select id="aIncomeQuickSubBand"><option value="">기본 추천값 사용</option></select>
+                    <label class="inline-check"><input type="checkbox" id="aIncomeUseDirect" />정확한 금액 직접 입력 사용</label>
                     <p class="hint">기준금액: <strong id="aQuickIncomeValueText">55,000,000원</strong></p>
                   </div>
                   <div>
@@ -362,18 +428,74 @@
 
                 <div id="aMonthlySpendWrap" class="grid two-col">
                   <div>
+                    <label for="aCreditBand">월평균 신용카드(선택형)</label>
+                    <select id="aCreditBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10">10만원 미만</option>
+                      <option value="10-30" selected>10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70-100">70~100만원</option>
+                      <option value="100-150">100~150만원</option>
+                      <option value="150p">150만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="aCreditSub">세부 선택</label>
+                    <select id="aCreditSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="aCreditUseDirect" />직접 입력</label>
                     <label for="aMonthlyCredit">월평균 신용카드</label>
                     <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="aCheckBand">월평균 체크카드+현금영수증(선택형)</label>
+                    <select id="aCheckBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10">10만원 미만</option>
+                      <option value="10-30" selected>10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70-100">70~100만원</option>
+                      <option value="100-150">100~150만원</option>
+                      <option value="150p">150만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="aCheckSub">세부 선택</label>
+                    <select id="aCheckSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="aCheckUseDirect" />직접 입력</label>
                     <label for="aMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="aMarketBand">월평균 전통시장(선택형)</label>
+                    <select id="aMarketBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10" selected>10만원 미만</option>
+                      <option value="10-30">10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70p">70만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="aMarketSub">세부 선택</label>
+                    <select id="aMarketSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="aMarketUseDirect" />직접 입력</label>
                     <label for="aMonthlyMarket">월평균 전통시장</label>
                     <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="aTransitBand">월평균 대중교통(선택형)</label>
+                    <select id="aTransitBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u5" selected>5만원 미만</option>
+                      <option value="5-10">5~10만원</option>
+                      <option value="10-20">10~20만원</option>
+                      <option value="20-30">20~30만원</option>
+                      <option value="30p">30만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="aTransitSub">세부 선택</label>
+                    <select id="aTransitSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="aTransitUseDirect" />직접 입력</label>
                     <label for="aMonthlyTransit">월평균 대중교통</label>
                     <input id="aMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
@@ -445,6 +567,9 @@
                       <option value="9000">9천만원대</option>
                       <option value="10000+">1억 이상</option>
                     </select>
+                    <label for="bIncomeQuickSubBand">구간 내 세부 선택</label>
+                    <select id="bIncomeQuickSubBand"><option value="">기본 추천값 사용</option></select>
+                    <label class="inline-check"><input type="checkbox" id="bIncomeUseDirect" />정확한 금액 직접 입력 사용</label>
                     <p class="hint">기준금액: <strong id="bQuickIncomeValueText">55,000,000원</strong></p>
                   </div>
                   <div>
@@ -455,18 +580,74 @@
 
                 <div id="bMonthlySpendWrap" class="grid two-col">
                   <div>
+                    <label for="bCreditBand">월평균 신용카드(선택형)</label>
+                    <select id="bCreditBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10">10만원 미만</option>
+                      <option value="10-30" selected>10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70-100">70~100만원</option>
+                      <option value="100-150">100~150만원</option>
+                      <option value="150p">150만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="bCreditSub">세부 선택</label>
+                    <select id="bCreditSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="bCreditUseDirect" />직접 입력</label>
                     <label for="bMonthlyCredit">월평균 신용카드</label>
                     <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="bCheckBand">월평균 체크카드+현금영수증(선택형)</label>
+                    <select id="bCheckBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10">10만원 미만</option>
+                      <option value="10-30" selected>10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70-100">70~100만원</option>
+                      <option value="100-150">100~150만원</option>
+                      <option value="150p">150만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="bCheckSub">세부 선택</label>
+                    <select id="bCheckSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="bCheckUseDirect" />직접 입력</label>
                     <label for="bMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="bMarketBand">월평균 전통시장(선택형)</label>
+                    <select id="bMarketBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u10" selected>10만원 미만</option>
+                      <option value="10-30">10~30만원</option>
+                      <option value="30-50">30~50만원</option>
+                      <option value="50-70">50~70만원</option>
+                      <option value="70p">70만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="bMarketSub">세부 선택</label>
+                    <select id="bMarketSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="bMarketUseDirect" />직접 입력</label>
                     <label for="bMonthlyMarket">월평균 전통시장</label>
                     <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
+                    <label for="bTransitBand">월평균 대중교통(선택형)</label>
+                    <select id="bTransitBand">
+                      <option value="none">거의 없음</option>
+                      <option value="u5" selected>5만원 미만</option>
+                      <option value="5-10">5~10만원</option>
+                      <option value="10-20">10~20만원</option>
+                      <option value="20-30">20~30만원</option>
+                      <option value="30p">30만원 이상</option>
+                      <option value="direct">직접 입력</option>
+                    </select>
+                    <label for="bTransitSub">세부 선택</label>
+                    <select id="bTransitSub"><option value="">기본값</option></select>
+                    <label class="inline-check"><input type="checkbox" id="bTransitUseDirect" />직접 입력</label>
                     <label for="bMonthlyTransit">월평균 대중교통</label>
                     <input id="bMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
@@ -535,6 +716,8 @@
 
                 <div class="list-header">
                   <h4>기타 부양가족 카드</h4>
+                  <button type="button" id="addParentDependentBtn" class="ghost-btn">부모 1명 추가</button>
+                  <button type="button" id="addGrandParentDependentBtn" class="ghost-btn">조부모 1명 추가</button>
                   <button type="button" id="addDependentBtn" class="ghost-btn">부양가족 카드 추가</button>
                 </div>
                 <div id="dependentList" class="repeat-list"></div>
