@@ -112,24 +112,38 @@ const state = {
 const FAQ_ITEMS = [
   {
     q: '맞벌이 부부는 부부합산으로 신고하나요?',
-    a: '일반적으로 근로소득 연말정산은 개인별로 진행되며, 이 서비스는 합산 신고가 아니라 부부 간 공제 항목 배분 최적화를 돕습니다.'
+    a: '<p>일반적으로 근로소득 연말정산은 개인 단위로 진행됩니다. 그래서 이 서비스도 “합산 신고”를 전제로 하지 않고, 부부가 같은 항목을 중복 공제하지 않도록 배분과 점검 순서를 안내합니다.</p><p>즉, 맞벌이 모드의 핵심은 신고 방식 변경이 아니라 누가 어떤 항목을 점검하면 실수를 줄일 수 있는지 정리하는 것입니다.</p>'
   },
   {
-    q: '자녀 공제는 누구에게 몰아주는 게 유리한가요?',
-    a: '자녀 기본공제를 누구에게 귀속하느냐에 따라 교육비·보험료·기부금·카드 관련 추천이 달라질 수 있어, 소득과 실제 지출자를 함께 보고 배분하는 것이 유리할 가능성이 높습니다.'
+    q: '맞벌이 부부는 무엇을 먼저 점검해야 하나요?',
+    a: '<p>먼저 자녀·부양가족의 기본공제 귀속자를 확정하고, 실제 결제자와 증빙 흐름이 일치하는지 확인하는 것이 좋습니다. 이 순서를 정하면 교육비·의료비·기부금 점검이 쉬워집니다.</p><p>그 다음 카드 사용 전략과 월세·현금영수증 선택처럼 충돌 가능성이 있는 항목을 정리하면 누락 위험을 크게 줄일 수 있습니다.</p>'
   },
   {
-    q: '자녀 의료비를 다른 배우자가 결제했으면 어떻게 되나요?',
-    a: '기본공제 귀속자와 실제 결제자가 다르면 공제 누락 위험이 생길 수 있어, 실제 지출자 기준으로 증빙과 귀속을 다시 확인해야 합니다.'
+    q: '월평균 입력은 얼마나 정확한가요?',
+    a: '<p>월평균 입력은 “지금 소비 패턴이 연말까지 이어진다”는 가정으로 만든 추정치입니다. 실제 월별 지출 변동을 완전히 반영하지는 않지만, 남은 기간에 어떤 행동을 할지 결정하는 데는 충분히 유용합니다.</p><p>정확도를 높이고 싶다면 누적 입력 모드로 전환해 현재 실적을 직접 입력해도 됩니다.</p>'
   },
   {
-    q: '월세 세액공제와 현금영수증을 같이 받을 수 있나요?',
-    a: '같은 월세 지출에 대해 월세 세액공제와 현금영수증 공제를 동시에 적용하는 것은 불가능할 수 있어 둘 중 하나를 선택해 점검해야 합니다.'
+    q: '연봉을 대략 입력해도 되나요?',
+    a: '<p>가능합니다. 빠른 선택은 입력 피로도를 줄이기 위한 기능이며 내부 계산에는 기준금액이 자동 매핑됩니다.</p><p>다만 경계 구간에 있는 경우에는 정확 입력으로 전환해 총급여를 직접 넣으면 추천의 민감도가 더 좋아질 수 있습니다.</p>'
   },
   {
-    q: '카드 사용은 누구 명의로 몰아야 하나요?',
-    a: '카드 공제는 배우자별 총급여 대비 사용액 초과 구간이 중요해 단순 합산보다 각자 부족 구간을 먼저 채우는 방식이 실수 방지에 유리합니다.'
+    q: '자녀 나이를 정확히 몰라도 입력 가능한가요?',
+    a: '<p>상세 인적공제 입력에서는 출생연도 외에도 연령대와 생활단계(미취학/초등/중고등/성인)로 빠르게 입력할 수 있습니다.</p><p>정확한 생년월일을 몰라도 점검을 시작할 수 있고, 필요할 때만 세부값을 보완하면 됩니다.</p>'
+  },
+  {
+    q: '실제 환급액과 결과가 다를 수 있는 이유는 무엇인가요?',
+    a: '<p>회사 제출자료 반영 시점, 홈택스 간소화 데이터, 개인별 요건 해석, 연도별 규정 변경에 따라 실제 결과는 달라질 수 있습니다.</p><p>이 도구는 확정 세액 계산기가 아니라 실행 행동을 정리하는 가이드이므로, 최종 신고 전 공식 자료 확인이 필요합니다.</p>'
+  },
+  {
+    q: '카드보다 연금저축이 더 중요한 경우는 언제인가요?',
+    a: '<p>이미 카드 관련 목표 구간을 충분히 채웠거나, 남은 기간이 짧아 소비 구조를 크게 바꾸기 어려운 경우에는 연금저축·IRP 같은 납입 전략 점검이 더 현실적일 수 있습니다.</p><p>반대로 현재 카드 부족 구간이 큰 경우에는 결제수단 비중 조정이 먼저일 수 있어, 결과 요약의 우선순위를 함께 확인해 주세요.</p>'
   }
+];
+
+const UPDATE_HISTORY_ITEMS = [
+  '2026-03-09: 월평균 입력 기본 전환, 맞벌이 모드 월평균/누적 토글 보강, 연봉 빠른 선택 개선',
+  '2026-03-09: 인적공제 상세 입력(반복 카드, 자동 판정, 충돌 배지) 확장',
+  '2026-03-09: 정보형 콘텐츠 섹션, 정책 페이지 링크, FAQ 확장, 신뢰/면책 안내 강화'
 ];
 
 const TODO_STORAGE_KEY = 'moneyback-action-guide-v5';
@@ -145,6 +159,9 @@ const todoList = document.getElementById('todoList');
 const personalDeductionSummary = document.getElementById('personalDeductionSummary');
 const spendEstimationSummary = document.getElementById('spendEstimationSummary');
 const detailPriorityBadge = document.getElementById('detailPriorityBadge');
+const whyRecommendationBox = document.getElementById('whyRecommendationBox');
+const updateHistoryList = document.getElementById('updateHistoryList');
+const footerUpdateDate = document.getElementById('footerUpdateDate');
 
 const singleModeSection = document.getElementById('singleModeSection');
 const coupleModeSection = document.getElementById('coupleModeSection');
@@ -1408,7 +1425,7 @@ function renderFaq() {
       (item) => `
       <details class="faq-item">
         <summary>${item.q}</summary>
-        <p>${item.a}</p>
+        ${item.a}
       </details>
     `
     )
@@ -1420,10 +1437,35 @@ function renderFaq() {
     mainEntity: FAQ_ITEMS.map((item) => ({
       '@type': 'Question',
       name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a }
+      acceptedAnswer: { '@type': 'Answer', text: item.a.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() }
     }))
   };
   document.getElementById('faq-jsonld').textContent = JSON.stringify(faqLd);
+}
+
+function renderWhyRecommendation(result, input) {
+  if (!whyRecommendationBox) return;
+  const spendModeLabel = input.spendMode === 'cumulative' || (input.projection && input.projection.mode === 'cumulative') ? '누적 입력' : '월평균 입력';
+  const topReason =
+    result.mode === 'single'
+      ? `입력한 소득(${formatMoney(input.income)}원)과 소비 패턴(${spendModeLabel})을 기준으로 카드 전략·납입 전략·인적공제 점검 우선순위를 조합했습니다.`
+      : `배우자별 소득과 소비를 분리해 각자 부족 구간을 추정하고, 중복공제 위험·결제자 불일치 위험을 함께 반영했습니다.`;
+  const impact =
+    result.mode === 'single'
+      ? '영향이 큰 입력값: 연봉, 카드/체크카드 비중, 인적공제(간편 또는 상세) 정보'
+      : '영향이 큰 입력값: 배우자 A/B 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보';
+
+  whyRecommendationBox.innerHTML = `
+    <p><strong>왜 이런 추천이 나왔나요?</strong></p>
+    <p>${topReason}</p>
+    <p>${impact}</p>
+    <p>이 추천은 확정 세액이 아니라 실행 행동의 우선순위를 정하기 위한 참고용 해석입니다.</p>
+  `;
+}
+
+function renderUpdateHistory() {
+  if (!updateHistoryList) return;
+  updateHistoryList.innerHTML = UPDATE_HISTORY_ITEMS.map((item) => `<li>${item}</li>`).join('');
 }
 
 function renderAll(result, input) {
@@ -1432,6 +1474,7 @@ function renderAll(result, input) {
   renderAllocations(result.allocations);
   renderScenario();
   renderTodos(result.todos);
+  renderWhyRecommendation(result, input);
 
   if (result.mode === 'single') {
     renderPersonalSummary(result.personal, 'single');
@@ -1621,11 +1664,13 @@ bIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('B'))
 bIncomeQuickBand.addEventListener('change', () => setCoupleIncomeByQuickBand('B'));
 
 ruleUpdateDate.textContent = RULES.meta.updatedAt;
+if (footerUpdateDate) footerUpdateDate.textContent = RULES.meta.updatedAt;
 setupMoneyInputs();
 setupTabsKeyboard();
 setupAccordions();
 bootstrapRepeatLists();
 renderFaq();
+renderUpdateHistory();
 updateSpouseEligibilityText();
 updateIncomeModeUI();
 updateSpendModeUI();

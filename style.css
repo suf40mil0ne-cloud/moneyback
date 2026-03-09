@@ -22,6 +22,22 @@ body {
   padding: 20px 16px 96px;
 }
 
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -40px;
+  background: #111827;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  z-index: 100;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
 .hero {
   border-radius: 20px;
   background: linear-gradient(135deg, #cffafe 0%, #fff 45%, #d1fae5 100%);
@@ -61,6 +77,49 @@ h4 { margin: 0 0 8px; font-size: 15px; }
 }
 .ad-banner { min-height: 90px; }
 .ad-rect { min-height: 250px; }
+
+.top-nav {
+  margin-top: 0;
+  padding: 14px 16px;
+}
+
+.top-nav nav,
+.anchor-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.top-nav nav a,
+.anchor-links a {
+  text-decoration: none;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.anchor-links {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #dbe5ef;
+}
+
+.prose p {
+  margin: 0 0 12px;
+  color: #334155;
+  font-size: 15px;
+}
+
+.content-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.content-list li {
+  margin: 6px 0;
+  color: #334155;
+  font-size: 14px;
+}
 
 .card {
   margin-top: 20px;
@@ -461,7 +520,53 @@ input:focus, select:focus, button:focus {
 .faq-block > p { margin: 0 0 10px; color: #64748b; font-size: 14px; }
 .faq-item { margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; padding: 12px; }
 .faq-item summary { cursor: pointer; font-weight: 700; list-style: none; }
-.faq-item p { margin: 8px 0 0; font-size: 14px; color: #334155; }
+.faq-item p { margin: 8px 0 0; font-size: 14px; color: #334155; line-height: 1.6; }
+
+.site-footer {
+  margin: 24px auto 90px;
+  max-width: 1080px;
+  padding: 16px;
+  border-top: 1px solid #dbe5ef;
+  color: #334155;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.policy-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 110px;
+}
+
+.policy-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(16, 33, 51, 0.08);
+  padding: 18px;
+}
+
+.policy-card p,
+.policy-card li {
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.footer-links a {
+  color: #0f172a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer-meta {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
 
 .notice {
   position: fixed;
@@ -486,4 +591,7 @@ input:focus, select:focus, button:focus {
   h2 { font-size: 22px; }
   .container { padding-bottom: 110px; }
   .tab-list { grid-template-columns: 1fr; }
+  .prose p { font-size: 14px; }
+  .top-nav nav a,
+  .anchor-links a { font-size: 13px; }
 }
