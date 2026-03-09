@@ -173,6 +173,10 @@ input:focus, select:focus, button:focus {
   background: #f8fafc;
 }
 
+.detail-panel {
+  margin-top: 12px;
+}
+
 .accordion-trigger {
   width: 100%;
   border: 0;
@@ -194,6 +198,18 @@ input:focus, select:focus, button:focus {
 
 .accordion-panel {
   padding: 12px;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #334155;
+  background: #f8fafc;
 }
 
 .list-header {
