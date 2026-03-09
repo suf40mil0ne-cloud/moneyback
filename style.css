@@ -148,6 +148,24 @@ input:focus, select:focus, button:focus {
 
 .hint { margin: 8px 0 0; color: #64748b; font-size: 12px; }
 .error { min-height: 20px; margin: 8px 0 0; color: #e11d48; font-size: 13px; }
+.input-mode-block {
+  margin-top: 8px;
+  border: 1px solid #dbe5ef;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 10px;
+}
+
+#estimationPreview {
+  margin-top: 10px;
+}
+
+#spendEstimationSummary {
+  margin-bottom: 10px;
+  border-color: #bae6fd;
+  background: #f0f9ff;
+  color: #0c4a6e;
+}
 
 .cta {
   width: 100%;

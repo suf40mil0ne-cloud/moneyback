@@ -56,7 +56,29 @@
 
         <section id="singleModeSection">
           <h3>1인 입력</h3>
+          <div class="input-mode-block">
+            <label for="incomeInputMode">연봉 입력 방식</label>
+            <select id="incomeInputMode">
+              <option value="quick" selected>대략 입력(빠른 선택)</option>
+              <option value="exact">정확히 입력(직접 숫자)</option>
+            </select>
+          </div>
+
           <div class="grid two-col">
+            <div id="quickIncomeWrap">
+              <label for="incomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
+              <select id="incomeQuickBand">
+                <option value="3000">3천만원대</option>
+                <option value="4000">4천만원대</option>
+                <option value="5000" selected>5천만원대</option>
+                <option value="6000">6천만원대</option>
+                <option value="7000">7천만원대</option>
+                <option value="8000">8천만원대</option>
+                <option value="9000">9천만원대</option>
+                <option value="10000+">1억 이상</option>
+              </select>
+              <p class="hint">대략 추정 계산용 기준금액: <strong id="quickIncomeValueText">55,000,000원</strong></p>
+            </div>
             <div>
               <label for="annualIncome">연봉(총급여, 원) *</label>
               <input id="annualIncome" data-money inputmode="numeric" placeholder="예: 55,000,000" aria-label="1인 연봉" />
@@ -155,6 +177,8 @@
               <section>
                 <div class="list-header">
                   <h4>3) 부양가족 반복 입력 카드</h4>
+                  <button type="button" id="addPersonalChildQuickBtn" class="ghost-btn">자녀 1명 추가</button>
+                  <button type="button" id="addPersonalParentQuickBtn" class="ghost-btn">부모 1명 추가</button>
                   <button type="button" id="addPersonalDependentBtn" class="ghost-btn">부양가족 추가</button>
                 </div>
                 <p class="hint">상세 입력이 하나라도 있으면 인적공제 계산은 상세 입력 기준으로 우선 반영됩니다.</p>
@@ -165,7 +189,38 @@
           </div>
 
           <h3>카드/현금 사용액</h3>
-          <div class="grid two-col">
+          <div class="input-mode-block">
+            <label for="spendInputMode">소비 입력 방식</label>
+            <select id="spendInputMode">
+              <option value="monthly" selected>월평균 입력(권장)</option>
+              <option value="cumulative">올해 누적 입력</option>
+            </select>
+          </div>
+
+          <div id="monthlySpendWrap" class="grid two-col">
+            <div>
+              <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
+              <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
+              <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
+              <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="monthlyTransit">월평균 대중교통 사용액</label>
+              <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
+            </div>
+          </div>
+
+          <div id="estimationPreview" class="summary-box">
+            <p>월평균 입력 기준 자동 추정이 여기에 표시됩니다.</p>
+          </div>
+
+          <div id="cumulativeSpendWrap" class="grid two-col hidden">
             <div>
               <label for="currentCreditCard">올해 누적 신용카드</label>
               <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" />
@@ -332,6 +387,7 @@
 
       <section class="card">
         <h3>1. 한눈 요약</h3>
+        <div id="spendEstimationSummary" class="summary-box"></div>
         <div id="personalDeductionSummary" class="summary-box"></div>
         <p id="detailPriorityBadge" class="hint hidden">상세 입력 기준으로 계산 중</p>
         <ul id="summaryList" class="plain-list"></ul>
