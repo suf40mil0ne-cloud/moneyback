@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>연말정산 행동 추천기 | 3가지 시나리오 가이드</title>
-  <meta name="description" content="연봉과 최소 입력만으로 카드/현금 목표, 연금저축·IRP, ISA 실행 가이드를 3가지 시나리오로 추천합니다." />
-  <meta name="keywords" content="연말정산,카드 공제 한도,연금저축 IRP,ISA,절세 가이드,직장인 절세" />
+  <title>연말정산 행동 추천기 | 1인·맞벌이 부부 최적화 가이드</title>
+  <meta name="description" content="1인/맞벌이 부부 최적화 모드로 연말정산 행동을 추천합니다. 정확한 환급액 계산 대신, 놓치지 않기 위한 배분·지출·점검 가이드를 제공합니다." />
+  <meta name="keywords" content="연말정산,맞벌이 부부 최적화,부부 배분 시뮬레이션,카드 공제 전략,연금저축 IRP,절세 가이드" />
   <meta name="google-adsense-account" content="ca-pub-7104324664246128" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:title" content="연말정산 행동 추천기" />
-  <meta property="og:description" content="정확한 환급액 계산 대신, 놓치지 않기 위한 목표치와 실행 플랜을 제시합니다." />
+  <meta property="og:description" content="정확한 환급액 계산 대신, 1인/맞벌이 부부 최적화 기준으로 놓치지 않기 위한 행동을 추천합니다." />
   <meta property="og:url" content="https://moneyback.pages.dev/" />
   <link rel="canonical" href="https://moneyback.pages.dev/" />
   <link rel="stylesheet" href="./style.css" />
@@ -32,7 +32,7 @@
     <header class="hero">
       <p class="badge">3분 컷</p>
       <h1>연말정산 행동 추천기</h1>
-      <p class="subtitle">정확한 환급액 계산이 아니라, 올해 놓치지 않기 위한 목표/실행 가이드를 빠르게 제시합니다.</p>
+      <p class="subtitle">1인/맞벌이 모두, 올해 놓치지 않기 위한 연말정산 행동 가이드</p>
     </header>
 
     <section class="ad-wrap" aria-label="상단 광고 자리">
@@ -42,61 +42,188 @@
     <section class="card">
       <h2>입력</h2>
       <form id="planner-form" novalidate>
-        <div class="grid two-col">
-          <div>
-            <label for="annualIncome">연봉(총급여, 원) *</label>
-            <input id="annualIncome" data-money placeholder="예: 55,000,000" />
-          </div>
-        </div>
+        <fieldset class="mode-switch" aria-label="모드 선택">
+          <legend>모드 선택</legend>
+          <label class="mode-chip">
+            <input type="radio" name="mode" value="single" checked />
+            <span>1인 모드</span>
+          </label>
+          <label class="mode-chip">
+            <input type="radio" name="mode" value="couple" />
+            <span>맞벌이 부부 모드</span>
+          </label>
+        </fieldset>
 
-        <h3>인적공제(간편 입력)</h3>
-        <div class="grid two-col">
-          <label class="inline-check"><input type="checkbox" id="hasSpouse" />배우자 있음</label>
-          <div></div>
-          <div>
-            <label for="minorChildrenCount">미성년 자녀 수(만 20세 이하)</label>
-            <input id="minorChildrenCount" data-money value="0" />
+        <section id="singleModeSection">
+          <h3>1인 입력</h3>
+          <div class="grid two-col">
+            <div>
+              <label for="annualIncome">연봉(총급여, 원) *</label>
+              <input id="annualIncome" data-money inputmode="numeric" placeholder="예: 55,000,000" aria-label="1인 연봉" />
+            </div>
+            <div>
+              <label for="singleMonthlyRent">월세 지출액(선택)</label>
+              <input id="singleMonthlyRent" data-money inputmode="numeric" placeholder="0" aria-label="1인 월세 지출액" />
+            </div>
+            <div>
+              <label for="singlePension">연금저축 납입액(선택)</label>
+              <input id="singlePension" data-money inputmode="numeric" placeholder="0" aria-label="1인 연금저축" />
+            </div>
+            <div>
+              <label for="singleIrp">IRP 납입액(선택)</label>
+              <input id="singleIrp" data-money inputmode="numeric" placeholder="0" aria-label="1인 IRP" />
+            </div>
           </div>
-          <div>
-            <label for="childTaxCreditEligibleCount">자녀세액공제 대상 자녀 수(8세 이상)</label>
-            <input id="childTaxCreditEligibleCount" data-money value="0" />
-          </div>
-          <div>
-            <label for="elderFamilyCount">부모/조부모 수(만 60세 이상)</label>
-            <input id="elderFamilyCount" data-money value="0" />
-          </div>
-          <div>
-            <label for="seniorCount">70세 이상 인원</label>
-            <input id="seniorCount" data-money value="0" />
-          </div>
-          <div>
-            <label for="disabledCount">장애인 인원</label>
-            <input id="disabledCount" data-money value="0" />
-          </div>
-          <label class="inline-check"><input type="checkbox" id="isSingleParent" />한부모 공제 해당</label>
-          <label class="inline-check"><input type="checkbox" id="isDependentIncomeEligible" />부양가족 소득요건 충족(가정)</label>
-        </div>
-        <p class="hint">본인은 자동 포함됩니다. 미성년 자녀(만 20세 이하), 부모/조부모(만 60세 이상)는 간편 입력용 가정 기준입니다.</p>
 
-        <h3>현재 사용액(선택, 입력 없으면 0)</h3>
-        <div class="grid two-col">
-          <div>
-            <label for="currentCreditCard">올해 누적 신용카드</label>
-            <input id="currentCreditCard" data-money placeholder="0" />
+          <h3>카드/현금 사용액</h3>
+          <div class="grid two-col">
+            <div>
+              <label for="currentCreditCard">올해 누적 신용카드</label>
+              <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" />
+            </div>
+            <div>
+              <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
+              <input id="currentCheckCash" data-money inputmode="numeric" placeholder="0" aria-label="1인 체크카드 및 현금영수증 사용액" />
+            </div>
+            <div>
+              <label for="currentTraditionalMarket">올해 누적 전통시장</label>
+              <input id="currentTraditionalMarket" data-money inputmode="numeric" placeholder="0" aria-label="1인 전통시장 사용액" />
+            </div>
+            <div>
+              <label for="currentTransit">올해 누적 대중교통</label>
+              <input id="currentTransit" data-money inputmode="numeric" placeholder="0" aria-label="1인 대중교통 사용액" />
+            </div>
           </div>
-          <div>
-            <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
-            <input id="currentCheckCash" data-money placeholder="0" />
+        </section>
+
+        <section id="coupleModeSection" class="hidden">
+          <h3>맞벌이 부부 입력</h3>
+          <p class="hint">선택 입력은 비워두면 0으로 처리됩니다. 주민등록번호, 상세 주소 등 민감정보는 입력하지 않습니다.</p>
+
+          <div class="accordion-group">
+            <div class="accordion-item">
+              <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="spouseASection" id="spouseATrigger">A. 배우자 A</button>
+              <div id="spouseASection" class="accordion-panel">
+                <div class="grid two-col">
+                  <div>
+                    <label for="aIncome">연봉(총급여) *</label>
+                    <input id="aIncome" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aCredit">올해 누적 신용카드</label>
+                    <input id="aCredit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aCheckCash">올해 누적 체크카드+현금영수증</label>
+                    <input id="aCheckCash" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aMarket">올해 누적 전통시장</label>
+                    <input id="aMarket" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aTransit">올해 누적 대중교통</label>
+                    <input id="aTransit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aPension">연금저축 납입액(선택)</label>
+                    <input id="aPension" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aIrp">IRP 납입액(선택)</label>
+                    <input id="aIrp" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aRent">월세 지출액(선택)</label>
+                    <input id="aRent" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aMedical">의료비 본인 지출액(선택)</label>
+                    <input id="aMedical" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="aDonation">기부금 본인 지출액(선택)</label>
+                    <input id="aDonation" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="spouseBSection" id="spouseBTrigger">B. 배우자 B</button>
+              <div id="spouseBSection" class="accordion-panel hidden">
+                <div class="grid two-col">
+                  <div>
+                    <label for="bIncome">연봉(총급여) *</label>
+                    <input id="bIncome" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bCredit">올해 누적 신용카드</label>
+                    <input id="bCredit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bCheckCash">올해 누적 체크카드+현금영수증</label>
+                    <input id="bCheckCash" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bMarket">올해 누적 전통시장</label>
+                    <input id="bMarket" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bTransit">올해 누적 대중교통</label>
+                    <input id="bTransit" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bPension">연금저축 납입액(선택)</label>
+                    <input id="bPension" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bIrp">IRP 납입액(선택)</label>
+                    <input id="bIrp" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bRent">월세 지출액(선택)</label>
+                    <input id="bRent" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bMedical">의료비 본인 지출액(선택)</label>
+                    <input id="bMedical" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                  <div>
+                    <label for="bDonation">기부금 본인 지출액(선택)</label>
+                    <input id="bDonation" data-money inputmode="numeric" placeholder="0" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="familySection" id="familyTrigger">C. 공통 가족/부양가족 정보</button>
+              <div id="familySection" class="accordion-panel hidden">
+                <div class="grid two-col">
+                  <label class="inline-check"><input type="checkbox" id="isMarriedRegistered" checked />혼인신고 여부</label>
+                  <div>
+                    <label for="childrenCount">자녀 수</label>
+                    <input id="childrenCount" data-money inputmode="numeric" value="0" />
+                  </div>
+                </div>
+
+                <div class="list-header">
+                  <h4>자녀 카드 입력</h4>
+                  <button type="button" id="syncChildrenBtn" class="ghost-btn">자녀 수만큼 카드 맞추기</button>
+                  <button type="button" id="addChildBtn" class="ghost-btn">자녀 카드 추가</button>
+                </div>
+                <div id="childList" class="repeat-list"></div>
+
+                <div class="list-header">
+                  <h4>기타 부양가족 카드</h4>
+                  <button type="button" id="addDependentBtn" class="ghost-btn">부양가족 카드 추가</button>
+                </div>
+                <div id="dependentList" class="repeat-list"></div>
+              </div>
+            </div>
           </div>
-          <div>
-            <label for="currentTraditionalMarket">올해 누적 전통시장</label>
-            <input id="currentTraditionalMarket" data-money placeholder="0" />
-          </div>
-          <div>
-            <label for="currentTransit">올해 누적 대중교통</label>
-            <input id="currentTransit" data-money placeholder="0" />
-          </div>
-        </div>
+        </section>
 
         <p id="formError" class="error" aria-live="polite"></p>
         <button type="submit" class="cta">추천 받기</button>
@@ -105,18 +232,50 @@
 
     <section id="results" class="results hidden" aria-live="polite">
       <div class="meta-line">마지막 규칙 업데이트: <span id="ruleUpdateDate"></span></div>
-      <div id="personalSummary" class="summary-box"></div>
-
-      <div class="tab-list" role="tablist" aria-label="시나리오 선택">
-        <button class="tab-btn active" type="button" data-tab="simple" role="tab" aria-selected="true">심플</button>
-        <button class="tab-btn" type="button" data-tab="balanced" role="tab" aria-selected="false">균형</button>
-        <button class="tab-btn" type="button" data-tab="max" role="tab" aria-selected="false">절세 극대화</button>
+      <div class="warning-badges" aria-label="주의 배지">
+        <span class="warn-badge">중복공제 주의</span>
+        <span class="warn-badge">실제 지출자 확인 필요</span>
+        <span class="warn-badge">월세/현금영수증 중복 불가</span>
+        <span class="warn-badge muted">참고용 가이드</span>
       </div>
 
-      <article id="scenarioCard" class="scenario-card"></article>
+      <div class="summary-box note-box">정확한 신고 전 홈택스/회사 제출자료 최종 확인이 필요합니다.</div>
 
       <section class="card">
-        <h3>오늘 할 일 3개</h3>
+        <h3>1. 한눈 요약</h3>
+        <ul id="summaryList" class="plain-list"></ul>
+      </section>
+
+      <section class="card">
+        <h3>2. 부부 배분 추천표</h3>
+        <div class="table-wrap">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>항목</th>
+                <th>현재 입력 상태</th>
+                <th>추천 귀속자</th>
+                <th>이유</th>
+                <th>주의사항</th>
+              </tr>
+            </thead>
+            <tbody id="allocationBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>3. 시나리오</h3>
+        <div class="tab-list" role="tablist" aria-label="시나리오 선택">
+          <button class="tab-btn active" type="button" data-tab="simple" role="tab" aria-selected="true" aria-controls="scenarioPanel" id="tab-simple">심플</button>
+          <button class="tab-btn" type="button" data-tab="balanced" role="tab" aria-selected="false" aria-controls="scenarioPanel" id="tab-balanced">균형</button>
+          <button class="tab-btn" type="button" data-tab="max" role="tab" aria-selected="false" aria-controls="scenarioPanel" id="tab-max">절세 극대화</button>
+        </div>
+        <article id="scenarioPanel" class="scenario-card" role="tabpanel" aria-labelledby="tab-simple"></article>
+      </section>
+
+      <section class="card">
+        <h3>4. 오늘 할 일</h3>
         <ul id="todoList" class="todo-list"></ul>
       </section>
     </section>
@@ -127,12 +286,12 @@
 
     <section class="faq-block">
       <h2>자주 묻는 질문</h2>
-      <p>자주 검색되는 질문을 짧게 정리했습니다.</p>
+      <p>실수 방지 중심으로 꼭 많이 묻는 질문만 간단히 정리했습니다.</p>
       <div id="faqList"></div>
     </section>
   </main>
 
-  <aside class="notice">본 서비스는 참고용 가이드이며, 실제 공제/세액은 개인 상황과 세법 적용 시점에 따라 달라질 수 있습니다.</aside>
+  <aside class="notice">본 서비스는 참고용 행동 가이드입니다. 실제 공제/세액은 개인 상황과 신고 시점 세법에 따라 달라질 수 있습니다.</aside>
   <script src="./main.js"></script>
 </body>
 </html>

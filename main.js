@@ -1,9 +1,12 @@
-const LAST_RULE_UPDATE = '2026-03-05';
-
-// 세법/가정 숫자 상수: 연도별 변경 가능성이 있어 수정 가능하게 분리
-const TAX_CONSTANTS = {
+const RULES = {
+  year: 2025,
+  meta: {
+    updatedAt: '2026-03-09',
+    modeLabelSingle: '1인',
+    modeLabelCouple: '맞벌이 부부 최적화'
+  },
   card: {
-    deductionStartRate: 0.25, // 총급여의 25% 초과 사용분부터 공제 대상 가정
+    thresholdRate: 0.25,
     rates: {
       credit: 0.15,
       checkCash: 0.3,
@@ -14,251 +17,636 @@ const TAX_CONSTANTS = {
       { maxIncome: 70000000, limit: 3000000 },
       { maxIncome: 120000000, limit: 2500000 },
       { maxIncome: Infinity, limit: 2000000 }
-    ],
-    extraLimitTraditionalMarket: 1000000,
-    extraLimitTransit: 1000000
-  },
-  personal: {
-    baseDeductionPerPerson: 1500000,
-    seniorAdditionalPerPerson: 1000000,
-    disabledAdditionalPerPerson: 2000000,
-    singleParentAdditional: 1000000
-  },
-  childTaxCredit: {
-    // 자녀세액공제는 실제 금액 단정 계산 대신 "검토 대상"만 안내
-    minimumAge: 8,
-    note: '자녀세액공제는 8세 이상 자녀 기준 등 요건 확인이 필요하며, 본 서비스는 금액 계산을 제공하지 않습니다.'
+    ]
   },
   pension: {
-    pensionSavingAnnualLimit: 6000000, // 연금저축 단독 기준 가정
-    combinedAnnualLimit: 9000000 // 연금저축+IRP 합산 기준 가정
+    pensionSavingAnnualLimit: 6000000,
+    combinedAnnualLimit: 9000000
   },
-  isa: {
-    // ISA는 단정적 절세 계산 대신 운용 목표 가이드 수치만 사용
-    note: '연도별 한도/비과세 요건은 변경될 수 있어 최신 공시 확인 필요'
+  irp: {
+    yearlyGuideLimit: 9000000
+  },
+  childCredit: {
+    minimumAge: 8,
+    minorAge: 19
+  },
+  warnings: {
+    duplicateDependent: '부양가족은 부부가 동시에 중복 공제하면 안 되므로 최종 제출 전 귀속 1인 확정이 필요합니다.',
+    payerMismatch: '실제 지출자와 기본공제 귀속자가 다르면 공제 누락 가능성이 높습니다.',
+    rentCashOverlap: '월세 세액공제와 현금영수증(카드성) 공제는 같은 지출에 대해 중복 적용이 불가합니다.'
   },
   scenario: {
     simple: {
-      title: '심플(귀찮음 최소)',
-      summary: '이것만 하면 손해를 크게 보기 어렵게, 최소 행동에 집중합니다.',
-      coverage: 0.58,
-      maxSpendShare: 0.3,
-      mix: { credit: 0.72, checkCash: 0.22, traditionalMarket: 0.03, transit: 0.03 },
-      pensionConservativeMonthly: 50000,
-      pensionAggressiveMonthly: 120000,
-      isaMonthly: 50000,
-      riskTone: 'low'
+      title: '심플',
+      singleSummary: '입력 최소, 실수 방지 중심, 과도한 명의 조정 최소',
+      coupleSummary: '입력 최소로 시작하고, 이미 쓰던 결제/납입 흐름을 크게 바꾸지 않는 방식입니다.'
     },
     balanced: {
-      title: '균형(현금흐름/편의)',
-      summary: '무리 없이 효율을 노리는 기본형 시나리오입니다.',
-      coverage: 0.78,
-      maxSpendShare: 0.38,
-      mix: { credit: 0.62, checkCash: 0.27, traditionalMarket: 0.06, transit: 0.05 },
-      pensionConservativeMonthly: 90000,
-      pensionAggressiveMonthly: 220000,
-      isaMonthly: 140000,
-      riskTone: 'mid'
+      title: '균형',
+      singleSummary: '공제 효율과 실행 편의성 균형',
+      coupleSummary: '부부 간 배분 효율을 챙기되, 실행 피로도를 과도하게 늘리지 않는 방식입니다.'
     },
     max: {
-      title: '절세 극대화(적극)',
-      summary: '가능하면 여기까지를 목표로, 납입/소비 패턴을 적극 조정합니다.',
-      coverage: 0.92,
-      maxSpendShare: 0.46,
-      mix: { credit: 0.5, checkCash: 0.3, traditionalMarket: 0.11, transit: 0.09 },
-      pensionConservativeMonthly: 150000,
-      pensionAggressiveMonthly: 380000,
-      isaMonthly: 250000,
-      riskTone: 'high'
+      title: '절세 극대화',
+      singleSummary: '납입·지출 배분을 적극 조정',
+      coupleSummary: '부부 귀속 최적화, 카드 명의 전략, 연금저축/IRP 우선순위를 적극적으로 맞춥니다.'
     }
   }
 };
 
 const FAQ_ITEMS = [
-  { q: '카드 공제는 무조건 많이 쓰면 좋은가요?', a: '추가 소비를 억지로 늘리기보다, 계획된 지출을 공제 효율이 높은 방식으로 관리하는 것이 안전합니다.' },
-  { q: '체크카드와 현금영수증 비중을 올려야 하나요?', a: '일반적으로 신용카드보다 공제율이 높게 적용되는 경우가 많아, 생활 패턴 내에서 비중 조정이 유리할 수 있습니다.' },
-  { q: '전통시장/대중교통은 꼭 분리 입력해야 하나요?', a: '정확한 분리 입력이 어려우면 0으로 두고 시작해도 됩니다. 분리할수록 목표 가이드가 더 구체화됩니다.' },
-  { q: '연금저축과 IRP는 둘 다 해야 하나요?', a: '필수는 아닙니다. 현금흐름을 해치지 않는 선에서 자동이체를 유지하는 것이 우선입니다.' },
-  { q: '연금저축 600, 합산 900은 확정 수치인가요?', a: '안내에서 자주 쓰이는 기준이지만 연도별 정책 변경 가능성이 있어 반드시 최신 정보를 확인해야 합니다.' },
-  { q: '자녀세액공제는 어떻게 보나요?', a: '이 페이지는 8세 이상 자녀 수를 기준으로 검토 대상 배지만 보여줍니다. 실제 공제금액 계산은 제공하지 않습니다.' },
-  { q: 'ISA는 어떤 상품을 사야 하나요?', a: '이 서비스는 특정 상품을 추천하지 않습니다. 리스크 톤에 맞춰 예금/채권형/혼합형 비중을 정하는 수준으로 안내합니다.' },
-  { q: '인적공제 인원은 어떻게 입력하나요?', a: '본인은 자동 포함됩니다. 배우자, 미성년 자녀(만 20세 이하), 부모/조부모(만 60세 이상)만 입력하면 간편하게 반영됩니다.' },
-  { q: '정확한 환급액 계산은 왜 안 하나요?', a: '정확 계산에는 상세 소득/공제 자료가 더 필요합니다. 이 페이지는 실행 가능한 목표치와 행동 가이드에 집중합니다.' },
-  { q: '현재 사용액을 안 넣어도 되나요?', a: '가능합니다. 입력하지 않으면 0 기준으로 목표치를 제시합니다.' },
-  { q: '시나리오는 어떤 기준으로 고르면 되나요?', a: '현금흐름이 불안하면 심플, 유지 가능하면 균형, 여유가 크면 절세 극대화 시나리오를 추천합니다.' },
-  { q: '카드 공제 한도는 소득에 따라 달라지나요?', a: '네. 일반적으로 총급여 구간에 따라 기본 한도 가정이 달라지므로, 소득 입력값에 따라 목표치가 달라집니다.' },
-  { q: '결과를 저장할 수 있나요?', a: '체크리스트 상태는 브라우저 로컬 저장소에 저장됩니다.' }
+  {
+    q: '맞벌이 부부는 부부합산으로 신고하나요?',
+    a: '일반적으로 근로소득 연말정산은 개인별로 진행되며, 이 서비스는 합산 신고가 아니라 부부 간 공제 항목 배분 최적화를 돕습니다.'
+  },
+  {
+    q: '자녀 공제는 누구에게 몰아주는 게 유리한가요?',
+    a: '자녀 기본공제를 누구에게 귀속하느냐에 따라 교육비·보험료·기부금·카드 관련 추천이 달라질 수 있어, 소득과 실제 지출자를 함께 보고 배분하는 것이 유리할 가능성이 높습니다.'
+  },
+  {
+    q: '자녀 의료비를 다른 배우자가 결제했으면 어떻게 되나요?',
+    a: '기본공제 귀속자와 실제 결제자가 다르면 공제 누락 위험이 생길 수 있어, 실제 지출자 기준으로 증빙과 귀속을 다시 확인해야 합니다.'
+  },
+  {
+    q: '월세 세액공제와 현금영수증을 같이 받을 수 있나요?',
+    a: '같은 월세 지출에 대해 월세 세액공제와 현금영수증 공제를 동시에 적용하는 것은 불가능할 수 있어 둘 중 하나를 선택해 점검해야 합니다.'
+  },
+  {
+    q: '카드 사용은 누구 명의로 몰아야 하나요?',
+    a: '카드 공제는 배우자별 총급여 대비 사용액 초과 구간이 중요해 단순 합산보다 각자 부족 구간을 먼저 채우는 방식이 실수 방지에 유리합니다.'
+  }
 ];
 
-const TODO_STORAGE_KEY = 'moneyback-scenario-todos-v2';
+const TODO_STORAGE_KEY = 'moneyback-action-guide-v3';
 
 const form = document.getElementById('planner-form');
-const formError = document.getElementById('formError');
 const results = document.getElementById('results');
+const formError = document.getElementById('formError');
 const ruleUpdateDate = document.getElementById('ruleUpdateDate');
-const personalSummary = document.getElementById('personalSummary');
-const scenarioCard = document.getElementById('scenarioCard');
+const summaryList = document.getElementById('summaryList');
+const allocationBody = document.getElementById('allocationBody');
+const scenarioPanel = document.getElementById('scenarioPanel');
 const todoList = document.getElementById('todoList');
+const singleModeSection = document.getElementById('singleModeSection');
+const coupleModeSection = document.getElementById('coupleModeSection');
+const childList = document.getElementById('childList');
+const dependentList = document.getElementById('dependentList');
+const childrenCountInput = document.getElementById('childrenCount');
 
-let scenarioResults = [];
+let activeMode = 'single';
 let activeScenarioId = 'simple';
+let latestResult = null;
 
-function toNumber(raw) {
-  const digits = String(raw || '').replace(/[^0-9]/g, '');
+function sanitizeNumber(raw) {
+  const digits = String(raw == null ? '' : raw).replace(/[^0-9]/g, '');
   return digits ? Number(digits) : 0;
 }
 
 function formatMoney(value) {
-  return Number(Math.round(value)).toLocaleString('ko-KR');
+  return Number(Math.max(0, Math.round(value))).toLocaleString('ko-KR');
 }
 
-function getMonthsLeft() {
-  const now = new Date();
-  return Math.max(1, 12 - now.getMonth());
+function getMoneyInputValue(id) {
+  const el = document.getElementById(id);
+  return el ? sanitizeNumber(el.value) : 0;
 }
 
 function getBaseCardLimit(income) {
-  return TAX_CONSTANTS.card.baseLimitByIncome.find((item) => income <= item.maxIncome).limit;
+  return RULES.card.baseLimitByIncome.find((row) => income <= row.maxIncome).limit;
 }
 
-function getRiskToneText(riskTone) {
-  if (riskTone === 'low') return '낮음: 예금/채권형 중심의 변동성 낮은 구성';
-  if (riskTone === 'mid') return '중간: 채권형+혼합형 중심, 주식혼합 소량 포함';
-  return '높음: 혼합형/주식혼합 비중을 높이되 분할 매수 유지';
-}
-
-function computePersonalSummary(input) {
-  const baseDependentsCount =
-    1 + // 본인 자동 포함
-    (input.hasSpouse ? 1 : 0) +
-    input.minorChildrenCount +
-    input.elderFamilyCount;
-
-  const base = baseDependentsCount * TAX_CONSTANTS.personal.baseDeductionPerPerson;
-  const senior = input.seniorCount * TAX_CONSTANTS.personal.seniorAdditionalPerPerson;
-  const disabled = input.disabledCount * TAX_CONSTANTS.personal.disabledAdditionalPerPerson;
-  const singleParent = input.isSingleParent ? TAX_CONSTANTS.personal.singleParentAdditional : 0;
-  const total = base + senior + disabled + singleParent;
+function computeCardTargetByPerson(income, usageTotal, mixBias = 'balanced') {
+  const threshold = income * RULES.card.thresholdRate;
+  const baseLimit = getBaseCardLimit(income);
+  const weight = mixBias === 'check' ? 0.31 : mixBias === 'credit' ? 0.2 : 0.26;
+  const desiredEligibleSpend = baseLimit / weight;
+  const target = Math.max(threshold, threshold + desiredEligibleSpend);
+  const shortfall = Math.max(0, target - usageTotal);
 
   return {
-    baseDependentsCount,
-    base,
-    senior,
-    disabled,
-    singleParent,
-    total,
-    isDependentIncomeEligible: input.isDependentIncomeEligible,
-    childTaxCreditEligibleCount: input.childTaxCreditEligibleCount
+    threshold,
+    target,
+    shortfall,
+    baseLimit
   };
 }
 
-function buildScenario(input, key) {
-  const conf = TAX_CONSTANTS.scenario[key];
-  const threshold = input.annualIncome * TAX_CONSTANTS.card.deductionStartRate;
-  const baseLimit = getBaseCardLimit(input.annualIncome);
+function yearsOldFromBirthYear(birthYear) {
+  if (!birthYear) return null;
+  return RULES.year - birthYear;
+}
 
-  const weightedRate =
-    conf.mix.credit * TAX_CONSTANTS.card.rates.credit +
-    conf.mix.checkCash * TAX_CONSTANTS.card.rates.checkCash +
-    conf.mix.traditionalMarket * TAX_CONSTANTS.card.rates.traditionalMarket +
-    conf.mix.transit * TAX_CONSTANTS.card.rates.transit;
+function isMinor(birthYear) {
+  const age = yearsOldFromBirthYear(birthYear);
+  return age != null ? age <= RULES.childCredit.minorAge : null;
+}
 
-  const eligibleNeeded = (baseLimit / weightedRate) * conf.coverage;
-  const annualTarget = Math.max(
-    threshold + input.annualIncome * 0.03,
-    Math.min(threshold + eligibleNeeded, input.annualIncome * conf.maxSpendShare)
-  );
+function isChildCreditEligible(birthYear) {
+  const age = yearsOldFromBirthYear(birthYear);
+  return age != null ? age >= RULES.childCredit.minimumAge : null;
+}
 
-  const targetCredit = annualTarget * conf.mix.credit;
-  const targetCheckCash = annualTarget * conf.mix.checkCash;
-  const targetTraditionalMarket = annualTarget * conf.mix.traditionalMarket;
-  const targetTransit = annualTarget * conf.mix.transit;
+function getSpouseLabelByIncome(aIncome, bIncome) {
+  if (aIncome === bIncome) return '균형 배분';
+  return aIncome > bIncome ? '배우자 A' : '배우자 B';
+}
 
-  const currentTotal =
-    input.currentCreditCard +
-    input.currentCheckCash +
-    input.currentTraditionalMarket +
-    input.currentTransit;
+function getPreferredCardHolder(aCard, bCard) {
+  return aCard.shortfall >= bCard.shortfall ? '배우자 A' : '배우자 B';
+}
 
-  const remainingTotal = Math.max(0, annualTarget - currentTotal);
-  const monthsLeft = getMonthsLeft();
+function createChildCard(data = {}) {
+  const index = childList.children.length + 1;
+  const card = document.createElement('article');
+  card.className = 'repeat-card';
+  card.innerHTML = `
+    <div class="repeat-card-title">
+      <strong>자녀 ${index}</strong>
+      <button type="button" class="remove-btn" data-remove="child">삭제</button>
+    </div>
+    <div class="grid two-col">
+      <div>
+        <label>이름/구분명</label>
+        <input data-field="name" value="${data.name || ''}" placeholder="자녀${index}" />
+      </div>
+      <div>
+        <label>출생연도</label>
+        <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
+      </div>
+      <div>
+        <label>교육비 지출액</label>
+        <input data-field="education" data-money inputmode="numeric" value="${data.education || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>의료비 지출액</label>
+        <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>보험료 지출액</label>
+        <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>기부금 지출액</label>
+        <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>신용카드 등 사용액</label>
+        <input data-field="cardSpend" data-money inputmode="numeric" value="${data.cardSpend || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>실제 결제자 <span class="mini-help" title="기본공제 추천 귀속 대상은 자동 계산됩니다.">?</span></label>
+        <select data-field="payer">
+          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>배우자 A</option>
+          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자 B</option>
+          <option value="child" ${data.payer === 'child' ? 'selected' : ''}>자녀 본인</option>
+          <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint">8세 이상 여부/미성년 여부는 출생연도로 자동 판단됩니다.</p>
+  `;
 
-  const incomeFactor = input.annualIncome < 30000000 ? 0.75 : input.annualIncome > 70000000 ? 1.15 : 1;
-  const pensionConservative = conf.pensionConservativeMonthly * incomeFactor;
-  const pensionAggressiveRaw = conf.pensionAggressiveMonthly * incomeFactor;
-  const pensionAggressive = Math.min(
-    pensionAggressiveRaw,
-    TAX_CONSTANTS.pension.combinedAnnualLimit / 12
-  );
+  card.querySelector('[data-remove="child"]').addEventListener('click', () => {
+    card.remove();
+    renumberCards(childList, '자녀');
+    childrenCountInput.value = String(childList.children.length);
+  });
 
-  const isaMonthly = conf.isaMonthly * incomeFactor;
+  childList.appendChild(card);
+}
 
+function createDependentCard(data = {}) {
+  const index = dependentList.children.length + 1;
+  const card = document.createElement('article');
+  card.className = 'repeat-card';
+  card.innerHTML = `
+    <div class="repeat-card-title">
+      <strong>부양가족 ${index}</strong>
+      <button type="button" class="remove-btn" data-remove="dependent">삭제</button>
+    </div>
+    <div class="grid two-col">
+      <div>
+        <label>관계</label>
+        <input data-field="relation" value="${data.relation || ''}" placeholder="부, 모, 조부모 등" />
+      </div>
+      <div>
+        <label>나이</label>
+        <input data-field="age" data-money inputmode="numeric" value="${data.age || ''}" placeholder="0" />
+      </div>
+      <label class="inline-check"><input type="checkbox" data-field="incomeEligible" ${data.incomeEligible ? 'checked' : ''} />소득요건 충족 여부</label>
+      <label class="inline-check"><input type="checkbox" data-field="disabled" ${data.disabled ? 'checked' : ''} />장애인 여부</label>
+      <label class="inline-check"><input type="checkbox" data-field="senior70" ${data.senior70 ? 'checked' : ''} />70세 이상 여부</label>
+      <div></div>
+      <div>
+        <label>의료비 지출액</label>
+        <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>기부금 지출액</label>
+        <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>보험료 지출액</label>
+        <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>신용카드 등 사용액</label>
+        <input data-field="card" data-money inputmode="numeric" value="${data.card || ''}" placeholder="0" />
+      </div>
+      <div>
+        <label>실제 결제자</label>
+        <select data-field="payer">
+          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>배우자 A</option>
+          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자 B</option>
+          <option value="dependent" ${data.payer === 'dependent' ? 'selected' : ''}>부양가족 본인</option>
+          <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
+        </select>
+      </div>
+    </div>
+  `;
+
+  card.querySelector('[data-remove="dependent"]').addEventListener('click', () => {
+    card.remove();
+    renumberCards(dependentList, '부양가족');
+  });
+
+  dependentList.appendChild(card);
+}
+
+function renumberCards(container, label) {
+  Array.from(container.children).forEach((card, idx) => {
+    const title = card.querySelector('.repeat-card-title strong');
+    if (title) title.textContent = `${label} ${idx + 1}`;
+  });
+}
+
+function syncChildrenCount() {
+  const desired = sanitizeNumber(childrenCountInput.value);
+  const current = childList.children.length;
+
+  if (desired > current) {
+    for (let i = 0; i < desired - current; i += 1) createChildCard();
+  } else if (desired < current) {
+    for (let i = 0; i < current - desired; i += 1) childList.lastElementChild.remove();
+  }
+  renumberCards(childList, '자녀');
+}
+
+function parseChildCards() {
+  return Array.from(childList.children).map((card, idx) => {
+    const read = (field) => card.querySelector(`[data-field="${field}"]`);
+    const birthYear = sanitizeNumber(read('birthYear').value);
+    const autoMinor = isMinor(birthYear);
+    const auto8plus = isChildCreditEligible(birthYear);
+
+    return {
+      name: read('name').value.trim() || `자녀${idx + 1}`,
+      birthYear,
+      isMinor: autoMinor,
+      is8Plus: auto8plus,
+      education: sanitizeNumber(read('education').value),
+      medical: sanitizeNumber(read('medical').value),
+      insurance: sanitizeNumber(read('insurance').value),
+      donation: sanitizeNumber(read('donation').value),
+      cardSpend: sanitizeNumber(read('cardSpend').value),
+      payer: read('payer').value
+    };
+  });
+}
+
+function parseDependentCards() {
+  return Array.from(dependentList.children).map((card, idx) => {
+    const read = (field) => card.querySelector(`[data-field="${field}"]`);
+    return {
+      relation: read('relation').value.trim() || `부양가족${idx + 1}`,
+      age: sanitizeNumber(read('age').value),
+      incomeEligible: read('incomeEligible').checked,
+      disabled: read('disabled').checked,
+      senior70: read('senior70').checked,
+      medical: sanitizeNumber(read('medical').value),
+      donation: sanitizeNumber(read('donation').value),
+      insurance: sanitizeNumber(read('insurance').value),
+      card: sanitizeNumber(read('card').value),
+      payer: read('payer').value
+    };
+  });
+}
+
+function collectSingleInput() {
   return {
-    id: key,
-    title: conf.title,
-    summary: conf.summary,
-    cardPlan: {
-      targetEligibleSpend: annualTarget,
-      targetCredit,
-      targetCheckCash,
-      targetTraditionalMarket,
-      targetTransit,
-      remainingTotal,
-      monthlyTargets: {
-        total: annualTarget / 12,
-        credit: targetCredit / 12,
-        checkCash: targetCheckCash / 12,
-        traditionalMarket: targetTraditionalMarket / 12,
-        transit: targetTransit / 12,
-        additionalNeededByYearEnd: remainingTotal / monthsLeft
-      }
+    mode: 'single',
+    income: getMoneyInputValue('annualIncome'),
+    monthlyRent: getMoneyInputValue('singleMonthlyRent'),
+    pension: getMoneyInputValue('singlePension'),
+    irp: getMoneyInputValue('singleIrp'),
+    credit: getMoneyInputValue('currentCreditCard'),
+    checkCash: getMoneyInputValue('currentCheckCash'),
+    market: getMoneyInputValue('currentTraditionalMarket'),
+    transit: getMoneyInputValue('currentTransit')
+  };
+}
+
+function collectCoupleInput() {
+  return {
+    mode: 'couple',
+    isMarriedRegistered: document.getElementById('isMarriedRegistered').checked,
+    spouseA: {
+      income: getMoneyInputValue('aIncome'),
+      credit: getMoneyInputValue('aCredit'),
+      checkCash: getMoneyInputValue('aCheckCash'),
+      market: getMoneyInputValue('aMarket'),
+      transit: getMoneyInputValue('aTransit'),
+      pension: getMoneyInputValue('aPension'),
+      irp: getMoneyInputValue('aIrp'),
+      rent: getMoneyInputValue('aRent'),
+      medical: getMoneyInputValue('aMedical'),
+      donation: getMoneyInputValue('aDonation')
     },
-    pensionPlan: {
-      conservativeMonthly: pensionConservative,
-      aggressiveMonthly: pensionAggressive,
-      note: `연금저축/IRP 합산 가이드 상수(연 ${formatMoney(TAX_CONSTANTS.pension.combinedAnnualLimit)}원)는 연도별 변경 가능성 있음`
+    spouseB: {
+      income: getMoneyInputValue('bIncome'),
+      credit: getMoneyInputValue('bCredit'),
+      checkCash: getMoneyInputValue('bCheckCash'),
+      market: getMoneyInputValue('bMarket'),
+      transit: getMoneyInputValue('bTransit'),
+      pension: getMoneyInputValue('bPension'),
+      irp: getMoneyInputValue('bIrp'),
+      rent: getMoneyInputValue('bRent'),
+      medical: getMoneyInputValue('bMedical'),
+      donation: getMoneyInputValue('bDonation')
     },
-    isaPlan: {
-      monthly: isaMonthly,
-      yearly: isaMonthly * 12,
-      riskTone: conf.riskTone,
-      note: TAX_CONSTANTS.isa.note
+    children: parseChildCards(),
+    dependents: parseDependentCards()
+  };
+}
+
+function validateInput(input) {
+  if (input.mode === 'single') {
+    if (!input.income) return '연봉(총급여)을 입력해 주세요.';
+    return '';
+  }
+
+  if (!input.spouseA.income || !input.spouseB.income) {
+    return '맞벌이 모드에서는 배우자 A/B 연봉(총급여)을 모두 입력해 주세요.';
+  }
+
+  if (!input.isMarriedRegistered) {
+    return '혼인신고 여부가 체크되지 않았습니다. 맞벌이 부부 최적화 모드 사용 전 상태를 확인해 주세요.';
+  }
+
+  return '';
+}
+
+function buildSingleRecommendation(input) {
+  const totalCard = input.credit + input.checkCash + input.market + input.transit;
+  const card = computeCardTargetByPerson(input.income, totalCard, input.checkCash > input.credit ? 'check' : 'balanced');
+  const preferredType = card.shortfall > 0 ? (input.checkCash >= input.credit ? '체크카드/현금영수증' : '체크카드') : '추가 사용보다 증빙 점검';
+
+  const warnings = [];
+  if (input.monthlyRent > 0 && input.checkCash > 0) warnings.push(RULES.warnings.rentCashOverlap);
+
+  const summary = [
+    `현재 기준으로는 카드 사용을 무리하게 늘리기보다, 남은 목표 ${formatMoney(card.shortfall)}원을 계획 지출 안에서 ${preferredType} 위주로 배치하는 편이 유리할 가능성이 높습니다.`,
+    `연금저축+IRP 입력 합계는 ${formatMoney(input.pension + input.irp)}원입니다. 연간 가이드 상한 ${formatMoney(RULES.irp.yearlyGuideLimit)}원 대비 여유를 확인해 자동이체 금액을 조정해 보세요.`,
+    input.monthlyRent > 0
+      ? '월세 지출을 입력하셨으므로, 월세 세액공제와 현금영수증 처리 중 어떤 방식으로 갈지 하나만 확정하는 점검이 필요합니다.'
+      : '월세 입력이 없으므로 카드/현금영수증 증빙 누락 점검에 집중하는 전략이 적합합니다.'
+  ];
+
+  const allocations = [
+    {
+      item: '카드사용액 전략',
+      current: `누적 ${formatMoney(totalCard)}원`,
+      target: '본인',
+      reason: `총급여 ${formatMoney(input.income)}원 기준 목표 대비 부족분 ${formatMoney(card.shortfall)}원을 먼저 확인`,
+      caution: card.shortfall > 0 ? '계획 없는 추가 소비는 피하고, 결제수단만 조정하세요.' : '목표 구간 도달 가능성이 높아 증빙 정리 우선'
     },
-    todo: [
-      '이번 주 안에 카드/현금영수증 사용내역 누락 여부 확인하기',
-      `월 ${formatMoney(Math.round(pensionConservative))}원 연금 자동이체 먼저 설정하기`,
-      `ISA 월 ${formatMoney(Math.round(isaMonthly))}원 목표를 캘린더에 등록하기`
+    {
+      item: '연금저축/IRP',
+      current: `연금저축 ${formatMoney(input.pension)} / IRP ${formatMoney(input.irp)}`,
+      target: '본인',
+      reason: '연말 몰아서 납입하기보다 월 자동이체 유지가 실수 방지에 유리',
+      caution: '한도는 연도별로 변동될 수 있어 최종 확인 필요'
+    },
+    {
+      item: '월세',
+      current: input.monthlyRent > 0 ? `월 ${formatMoney(input.monthlyRent)}원 지출 입력` : '입력 없음',
+      target: '본인',
+      reason: '월세 증빙 방식 선택이 누락되면 공제 누락 가능성',
+      caution: RULES.warnings.rentCashOverlap
+    }
+  ];
+
+  const scenarioContent = {
+    simple: [
+      '이번 달은 결제수단 변경 최소화로 시작합니다.',
+      '남은 소비 중 생활필수 지출만 체크카드/현금영수증으로 우선 배치합니다.',
+      '증빙 누락(현금영수증 미발급) 여부만 먼저 점검합니다.'
     ],
-    rationale: [
-      `카드 공제 가정은 총급여의 ${Math.round(TAX_CONSTANTS.card.deductionStartRate * 100)}% 초과 사용분부터 시작했습니다.`,
-      '시나리오별 결제수단 비중(신용/체크·현금/전통시장/대중교통)을 다르게 설정해 목표치를 만들었습니다.',
-      `기본 카드 공제 한도는 총급여 구간별 가정(현재 입력 기준 ${formatMoney(baseLimit)}원)으로 반영했습니다.`,
-      '실제 공제/세액은 연도별 세법, 공제 요건, 증빙 여부에 따라 달라질 수 있습니다.'
+    balanced: [
+      '신용카드 비중이 높다면 일부를 체크카드로 이동해 공제 효율 균형을 맞춥니다.',
+      '연금저축/IRP는 월 자동이체를 유지하면서 분기별로 한도 여유를 확인합니다.',
+      '월세가 있다면 월세 세액공제와 현금영수증 중 한 가지 경로를 문서로 확정합니다.'
+    ],
+    max: [
+      '연말 전까지 부족분을 월 단위로 쪼개 결제수단을 적극 최적화합니다.',
+      '연금저축/IRP를 우선순위로 배치해 연말 급납입 리스크를 줄입니다.',
+      '카드·현금·월세 증빙 경로를 한 장표로 만들어 누락 가능성을 최소화합니다.'
     ]
   };
+
+  const todos = [
+    `이번 주에 카드 부족분 ${formatMoney(card.shortfall)}원 달성 가능한 결제 항목만 분류하기`,
+    '월세는 세액공제로 갈지 현금영수증으로 갈지 하나만 선택하기',
+    '홈택스 간소화 자료에서 누락된 카드/현금영수증 항목 확인하기'
+  ];
+
+  return {
+    mode: 'single',
+    summary,
+    allocations,
+    warnings,
+    scenarios: scenarioContent,
+    todos,
+    cardStats: { self: card }
+  };
 }
 
-function generateScenarios(input) {
-  return ['simple', 'balanced', 'max'].map((key) => buildScenario(input, key));
+function buildCoupleRecommendation(input) {
+  const aTotalCard = input.spouseA.credit + input.spouseA.checkCash + input.spouseA.market + input.spouseA.transit;
+  const bTotalCard = input.spouseB.credit + input.spouseB.checkCash + input.spouseB.market + input.spouseB.transit;
+  const aCard = computeCardTargetByPerson(input.spouseA.income, aTotalCard, input.spouseA.checkCash > input.spouseA.credit ? 'check' : 'balanced');
+  const bCard = computeCardTargetByPerson(input.spouseB.income, bTotalCard, input.spouseB.checkCash > input.spouseB.credit ? 'check' : 'balanced');
+
+  const recommendedChildOwner = getSpouseLabelByIncome(input.spouseA.income, input.spouseB.income);
+  const preferredCardHolder = getPreferredCardHolder(aCard, bCard);
+
+  const allocations = [];
+  const warnings = [RULES.warnings.duplicateDependent];
+
+  input.children.forEach((child) => {
+    const owner = recommendedChildOwner === '균형 배분' ? '배우자 A 우선(동률)' : recommendedChildOwner;
+    const payerLabel = child.payer === 'A' ? '배우자 A' : child.payer === 'B' ? '배우자 B' : child.payer === 'child' ? '자녀 본인' : '모름';
+    const mismatchMedical = child.medical > 0 && !['unknown', 'child'].includes(child.payer) && payerLabel !== owner;
+
+    allocations.push({
+      item: `기본공제(${child.name})`,
+      current: `출생연도 ${child.birthYear || '-'} / 8세 이상 ${child.is8Plus == null ? '판단불가' : child.is8Plus ? '예' : '아니오'} / 미성년 ${child.isMinor == null ? '판단불가' : child.isMinor ? '예' : '아니오'}`,
+      target: owner,
+      reason: '소득 구간 기준으로 기본공제 귀속자를 먼저 정하면 연계 항목(교육비·보험료·기부금) 정리가 쉬워집니다.',
+      caution: '최종 제출 전 자녀별 귀속 1인 확정 필요'
+    });
+
+    allocations.push({
+      item: `교육비(${child.name})`,
+      current: `${formatMoney(child.education)}원 / 실제 결제자 ${payerLabel}`,
+      target: owner,
+      reason: '자녀 교육비는 자녀 기본공제를 받는 사람에게 귀속 추천',
+      caution: child.education > 0 ? '영수증 명의 및 귀속자 일치 여부 확인 필요' : '입력 없음'
+    });
+
+    allocations.push({
+      item: `의료비(${child.name})`,
+      current: `${formatMoney(child.medical)}원 / 실제 결제자 ${payerLabel}`,
+      target: owner,
+      reason: '의료비는 기본공제 귀속과 실제 지출자 기준이 엇갈리면 누락 위험이 커집니다.',
+      caution: mismatchMedical ? RULES.warnings.payerMismatch : '실제 지출자 기준 증빙 확인 필요'
+    });
+
+    if (mismatchMedical) warnings.push(`자녀 ${child.name} 의료비는 결제자와 기본공제 추천 귀속자가 달라 누락 위험이 있습니다.`);
+  });
+
+  allocations.push({
+    item: '배우자 의료비',
+    current: `A ${formatMoney(input.spouseA.medical)}원 / B ${formatMoney(input.spouseB.medical)}원`,
+    target: '실제 지출자 기준 분리',
+    reason: '배우자 의료비는 실제 지출한 사람이 공제받을 수 있는 항목으로 분리 점검이 필요합니다.',
+    caution: '각자 결제 내역 증빙 보관 필요'
+  });
+
+  allocations.push({
+    item: '카드사용액 전략',
+    current: `A 부족 ${formatMoney(aCard.shortfall)}원 / B 부족 ${formatMoney(bCard.shortfall)}원`,
+    target: `${preferredCardHolder} 우선`,
+    reason: '카드 공제는 부부 합산이 아니라 배우자별 총급여 대비 초과 구간을 각각 채우는 구조가 중요합니다.',
+    caution: '계획 없는 소비 증가 대신 기존 지출 명의만 조정'
+  });
+
+  allocations.push({
+    item: '연금저축/IRP',
+    current: `A ${formatMoney(input.spouseA.pension + input.spouseA.irp)}원 / B ${formatMoney(input.spouseB.pension + input.spouseB.irp)}원`,
+    target: '한도 여유가 큰 배우자 우선',
+    reason: '연말 몰아넣기보다 부부 각각 자동이체를 유지하면 누락과 착오를 줄일 수 있습니다.',
+    caution: `연간 가이드 ${formatMoney(RULES.irp.yearlyGuideLimit)}원은 변동 가능`
+  });
+
+  const rentOverlap = (input.spouseA.rent > 0 && input.spouseA.checkCash > 0) || (input.spouseB.rent > 0 && input.spouseB.checkCash > 0);
+  allocations.push({
+    item: '월세',
+    current: `A 월세 ${formatMoney(input.spouseA.rent)}원 / B 월세 ${formatMoney(input.spouseB.rent)}원`,
+    target: '월세 세액공제 또는 현금영수증 중 1개 선택',
+    reason: '같은 지출에 대해 중복 적용을 피해야 합니다.',
+    caution: RULES.warnings.rentCashOverlap
+  });
+  if (rentOverlap) warnings.push(RULES.warnings.rentCashOverlap);
+
+  input.dependents.forEach((dep) => {
+    const recommended = dep.payer === 'B' ? '배우자 B' : '배우자 A';
+    allocations.push({
+      item: `기타 부양가족(${dep.relation})`,
+      current: `나이 ${dep.age} / 소득요건 ${dep.incomeEligible ? '충족' : '미충족 또는 미확인'} / 결제자 ${dep.payer === 'B' ? '배우자 B' : dep.payer === 'A' ? '배우자 A' : dep.payer === 'dependent' ? '부양가족 본인' : '모름'}`,
+      target: recommended,
+      reason: '중복공제를 피하려면 가족별로 귀속자를 한 사람으로 고정하는 것이 안전합니다.',
+      caution: dep.incomeEligible ? '요건 충족 가정이므로 증빙 확인 필요' : '소득요건 미확인 시 공제 누락 가능성'
+    });
+  });
+
+  const firstSummary =
+    input.children.length > 0
+      ? `우리 집 현재 기준 추천: 자녀 ${input.children.length}명 중 ${input.children.length}명 모두 ${recommendedChildOwner === '균형 배분' ? '배우자 A 우선(동률)' : recommendedChildOwner} 귀속이 유리할 가능성이 높습니다.`
+      : '우리 집 현재 기준 추천: 자녀 입력이 없어 자녀 귀속 최적화는 제외하고 카드·월세·의료비 중심으로 점검했습니다.';
+
+  const summary = [
+    firstSummary,
+    `카드 추가 사용은 ${preferredCardHolder} 명의 체크카드/현금영수증 위주로 먼저 배치하는 전략이 적합합니다.`,
+    '월세는 세액공제와 현금영수증 중 하나만 선택해 중복 이슈를 피해야 합니다.',
+    warnings.some((line) => line.includes('의료비'))
+      ? '자녀 의료비에서 결제자와 기본공제 귀속이 달라 공제 누락 위험이 있습니다.'
+      : '자녀 의료비는 실제 지출자 기준과 기본공제 귀속자 일치 여부를 최종 점검하세요.'
+  ];
+
+  const scenarioContent = {
+    simple: [
+      '자녀 기본공제 귀속은 한 번 정하면 연관 항목(교육비·보험료·기부금)도 같은 귀속자 기준으로 유지합니다.',
+      `카드 전략은 ${preferredCardHolder} 부족 구간부터 먼저 채우고, 다른 배우자는 현재 패턴 유지를 권장합니다.`,
+      '부양가족별로 누가 공제받는지 체크리스트 1장으로 정리해 중복공제를 방지합니다.'
+    ],
+    balanced: [
+      '자녀 귀속은 소득·지출 증빙을 함께 보며 1명 단위로 재배분합니다.',
+      '카드는 A/B 각각 부족 구간을 월 단위로 나눠 채우고, 생활 편의가 높은 결제수단을 우선 사용합니다.',
+      '연금저축/IRP는 한도 여유가 큰 배우자부터 비중을 높이고, 다른 배우자는 최소 자동이체를 유지합니다.'
+    ],
+    max: [
+      '부부 간 귀속을 항목별로 적극 최적화해 자녀/부양가족 항목을 최대한 정밀하게 배분합니다.',
+      '카드는 부족분이 큰 배우자 명의로 계획 지출을 집중해 초과 구간을 우선 확보합니다.',
+      '의료비·월세·기부금은 실제 지출자 증빙을 기준으로 연말 전에 귀속 충돌을 해소합니다.'
+    ]
+  };
+
+  const todos = [
+    input.children.length > 0
+      ? `${input.children[0].name} 교육비를 기본공제 받을 배우자 명의 기준으로 다시 점검하기`
+      : '자녀 귀속자가 확정됐다면 교육비/의료비/보험료 귀속도 같은 기준으로 맞추기',
+    '월세는 세액공제로 갈지 현금영수증으로 갈지 하나만 선택하기',
+    `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`,
+    '홈택스 간소화 자료에서 부부 중복공제 여부 최종 확인하기'
+  ];
+
+  return {
+    mode: 'couple',
+    summary,
+    allocations,
+    warnings,
+    scenarios: scenarioContent,
+    todos,
+    cardStats: { aCard, bCard }
+  };
 }
 
-function renderPersonalSummary(summary, income) {
-  const childTaxBadge =
-    summary.childTaxCreditEligibleCount > 0
-      ? `<p><span class="summary-badge">자녀세액공제 참고: 8세 이상 자녀 ${summary.childTaxCreditEligibleCount}명 검토 대상</span></p>`
-      : '<p><span class="summary-badge muted">자녀세액공제 참고: 해당 없음(입력 기준)</span></p>';
+function renderSummary(lines) {
+  summaryList.innerHTML = lines.map((line) => `<li>${line}</li>`).join('');
+}
 
-  personalSummary.innerHTML = [
-    `<p><strong>입력 연봉:</strong> ${formatMoney(income)}원</p>`,
-    `<p><strong>기본공제 인원(간편 계산):</strong> ${summary.baseDependentsCount}명 (본인 자동 포함)</p>`,
-    `<p><strong>인적공제 가이드 합계:</strong> ${formatMoney(summary.total)}원 (기본 ${formatMoney(summary.base)} / 경로우대 ${formatMoney(summary.senior)} / 장애인 ${formatMoney(summary.disabled)} / 한부모 ${formatMoney(summary.singleParent)})</p>`,
-    childTaxBadge,
-    summary.isDependentIncomeEligible
-      ? '<p>부양가족 소득요건 충족 가정으로 반영했습니다.</p>'
-      : '<p>부양가족 소득요건 체크가 꺼져 있어, 공제 적용 전 요건 확인이 필요합니다.</p>',
-    `<p>${TAX_CONSTANTS.childTaxCredit.note}</p>`,
-    '<p>위 금액은 참고용 입력 가이드이며, 실제 인정 여부는 개인 요건 및 증빙 기준을 확인해야 합니다.</p>'
-  ].join('');
+function renderAllocations(rows) {
+  allocationBody.innerHTML = rows
+    .map(
+      (row) => `
+      <tr>
+        <td>${row.item}</td>
+        <td>${row.current}</td>
+        <td>${row.target}</td>
+        <td>${row.reason}</td>
+        <td>${row.caution}</td>
+      </tr>
+    `
+    )
+    .join('');
+}
+
+function renderScenario() {
+  if (!latestResult) return;
+  const conf = RULES.scenario[activeScenarioId];
+  const actions = latestResult.scenarios[activeScenarioId] || [];
+  const intro = latestResult.mode === 'couple' ? conf.coupleSummary : conf.singleSummary;
+
+  scenarioPanel.innerHTML = `
+    <p><strong>${conf.title}</strong> · ${intro}</p>
+    <ul class="scenario-list">
+      ${actions.map((line) => `<li>${line}</li>`).join('')}
+    </ul>
+  `;
+
+  const activeTab = document.querySelector(`.tab-btn[data-tab="${activeScenarioId}"]`);
+  if (activeTab) scenarioPanel.setAttribute('aria-labelledby', activeTab.id);
 }
 
 function loadTodoState() {
@@ -273,105 +661,34 @@ function saveTodoState(state) {
   localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(state));
 }
 
-function renderTodo(scenario) {
-  const state = loadTodoState();
-  const currentState = state[scenario.id] || scenario.todo.map(() => false);
+function renderTodos(items) {
+  const storage = loadTodoState();
+  const key = `${latestResult.mode}-${activeScenarioId}`;
+  const checkedState = storage[key] || items.map(() => false);
 
-  todoList.innerHTML = scenario.todo
-    .map((item, idx) => `
+  todoList.innerHTML = items
+    .map(
+      (item, idx) => `
       <li>
-        <input type="checkbox" id="todo-${scenario.id}-${idx}" ${currentState[idx] ? 'checked' : ''} />
-        <label for="todo-${scenario.id}-${idx}" class="${currentState[idx] ? 'done' : ''}">${item}</label>
+        <input type="checkbox" id="todo-${idx}" ${checkedState[idx] ? 'checked' : ''} />
+        <label for="todo-${idx}" class="${checkedState[idx] ? 'done' : ''}">${item}</label>
       </li>
-    `)
+    `
+    )
     .join('');
 
-  scenario.todo.forEach((_, idx) => {
-    const checkbox = document.getElementById(`todo-${scenario.id}-${idx}`);
-    const label = document.querySelector(`label[for="todo-${scenario.id}-${idx}"]`);
-    checkbox.addEventListener('change', () => {
+  items.forEach((_, idx) => {
+    const input = document.getElementById(`todo-${idx}`);
+    const label = document.querySelector(`label[for="todo-${idx}"]`);
+    input.addEventListener('change', () => {
       const next = loadTodoState();
-      const base = next[scenario.id] || scenario.todo.map(() => false);
-      base[idx] = checkbox.checked;
-      next[scenario.id] = base;
+      const base = next[key] || items.map(() => false);
+      base[idx] = input.checked;
+      next[key] = base;
       saveTodoState(next);
-      label.classList.toggle('done', checkbox.checked);
+      label.classList.toggle('done', input.checked);
     });
   });
-}
-
-function renderScenario(scenario) {
-  const plan = scenario.cardPlan;
-
-  scenarioCard.innerHTML = `
-    <h3>${scenario.title}</h3>
-    <p>${scenario.summary}</p>
-
-    <section class="block">
-      <h4>A. 카드/현금 목표 사용액(가이드)</h4>
-      <ul>
-        <li>연간 목표 사용액: ${formatMoney(plan.targetEligibleSpend)}원</li>
-        <li>월 평균 목표: ${formatMoney(plan.monthlyTargets.total)}원</li>
-        <li>현재 입력 기준 남은 기간 추가 목표: ${formatMoney(plan.remainingTotal)}원 (월 약 ${formatMoney(plan.monthlyTargets.additionalNeededByYearEnd)}원)</li>
-      </ul>
-    </section>
-
-    <section class="block">
-      <h4>B. 카테고리별 목표</h4>
-      <ul>
-        <li>신용카드 목표: 연 ${formatMoney(plan.targetCredit)}원 / 월 ${formatMoney(plan.monthlyTargets.credit)}원</li>
-        <li>체크·현금영수증 목표: 연 ${formatMoney(plan.targetCheckCash)}원 / 월 ${formatMoney(plan.monthlyTargets.checkCash)}원</li>
-        <li>전통시장 목표: 연 ${formatMoney(plan.targetTraditionalMarket)}원 / 월 ${formatMoney(plan.monthlyTargets.traditionalMarket)}원</li>
-        <li>대중교통 목표: 연 ${formatMoney(plan.targetTransit)}원 / 월 ${formatMoney(plan.monthlyTargets.transit)}원</li>
-      </ul>
-    </section>
-
-    <section class="block">
-      <h4>C. 연금저축/IRP 월 납입</h4>
-      <ul>
-        <li>보수적: 월 ${formatMoney(scenario.pensionPlan.conservativeMonthly)}원</li>
-        <li>적극: 월 ${formatMoney(scenario.pensionPlan.aggressiveMonthly)}원</li>
-      </ul>
-      <p>${scenario.pensionPlan.note}</p>
-    </section>
-
-    <section class="block">
-      <h4>D. ISA 운용 가이드</h4>
-      <ul>
-        <li>월 목표: ${formatMoney(scenario.isaPlan.monthly)}원</li>
-        <li>연 목표: ${formatMoney(scenario.isaPlan.yearly)}원</li>
-        <li>리스크 톤: ${getRiskToneText(scenario.isaPlan.riskTone)}</li>
-      </ul>
-      <p>${scenario.isaPlan.note}</p>
-    </section>
-
-    <button type="button" class="accordion-btn" id="rationaleBtn">근거/가정 펼치기</button>
-    <div class="accordion-content hidden" id="rationaleBody">
-      ${scenario.rationale.map((line) => `<p>${line}</p>`).join('')}
-    </div>
-  `;
-
-  const rationaleBtn = document.getElementById('rationaleBtn');
-  const rationaleBody = document.getElementById('rationaleBody');
-  rationaleBtn.addEventListener('click', () => {
-    const opened = !rationaleBody.classList.contains('hidden');
-    rationaleBody.classList.toggle('hidden');
-    rationaleBtn.textContent = opened ? '근거/가정 펼치기' : '근거/가정 접기';
-  });
-
-  renderTodo(scenario);
-}
-
-function activateTab(id) {
-  activeScenarioId = id;
-  document.querySelectorAll('.tab-btn').forEach((btn) => {
-    const active = btn.getAttribute('data-tab') === id;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', active ? 'true' : 'false');
-  });
-
-  const scenario = scenarioResults.find((item) => item.id === id);
-  if (scenario) renderScenario(scenario);
 }
 
 function renderFaq() {
@@ -379,11 +696,11 @@ function renderFaq() {
   faqList.innerHTML = FAQ_ITEMS
     .map(
       (item) => `
-        <details class="faq-item">
-          <summary>${item.q}</summary>
-          <p>${item.a}</p>
-        </details>
-      `
+      <details class="faq-item">
+        <summary>${item.q}</summary>
+        <p>${item.a}</p>
+      </details>
+    `
     )
     .join('');
 
@@ -399,78 +716,122 @@ function renderFaq() {
   document.getElementById('faq-jsonld').textContent = JSON.stringify(faqLd);
 }
 
-function setupMoneyInputs() {
-  document.querySelectorAll('input[data-money]').forEach((input) => {
-    input.addEventListener('input', (e) => {
-      const digits = e.target.value.replace(/[^0-9]/g, '');
-      e.target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+function renderAll(result) {
+  latestResult = result;
+  renderSummary(result.summary);
+  renderAllocations(result.allocations);
+  renderScenario();
+  renderTodos(result.todos);
+
+  results.classList.remove('hidden');
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleMode(mode) {
+  activeMode = mode;
+  singleModeSection.classList.toggle('hidden', mode !== 'single');
+  coupleModeSection.classList.toggle('hidden', mode !== 'couple');
+  formError.textContent = '';
+}
+
+function activateScenarioTab(nextId) {
+  activeScenarioId = nextId;
+  const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+
+  tabs.forEach((btn) => {
+    const isActive = btn.dataset.tab === nextId;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+
+  if (latestResult) {
+    renderScenario();
+    renderTodos(latestResult.todos);
+  }
+}
+
+function setupTabsKeyboard() {
+  const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const nextIdx = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+      tabs[nextIdx].focus();
+      activateScenarioTab(tabs[nextIdx].dataset.tab);
     });
   });
 }
 
-function getInputValue(id) {
-  return toNumber(document.getElementById(id).value);
+function setupAccordions() {
+  document.querySelectorAll('.accordion-trigger').forEach((btn) => {
+    const panelId = btn.getAttribute('aria-controls');
+    const panel = document.getElementById(panelId);
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      panel.classList.toggle('hidden', isOpen);
+    });
+  });
+}
+
+function setupMoneyInputs() {
+  document.addEventListener('input', (e) => {
+    const target = e.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (!target.hasAttribute('data-money')) return;
+
+    const digits = target.value.replace(/[^0-9]/g, '');
+    target.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+  });
+}
+
+function bootstrapRepeatLists() {
+  childrenCountInput.value = '0';
+
+  document.getElementById('addChildBtn').addEventListener('click', () => {
+    createChildCard();
+    childrenCountInput.value = String(childList.children.length);
+  });
+
+  document.getElementById('syncChildrenBtn').addEventListener('click', syncChildrenCount);
+
+  document.getElementById('addDependentBtn').addEventListener('click', () => {
+    createDependentCard();
+  });
 }
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-
-  const annualIncome = getInputValue('annualIncome');
-  if (!annualIncome) {
-    formError.textContent = '연봉(총급여)을 입력해 주세요.';
-    return;
-  }
-
-  const minorChildrenCount = getInputValue('minorChildrenCount');
-  const childTaxCreditEligibleCount = getInputValue('childTaxCreditEligibleCount');
-  const elderFamilyCount = getInputValue('elderFamilyCount');
-  const seniorCount = getInputValue('seniorCount');
-  const disabledCount = getInputValue('disabledCount');
-  const hasSpouse = document.getElementById('hasSpouse').checked;
-  const baseDependentsCount = 1 + (hasSpouse ? 1 : 0) + minorChildrenCount + elderFamilyCount;
-
-  if (seniorCount > elderFamilyCount + (hasSpouse ? 1 : 0)) {
-    formError.textContent = '70세 이상 인원은 배우자+부모/조부모 입력 수를 넘지 않게 입력해 주세요.';
-    return;
-  }
-  if (disabledCount > baseDependentsCount) {
-    formError.textContent = '장애인 인원은 기본공제 인원 범위 안에서 입력해 주세요.';
-    return;
-  }
-  if (childTaxCreditEligibleCount > minorChildrenCount) {
-    formError.textContent = '8세 이상 자녀 수는 미성년 자녀 수(만 20세 이하)를 넘을 수 없습니다.';
-    return;
-  }
-
   formError.textContent = '';
 
-  const input = {
-    annualIncome,
-    hasSpouse,
-    minorChildrenCount,
-    childTaxCreditEligibleCount,
-    elderFamilyCount,
-    seniorCount,
-    disabledCount,
-    isSingleParent: document.getElementById('isSingleParent').checked,
-    isDependentIncomeEligible: document.getElementById('isDependentIncomeEligible').checked,
-    currentCreditCard: getInputValue('currentCreditCard'),
-    currentCheckCash: getInputValue('currentCheckCash'),
-    currentTraditionalMarket: getInputValue('currentTraditionalMarket'),
-    currentTransit: getInputValue('currentTransit')
-  };
+  const input = activeMode === 'single' ? collectSingleInput() : collectCoupleInput();
+  const error = validateInput(input);
 
-  scenarioResults = generateScenarios(input);
-  renderPersonalSummary(computePersonalSummary(input), annualIncome);
-  activateTab(activeScenarioId);
-  results.classList.remove('hidden');
-  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (error) {
+    formError.textContent = error;
+    results.classList.add('hidden');
+    return;
+  }
+
+  const result = input.mode === 'single' ? buildSingleRecommendation(input) : buildCoupleRecommendation(input);
+  renderAll(result);
+});
+
+document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+  radio.addEventListener('change', (e) => {
+    toggleMode(e.target.value);
+  });
 });
 
 document.querySelectorAll('.tab-btn').forEach((btn) => {
-  btn.addEventListener('click', () => activateTab(btn.getAttribute('data-tab')));
+  btn.addEventListener('click', () => activateScenarioTab(btn.dataset.tab));
 });
 
-ruleUpdateDate.textContent = LAST_RULE_UPDATE;
+ruleUpdateDate.textContent = RULES.meta.updatedAt;
 setupMoneyInputs();
+setupTabsKeyboard();
+setupAccordions();
+bootstrapRepeatLists();
 renderFaq();
