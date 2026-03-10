@@ -345,9 +345,13 @@ function getBandRulesForSpend(kind) {
 }
 
 function fillSubOptions(selectEl, values) {
+  const previousValue = selectEl.value;
   selectEl.innerHTML = `<option value="">기본값</option>${values
     .map((v) => `<option value="${v}">${formatMoney(v)}원</option>`)
     .join('')}`;
+  if (previousValue && values.map(String).includes(String(previousValue))) {
+    selectEl.value = String(previousValue);
+  }
 }
 
 function resolveSpendValue(kind, bandEl, subEl, directInputEl, directToggleEl) {
