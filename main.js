@@ -165,64 +165,147 @@ const state = {
 
 const FAQ_ITEMS = [
   {
-    q: '맞벌이 부부는 부부합산으로 신고하나요?',
-    a: '<p>일반적으로 근로소득 연말정산은 개인 단위로 진행됩니다. 그래서 이 서비스도 “합산 신고”를 전제로 하지 않고, 부부가 같은 항목을 중복 공제하지 않도록 배분과 점검 순서를 안내합니다.</p><p>즉, 맞벌이 모드의 핵심은 신고 방식 변경이 아니라 누가 어떤 항목을 점검하면 실수를 줄일 수 있는지 정리하는 것입니다.</p>'
+    q: '연말정산 환급을 많이 받으려면 무조건 카드를 더 써야 하나요?',
+    a: '<p>그렇지는 않습니다. 카드 공제는 총급여의 일정 기준 사용액을 넘긴 뒤에야 효과가 생기기 때문에, 기준 전이라면 결제수단 조정이 중요하고 기준을 넘긴 뒤라면 추가 소비보다 증빙 정리가 더 중요할 수 있습니다.</p><p>이 도구도 “더 쓰기”보다 “어떤 수단으로 쓰는 게 유리한지”와 연금저축·인적공제 우선순위를 함께 보도록 설계했습니다.</p>'
   },
   {
-    q: '맞벌이 부부는 무엇을 먼저 점검해야 하나요?',
-    a: '<p>먼저 자녀·부양가족의 기본공제 귀속자를 확정하고, 실제 결제자와 증빙 흐름이 일치하는지 확인하는 것이 좋습니다. 이 순서를 정하면 교육비·의료비·기부금 점검이 쉬워집니다.</p><p>그 다음 카드 사용 전략과 월세·현금영수증 선택처럼 충돌 가능성이 있는 항목을 정리하면 누락 위험을 크게 줄일 수 있습니다.</p>'
+    q: '신용카드보다 체크카드가 유리한 이유는 무엇인가요?',
+    a: '<p>국세청 안내 기준으로 신용카드는 공제율이 낮고, 체크카드·현금영수증은 더 높은 공제율이 적용됩니다. 그래서 이미 기준 사용액을 넘긴 구간이라면 신용카드보다 체크카드·현금영수증 쪽이 유리하게 해석되는 경우가 많습니다.</p><p>다만 무조건 전환이 답은 아니고, 현재 총급여 대비 부족 구간과 남은 기간 소비 여력을 같이 봐야 합니다.</p>'
   },
   {
-    q: '월평균 입력은 얼마나 정확한가요?',
-    a: '<p>월평균 입력은 “지금 소비 패턴이 연말까지 이어진다”는 가정으로 만든 추정치입니다. 실제 월별 지출 변동을 완전히 반영하지는 않지만, 남은 기간에 어떤 행동을 할지 결정하는 데는 충분히 유용합니다.</p><p>정확도를 높이고 싶다면 누적 입력 모드로 전환해 현재 실적을 직접 입력해도 됩니다.</p>'
+    q: '맞벌이 부부는 무엇부터 비교해야 하나요?',
+    a: '<p>먼저 자녀·부양가족의 기본공제 귀속자를 정하고, 교육비·의료비·기부금이 그 귀속과 실제 지출자 흐름에 맞는지 확인하세요. 그다음 배우자별 카드 부족 구간과 월세·현금영수증 충돌 여부를 보면 실수를 크게 줄일 수 있습니다.</p><p>핵심은 합산 계산보다 “누가 어떤 항목을 가져가는 것이 안전한지”를 비교하는 것입니다.</p>'
   },
   {
-    q: '연봉을 대략 입력해도 되나요?',
-    a: '<p>가능합니다. 빠른 선택은 입력 피로도를 줄이기 위한 기능이며 내부 계산에는 기준금액이 자동 매핑됩니다.</p><p>다만 경계 구간에 있는 경우에는 정확 입력으로 전환해 총급여를 직접 넣으면 추천의 민감도가 더 좋아질 수 있습니다.</p>'
+    q: '월세 공제와 현금영수증은 같이 받을 수 있나요?',
+    a: '<p>같은 월세 지출에 대해서는 중복 적용이 되지 않는 것으로 보는 것이 안전합니다. 그래서 월세 세액공제를 받을지, 현금영수증 성격의 공제로 갈지 먼저 방향을 정하고 증빙을 맞추는 편이 좋습니다.</p><p>결과 화면에서도 월세가 입력되면 다른 소비 전략보다 계약·전입·계좌이체 같은 요건 점검을 우선으로 띄우도록 보강했습니다.</p>'
   },
   {
-    q: '자녀 나이를 정확히 몰라도 입력 가능한가요?',
-    a: '<p>상세 인적공제 입력에서는 출생연도 외에도 연령대와 생활단계(미취학/초등/중고등/성인)로 빠르게 입력할 수 있습니다.</p><p>정확한 생년월일을 몰라도 점검을 시작할 수 있고, 필요할 때만 세부값을 보완하면 됩니다.</p>'
+    q: '주택청약은 연말정산에 어떤 도움이 되나요?',
+    a: '<p>주택청약종합저축은 무주택 세대주 등 요건을 충족하면 소득공제 검토 대상이 될 수 있어, 납입 중이라면 연말에 빠뜨리기 쉬운 항목입니다. 특히 자동이체만 해두고 증빙이나 요건 확인을 놓치는 경우가 있어, 납입 중이면 올해도 꼭 확인할 항목으로 보는 편이 좋습니다.</p><p>이 서비스는 청약 자체를 계산하지는 않지만, 주거비 전략 가이드에서 “납입 중이면 반드시 다시 볼 항목”으로 따로 안내합니다.</p>'
   },
   {
-    q: '실제 환급액과 결과가 다를 수 있는 이유는 무엇인가요?',
-    a: '<p>회사 제출자료 반영 시점, 홈택스 간소화 데이터, 개인별 요건 해석, 연도별 규정 변경에 따라 실제 결과는 달라질 수 있습니다.</p><p>이 도구는 확정 세액 계산기가 아니라 실행 행동을 정리하는 가이드이므로, 최종 신고 전 공식 자료 확인이 필요합니다.</p>'
+    q: '의료비는 언제 효과가 큰가요?',
+    a: '<p>의료비는 총급여 대비 기준을 넘겨야 세액공제 체감이 생기는 구조라, 무조건 많이 썼다고 바로 유리해지지는 않습니다. 대신 자주 놓치는 항목이 많고 실제 지출자 기준이 중요해서, 공제 대상자와 결제 흐름을 같이 정리하는 것이 핵심입니다.</p><p>맞벌이 부부라면 누가 냈는지에 따라 결과가 달라질 수 있어, 자녀 의료비는 특히 귀속자와 결제자를 같이 확인하는 편이 안전합니다.</p>'
   },
   {
-    q: '카드보다 연금저축이 더 중요한 경우는 언제인가요?',
-    a: '<p>이미 카드 관련 목표 구간을 충분히 채웠거나, 남은 기간이 짧아 소비 구조를 크게 바꾸기 어려운 경우에는 연금저축·IRP 같은 납입 전략 점검이 더 현실적일 수 있습니다.</p><p>반대로 현재 카드 부족 구간이 큰 경우에는 결제수단 비중 조정이 먼저일 수 있어, 결과 요약의 우선순위를 함께 확인해 주세요.</p>'
+    q: '교육비는 어떤 부분이 자주 헷갈리나요?',
+    a: '<p>자녀 연령과 교육 단계에 따라 검토 포인트가 달라지고, 특히 미취학 아동의 학원비처럼 자주 헷갈리는 항목은 간소화 자료만 보고 끝내면 누락되기 쉽습니다. 그래서 자녀 카드에서는 생활단계와 교육비를 같이 보도록 했습니다.</p><p>먼저 자녀 기본공제 귀속자를 정한 뒤 교육비 영수증 흐름을 같은 사람 기준으로 맞추면 실수 가능성을 줄일 수 있습니다.</p>'
+  },
+  {
+    q: '기부금은 기본공제대상자와 어떤 관계가 있나요?',
+    a: '<p>기부금은 기본공제대상자 여부와 연결해서 보는 경우가 많아, 가족관계와 소득요건을 먼저 확인해야 오해를 줄일 수 있습니다. 특히 맞벌이 가구는 가족별 귀속자가 섞이면 기부금까지 함께 헷갈리기 쉬워서, 가족 공제표를 먼저 정리한 뒤 보는 편이 좋습니다.</p><p>이 서비스의 누락 점검 리스트도 교육비·의료비와 함께 기부금을 묶어 보여주도록 보강했습니다.</p>'
+  },
+  {
+    q: '연금저축/IRP와 ISA는 어떤 순서로 보는 게 좋나요?',
+    a: '<p>즉시 연말정산 효과가 급하면 연금저축·IRP를 먼저 보는 편이 보통 더 단순합니다. ISA는 즉시 환급형이 아니라 투자수익 절세와 만기 후 연금계좌 전환 전략까지 포함해 봐야 하므로, 연금계좌를 어느 정도 활용 중일 때 병행 가치가 커집니다.</p><p>그래서 결과에서는 환급 극대화 우선형, 장기 절세 병행형, 만기 점검형처럼 나눠 설명합니다.</p>'
   },
   {
     q: 'ISA는 연말정산 환급을 바로 늘려주나요?',
     a: '<p>보통은 그렇지 않습니다. 연금저축·IRP처럼 납입 자체가 연말정산 세액공제로 바로 연결되는 구조와 달리, ISA는 투자수익 과세를 줄이는 절세 투자 계좌로 이해하는 편이 맞습니다.</p><p>다만 ISA를 오래 유지한 뒤 만기 자금을 연금계좌 전환 전략과 연결하면 연말정산 전체 설계에는 영향을 줄 수 있으므로, “즉시 환급”이 아니라 “세제 구조 확장” 관점에서 보시는 것이 좋습니다.</p>'
   },
   {
-    q: '연금저축/IRP와 ISA는 무엇이 다른가요?',
-    a: '<p>연금저축·IRP는 연말정산에서 세액공제 효과를 먼저 보는 계좌이고, ISA는 손익통산과 비과세 한도, 초과분 저율 분리과세를 통해 투자수익 과세를 줄이는 계좌입니다.</p><p>즉시 환급이 급하면 연금저축·IRP가 먼저일 수 있고, 이미 연금계좌를 어느 정도 활용 중이거나 장기 투자 절세가 중요하면 ISA 병행 또는 강화가 현실적일 수 있습니다.</p>'
+    q: '올해 새로 챙길 수 있는 공제는 무엇인가요?',
+    a: '<p>결혼세액공제, 자녀세액공제 구조, 산후조리원 의료비, 수영장·체력단련장 이용료 카드공제, 월세·주택청약 관련 확대 항목은 적용 연도와 개인 요건이 엇갈리기 쉬운 대표 항목입니다. 그래서 결과 하단 가이드에서 “확대·신설 공제 체크”로 따로 묶어 두었습니다.</p><p>이 항목들은 법 개정 보도자료와 국세청 FAQ의 적용 연도가 다를 수 있으니, 신고 직전에는 홈택스 문답과 공식 안내를 함께 확인하세요.</p>'
   },
   {
-    q: 'ISA에서 S&P500에 투자한다는 말은 무슨 뜻인가요?',
-    a: '<p>이 사이트에서는 ISA 안에서 미국 상장 ETF를 직접 매수하는 의미로 단순화하지 않습니다. 보통은 국내상장 해외지수 ETF를 활용해 S&amp;P500, 나스닥100 등 글로벌 지수에 간접적으로 노출되는 구조를 설명합니다.</p><p>핵심은 특정 종목 추천이 아니라, ISA를 장기 투자용 절세계좌로 쓰면서 글로벌 지수형 자산을 어떤 방식으로 담을지 이해하는 데 있습니다.</p>'
+    q: '홈택스에서는 무엇을 먼저 봐야 하나요?',
+    a: '<p>연말정산 미리보기로 남은 카드 전략과 예상 사용액을 먼저 보고, 맞춤형 안내 서비스에서 빠진 공제 후보가 있는지 확인하세요. 간소화 서비스는 편리하지만 자동으로 다 잡히는 것은 아니어서, 월세·의료비·교육비·기부금처럼 누락이 잦은 항목은 한 번 더 대조하는 편이 좋습니다.</p><p>특히 11~12월에는 남은 기간 행동을 바꾸기 좋으므로, 미리보기와 맞춤형 안내를 함께 보는 흐름이 실전적입니다.</p>'
   },
   {
-    q: 'ISA에서 미국 상장 ETF를 직접 살 수 있나요?',
-    a: '<p>이 가이드에서는 그 방향으로 안내하지 않습니다. 사용자 오해를 줄이기 위해 ISA에서는 국내상장 해외지수 ETF 활용 개념을 우선 설명하고, 미국 상장 ETF 직접매수처럼 받아들여질 표현은 피합니다.</p><p>따라서 결과 화면에서도 S&amp;P500형 노출이 필요하다면 “국내상장 해외지수 ETF 카테고리 활용” 수준으로만 제안합니다.</p>'
+    q: '실제 환급액과 결과가 다를 수 있는 이유는 무엇인가요?',
+    a: '<p>회사 제출자료 반영 시점, 홈택스 간소화 데이터, 개인별 요건 해석, 귀속연도별 규정 변경에 따라 실제 결과는 달라질 수 있습니다. 이 도구는 확정 세액 계산기가 아니라 실행 행동을 정리하는 가이드이므로, 최종 신고 전 공식 자료 확인이 필요합니다.</p><p>그래서 결과도 “무조건 얼마 더 환급”이 아니라, 지금 무엇을 먼저 확인하면 실수를 줄일 수 있는지에 집중합니다.</p>'
+  }
+];
+
+const STRATEGY_GUIDE_ITEMS = [
+  {
+    title: '카드 사용 전략',
+    badge: '카드·체크카드·현금영수증',
+    lines: [
+      '신용카드보다 체크카드·현금영수증 공제율이 높아, 기준 사용액을 넘긴 뒤라면 결제수단 전환 효과가 더 크게 해석될 수 있습니다.',
+      '전통시장과 대중교통은 별도 우대 구간이 있어, 이미 쓰는 지출을 그 항목으로 정확히 분류하는 것이 먼저입니다.',
+      '무조건 더 쓰기보다 총급여 대비 부족 구간과 남은 기간을 보고 전환량을 정하세요.'
+    ]
   },
   {
-    q: 'ISA를 3년 보유한 뒤에는 무엇을 확인해야 하나요?',
-    a: '<p>계좌를 오래 유지했다면 단순히 출금할지 여부만 보지 말고, 만기 시점과 세제 혜택 구조, 연금계좌 전환 가능성을 함께 확인해야 합니다. 특히 이미 연금저축·IRP를 활용 중이라면 만기 자금을 어떤 순서로 연계할지 점검할 가치가 있습니다.</p><p>결과 화면의 만기 알림은 바로 그 체크포인트를 놓치지 않도록 돕기 위한 장치입니다.</p>'
+    title: '가족공제 전략',
+    badge: '배우자·자녀·부모',
+    lines: [
+      '배우자와 부양가족은 소득요건과 나이요건을 먼저 보고, 기본공제 귀속자를 한 사람으로 정해야 연계 항목이 덜 꼬입니다.',
+      '맞벌이 부부는 자녀 기본공제 귀속을 먼저 정한 뒤 교육비·의료비·기부금을 같은 흐름으로 맞추는 것이 안전합니다.',
+      '부모·조부모는 60세 기준, 경로우대는 70세 기준을 함께 점검하세요.'
+    ]
   },
   {
-    q: 'ISA 만기 자금은 그냥 출금하면 되나요?',
-    a: '<p>무조건 바로 출금하는 흐름으로 보기는 어렵습니다. 만기 시점에는 연금계좌 전환을 포함한 세제 연계 전략을 먼저 확인하고, 단순 출금이 더 나은지 비교하는 편이 안전합니다.</p><p>계좌 유지기간, 현재 연금계좌 활용도, 이후 투자 계획을 같이 봐야 하므로, 만기 직전에는 “출금 전 점검”이 우선입니다.</p>'
+    title: '의료비·교육비·기부금 체크',
+    badge: '누락 점검',
+    lines: [
+      '의료비는 총급여 대비 기준을 넘겨야 체감효과가 생기므로, 금액보다 실제 지출자와 대상자 정리가 중요합니다.',
+      '교육비는 자녀 단계별로 확인 포인트가 달라서, 생활단계 입력과 영수증 귀속을 함께 보는 편이 좋습니다.',
+      '기부금은 가족 공제와 같이 보면 헷갈리기 쉬우니, 기본공제 대상자 여부를 먼저 확인하세요.'
+    ]
   },
   {
-    q: '연금저축/IRP를 먼저 채우고 ISA를 해야 하나요?',
-    a: '<p>즉시 연말정산 환급 효과가 더 중요하고 아직 연금저축·IRP 한도 여유가 크다면, 보통은 연금계좌 우선이 더 단순하고 실전적일 수 있습니다. 반대로 이미 연금계좌를 꽤 활용 중이거나 투자수익 절세 니즈가 분명하면 ISA를 병행하거나 우선 강화하는 전략도 가능합니다.</p><p>이 도구는 연봉, 월평균 지출, 연금 활용 상태, ISA 보유 상태를 함께 보고 그 우선순위를 행동 문장으로 정리합니다.</p>'
+    title: '주거비 절세 포인트',
+    badge: '월세·청약·주택자금',
+    lines: [
+      '월세는 대상 요건과 계약·전입·계좌이체 증빙을 같이 봐야 하고, 같은 지출을 현금영수증과 중복 적용하는 방식은 피하는 편이 안전합니다.',
+      '주택청약종합저축은 납입 중이면 연말에 꼭 다시 봐야 할 항목입니다. 무주택 세대주 여부와 납입내역을 함께 확인하세요.',
+      '주택자금 관련 공제는 항목이 나뉘어 있어, 월세·청약·대출을 한 번에 섞지 말고 각각 따로 확인하세요.'
+    ]
+  },
+  {
+    title: '연금저축·IRP·ISA 우선순위',
+    badge: '계좌 전략',
+    lines: [
+      '연금저축·IRP는 즉시 연말정산 효과가 큰 세액공제형 계좌로 보고, ISA는 투자수익 절세와 만기 전략 중심으로 보세요.',
+      '현금흐름이 빠듯하면 연금저축·IRP 자동이체를 먼저 점검하고, 투자 여력이 남으면 ISA 병행을 검토하는 흐름이 실전적입니다.',
+      'ISA 만기 예정이라면 출금보다 연금계좌 전환 가능성을 먼저 보는 편이 좋습니다.'
+    ]
+  },
+  {
+    title: '올해 꼭 챙길 확대 공제',
+    badge: '적용 연도 확인',
+    lines: [
+      '결혼세액공제, 자녀세액공제 구조, 산후조리원 의료비, 체육시설 이용료 카드공제, 월세·주택청약 확대는 공식 안내에서 적용 연도를 다시 확인하세요.',
+      '정부 발표와 국세청 FAQ의 시점이 다를 수 있으니, 실제 신고에는 국세청 안내와 홈택스 문답을 우선 보세요.',
+      '확대 항목은 “있다더라” 수준으로 넘기지 말고, 내가 올해 적용 대상인지 요건부터 확인하세요.'
+    ]
+  }
+];
+
+const HOMETAX_GUIDE_ITEMS = [
+  '11~12월에는 홈택스 연말정산 미리보기로 남은 카드 전략과 카드/체크카드 비중을 먼저 점검하세요.',
+  '맞춤형 안내 서비스에서는 내가 놓친 공제 후보가 없는지부터 확인하세요.',
+  '간소화 서비스에 자동 반영되지 않는 월세·교육비·의료비·기부금은 별도로 대조해 보세요.'
+];
+
+const YEARLY_EXPANSION_ITEMS = [
+  {
+    title: '결혼세액공제',
+    text: '혼인신고 연도와 생애 1회 여부처럼 적용 요건이 핵심입니다. 기사만 보지 말고 귀속연도 공식 안내를 같이 보세요.'
+  },
+  {
+    title: '자녀세액공제',
+    text: '손자녀 포함 여부, 출산·입양 공제, 자녀 수별 금액표는 귀속연도별로 바뀌기 쉬워 최신 FAQ를 먼저 확인하세요.'
+  },
+  {
+    title: '산후조리원·의료비',
+    text: '산후조리원 비용은 한도와 요건, 소득기준 완화 여부가 귀속연도에 따라 달라질 수 있어 공식 문답을 먼저 보세요.'
+  },
+  {
+    title: '수영장·체력단련장 이용료',
+    text: '카드 공제 반영 대상이 되는 시기와 세부 조건이 있어, 실제 결제내역을 업종 기준으로 확인하는 편이 안전합니다.'
+  },
+  {
+    title: '월세·주택청약 확대',
+    text: '대상자 범위와 주택 기준이 확대된 해가 있어도, 내가 그 연도 적용 대상인지 먼저 봐야 실수가 줄어듭니다.'
   }
 ];
 
 const UPDATE_HISTORY_ITEMS = [
+  '2026-03-10: 절세전략 가이드, 홈택스 행동 가이드, 확대 공제 체크, 결과 누락 점검 리스트 보강',
   '2026-03-10: ISA 입력, ISA 우선순위 엔진, 만기 알림, ISA FAQ/가이드 섹션 추가',
   '2026-03-09: 월평균 입력 기본 전환, 맞벌이 모드 월평균/누적 토글 보강, 연봉 빠른 선택 개선',
   '2026-03-09: 인적공제 상세 입력(반복 카드, 자동 판정, 충돌 배지) 확장',
@@ -243,6 +326,7 @@ const personalDeductionSummary = document.getElementById('personalDeductionSumma
 const spendEstimationSummary = document.getElementById('spendEstimationSummary');
 const detailPriorityBadge = document.getElementById('detailPriorityBadge');
 const whyRecommendationBox = document.getElementById('whyRecommendationBox');
+const deductionChecklistBox = document.getElementById('deductionChecklistBox');
 const updateHistoryList = document.getElementById('updateHistoryList');
 const footerUpdateDate = document.getElementById('footerUpdateDate');
 const isaBadgeRow = document.getElementById('isaBadgeRow');
@@ -251,6 +335,9 @@ const isaActionGuide = document.getElementById('isaActionGuide');
 const isaMaturityAlert = document.getElementById('isaMaturityAlert');
 const singleIsaCapacityHint = document.getElementById('singleIsaCapacityHint');
 const coupleIsaCapacityHint = document.getElementById('coupleIsaCapacityHint');
+const strategyGuideGrid = document.getElementById('strategyGuideGrid');
+const hometaxActionGuide = document.getElementById('hometaxActionGuide');
+const yearlyExpansionGrid = document.getElementById('yearlyExpansionGrid');
 
 const singleModeSection = document.getElementById('singleModeSection');
 const coupleModeSection = document.getElementById('coupleModeSection');
@@ -2062,6 +2149,50 @@ function updateCoupleIsaCapacityHint() {
   coupleIsaCapacityHint.textContent = `자동 추정 월 투자 여력: ${labelInvestCapacity(estimate)}`;
 }
 
+function buildSingleTodoItems(input, personal, card, isaProfile) {
+  const items = [];
+  if (card.shortfall > 0) {
+    items.push(
+      input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+        ? `체크카드/현금영수증으로 월 ${formatMoney(card.shortfall / input.projection.remainingMonths)}원 전환 계획 세우기`
+        : '신용카드보다 체크카드/현금영수증 비중을 먼저 조정하기'
+    );
+  } else {
+    items.push('추가 소비보다 결제수단 구분과 증빙 누락부터 점검하기');
+  }
+
+  if (input.monthlyRent > 0) items.push('월세 계약·전입·계좌이체 요건을 다시 확인하고 현금영수증과 중복 적용하지 않기');
+  else if (personal.childTaxCount > 0) items.push('자녀 기본공제 귀속과 교육비·의료비 결제자를 같은 흐름으로 정리하기');
+  else if (personal.seniorCount > 0) items.push('부모·조부모 소득요건과 70세 이상 여부를 다시 확인하기');
+  else items.push('배우자·부양가족 소득요건과 나이요건을 다시 확인하기');
+
+  if (input.pension + input.irp < RULES.pension.pensionSavingAnnualLimit) items.push('연금저축 또는 IRP 자동이체 금액을 정하고 한도 여유를 점검하기');
+  else if (isaProfile.maturityNeeded) items.push('ISA 만기 자금은 출금 전에 연금계좌 전환 가능성을 먼저 비교하기');
+  else items.push('홈택스 연말정산 미리보기에서 남은 카드 전략과 누락 공제 후보를 확인하기');
+
+  return items.slice(0, 3);
+}
+
+function buildCoupleTodoItems(input, aCard, bCard, isaProfile, preferredCardHolder) {
+  const items = [];
+  const preferredShortfall = preferredCardHolder === '본인' ? aCard.shortfall : bCard.shortfall;
+  items.push(
+    input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+      ? `${preferredCardHolder} 기준 월 ${formatMoney(preferredShortfall / Math.max(1, input.projection.remainingMonths))}원 정도 체크카드/현금영수증 전환 계획 세우기`
+      : `${preferredCardHolder} 부족 구간부터 먼저 채우고 다른 배우자는 추가 소비보다 증빙 정리하기`
+  );
+
+  if (input.children.length > 0) items.push('자녀별 기본공제 귀속자와 교육비·의료비 결제자를 한 표로 정리하기');
+  else if (input.dependents.length > 0) items.push('부양가족 귀속자를 부부 중 1인으로 확정하고 중복공제 가능성 제거하기');
+  else items.push('부부가 각자 가져갈 공제 항목을 먼저 정리하고 같은 항목을 중복 입력하지 않기');
+
+  if ((input.spouseA.rent || 0) > 0 || (input.spouseB.rent || 0) > 0) items.push('월세는 배우자별 계약·전입·계좌이체 요건을 다시 확인하고 카드성 공제와 충돌이 없는지 보기');
+  else if (isaProfile.maturityNeeded) items.push('가구 ISA 만기 자금은 단순 출금보다 연금계좌 전환 가능성을 먼저 확인하기');
+  else items.push('홈택스 미리보기와 맞춤형 안내 서비스에서 빠진 공제 후보를 부부 각각 확인하기');
+
+  return items.slice(0, 3);
+}
+
 function buildSingleRecommendation(input) {
   const personal = analyzePersonalDeduction(input);
   const isaProfile = getIsaPriorityProfile(input.isa, {
@@ -2079,7 +2210,16 @@ function buildSingleRecommendation(input) {
   if (personal.ineligibleCount > 0) warnings.push('소득요건 미충족 부양가족이 있어 기본공제 대상에서 제외될 수 있습니다.');
 
   const summary = [
-    `현재 기준으로는 남은 목표 ${formatMoney(card.shortfall)}원을 계획 지출 안에서 ${preferredType} 위주로 배치하는 편이 유리할 가능성이 높습니다.`,
+    personal.childTaxCount > 0
+      ? '지금은 카드 전략보다 자녀 공제와 교육비·의료비 귀속 점검 효과가 더 클 수 있습니다.'
+      : personal.seniorCount > 0
+        ? '부모·조부모 입력이 있다면 카드 추가 사용보다 가족공제와 경로우대 가능성을 먼저 확인하세요.'
+        : input.monthlyRent > 0
+          ? '월세가 있다면 카드 전략보다 월세 세액공제 요건과 중복 여부를 먼저 점검하는 편이 좋습니다.'
+          : `현재 기준으로는 남은 목표 ${formatMoney(card.shortfall)}원을 계획 지출 안에서 ${preferredType} 위주로 배치하는 편이 유리할 가능성이 높습니다.`,
+    card.shortfall > 0
+      ? `현재 패턴이면 신용카드보다 체크카드/현금영수증 전환 효과가 더 큽니다. 남은 부족분은 ${formatMoney(card.shortfall)}원으로 봤습니다.`
+      : '이미 기준 사용액을 어느 정도 넘긴 구간이라면 추가 소비보다 결제수단 구분과 증빙 정리가 더 중요합니다.',
     `연금저축+IRP 입력 합계는 ${formatMoney(input.pension + input.irp)}원입니다. 연간 가이드 상한 ${formatMoney(RULES.irp.yearlyGuideLimit)}원 대비 여유를 확인해 자동이체 금액을 조정해 보세요.`,
     `ISA 우선순위는 ${isaProfile.priority}으로 해석했습니다. ${isaProfile.relationship}`,
     input.monthlyRent > 0
@@ -2129,18 +2269,7 @@ function buildSingleRecommendation(input) {
 
   const scenarioContent = buildSingleScenarioSet(input, personal, card, isaProfile, totalCard);
 
-  const monthlyAction = input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
-    ? `앞으로 월 ${formatMoney(card.shortfall / input.projection.remainingMonths)}원 수준으로 체크카드/현금영수증 전환 계획 세우기`
-    : '지출 구조(카드/현금영수증 비중) 점검하기';
-
-  const todos = [
-    monthlyAction,
-    '배우자 또는 가족 공제 요건 다시 점검하기',
-    '연금저축 자동이체 가능 금액과 월세/의료비/교육비 누락 항목 확인하기',
-    isaProfile.maturityNeeded
-      ? 'ISA 만기 전 연금계좌 전환 가능성과 단순 출금 대안을 비교하기'
-      : 'ISA를 쓴다면 국내상장 해외지수 ETF 등 활용 구조를 먼저 이해하기'
-  ];
+  const todos = buildSingleTodoItems(input, personal, card, isaProfile);
 
   return {
     mode: 'single',
@@ -2169,6 +2298,7 @@ function buildCoupleRecommendation(input) {
 
   const recommendedChildOwner = getSpouseLabelByIncome(input.spouseA.income, input.spouseB.income);
   const preferredCardHolder = getPreferredCardHolder(aCard, bCard);
+  const hasParents = input.dependents.some((dep) => (dep.age != null && dep.age >= RULES.personalDeduction.elderFamilyMinAge) || dep.senior70);
 
   const allocations = [];
   const warnings = [RULES.warnings.duplicateDependent];
@@ -2270,7 +2400,11 @@ function buildCoupleRecommendation(input) {
       : `카드 추가 사용은 ${preferredCardHolder} 명의 체크카드/현금영수증 위주 배치가 적합합니다.`;
 
   const summary = [
-    firstSummary,
+    input.children.length > 0
+      ? '맞벌이 부부라면 자녀 공제 귀속 비교가 가장 큰 변수입니다. 교육비·의료비 결제 흐름도 같이 보세요.'
+      : hasParents
+        ? '부모·조부모 부양가족이 있다면 카드 전략보다 기본공제와 경로우대 가능성을 먼저 확인하세요.'
+        : firstSummary,
     monthlySwitchAction,
     `ISA 우선순위는 ${isaProfile.priority}으로 해석했습니다. ${isaProfile.relationship}`,
     '월세는 세액공제와 현금영수증 중 하나만 선택해 중복을 피해야 합니다.',
@@ -2282,18 +2416,7 @@ function buildCoupleRecommendation(input) {
 
   const scenarioContent = buildCoupleScenarioSet(input, aCard, bCard, isaProfile);
 
-  const todos = [
-    input.children.length > 0
-      ? `${input.children[0].name} 교육비를 기본공제 받을 배우자 기준으로 점검하기`
-      : '자녀 귀속자가 확정됐다면 교육비/의료비/보험료 귀속도 같은 기준으로 맞추기',
-    '월세는 세액공제로 갈지 현금영수증으로 갈지 하나만 선택하기',
-    input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
-      ? `${preferredCardHolder} 체크카드/현금영수증으로 월 ${formatMoney(preferredShortfall / input.projection.remainingMonths)}원 전환 계획 세우기`
-      : `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`,
-    isaProfile.maturityNeeded
-      ? 'ISA 만기 자금은 출금 전에 연금계좌 전환 가능성부터 확인하기'
-      : '연금계좌와 ISA 자동이체를 병행할지 월 현금흐름 기준으로 결정하기'
-  ];
+  const todos = buildCoupleTodoItems(input, aCard, bCard, isaProfile, preferredCardHolder);
 
   return {
     mode: 'couple',
@@ -2759,6 +2882,61 @@ function renderFaq() {
   document.getElementById('faq-jsonld').textContent = JSON.stringify(faqLd);
 }
 
+function renderStrategyContent() {
+  if (strategyGuideGrid) {
+    strategyGuideGrid.innerHTML = STRATEGY_GUIDE_ITEMS.map(
+      (item) => `
+        <article class="strategy-guide-card">
+          <span class="strategy-badge">${item.badge}</span>
+          <h3>${item.title}</h3>
+          ${item.lines.map((line) => `<p>${line}</p>`).join('')}
+        </article>
+      `
+    ).join('');
+  }
+
+  if (hometaxActionGuide) {
+    hometaxActionGuide.innerHTML = `
+      <ul class="content-list">
+        ${HOMETAX_GUIDE_ITEMS.map((item) => `<li>${item}</li>`).join('')}
+      </ul>
+    `;
+  }
+
+  if (yearlyExpansionGrid) {
+    yearlyExpansionGrid.innerHTML = YEARLY_EXPANSION_ITEMS.map(
+      (item) => `
+        <article class="strategy-guide-card compact">
+          <h3>${item.title}</h3>
+          <p>${item.text}</p>
+        </article>
+      `
+    ).join('');
+  }
+}
+
+function collectDeductionChecklist(result, input) {
+  const checklist = [
+    '간소화 서비스에 자동 반영되지 않는 항목이 없는지 홈택스 자료와 실제 영수증을 한 번 더 대조하세요.'
+  ];
+
+  if (result.mode === 'single') {
+    if (input.monthlyRent > 0) checklist.push('월세 계약서, 전입 상태, 계좌이체 증빙을 다시 확인하고 같은 지출을 현금영수증과 중복 적용하지 마세요.');
+    if (result.personal?.childTaxCount > 0) checklist.push('자녀 기본공제 귀속과 교육비·의료비 결제자가 같은 흐름인지 확인하세요.');
+    if (result.personal?.seniorCount > 0) checklist.push('부모·조부모는 소득요건과 70세 이상 여부를 함께 확인해 경로우대 누락을 줄이세요.');
+    if (input.pension + input.irp > 0) checklist.push('연금저축·IRP 납입증명과 실제 납입액이 일치하는지 확인하세요.');
+    if (result.isa?.maturityNeeded) checklist.push('ISA 만기 자금은 출금 전에 연금계좌 전환 가능성과 적용 요건을 먼저 비교하세요.');
+  } else {
+    if (input.children.length > 0) checklist.push('맞벌이 부부는 자녀별 기본공제 귀속자와 교육비·의료비 지출자를 한 표로 정리하세요.');
+    if (input.dependents.length > 0) checklist.push('부양가족은 부부가 동시에 중복 공제하지 않도록 귀속자를 1인으로 확정하세요.');
+    if ((input.spouseA.rent || 0) > 0 || (input.spouseB.rent || 0) > 0) checklist.push('월세 공제는 배우자별 계약·전입·계좌이체 증빙을 다시 보고, 카드성 공제와 충돌이 없는지 확인하세요.');
+    if (result.isa?.maturityNeeded) checklist.push('가구 ISA가 만기 구간이면 단순 출금보다 연금계좌 전환 가능성을 먼저 비교하세요.');
+  }
+
+  checklist.push('수영장·체력단련장 이용료, 산후조리원, 주택청약처럼 확대·신설 항목은 귀속연도 공식 안내로 다시 확인하세요.');
+  return checklist.slice(0, 5);
+}
+
 function renderIsaSummary(result, input) {
   if (!result.isa || !isaSummaryCard || !isaActionGuide || !isaBadgeRow || !isaMaturityAlert) return;
   const profile = result.isa;
@@ -2804,19 +2982,49 @@ function renderWhyRecommendation(result, input) {
   const spendModeLabel = input.spendMode === 'cumulative' || (input.projection && input.projection.mode === 'cumulative') ? '누적 입력' : '월평균 입력';
   const topReason =
     result.mode === 'single'
-      ? `입력한 소득(${formatMoney(input.income)}원)과 소비 패턴(${spendModeLabel})을 기준으로 카드 전략·납입 전략·인적공제·ISA 우선순위를 조합했습니다.`
-      : `배우자별 소득과 소비를 분리해 각자 부족 구간을 추정하고, 중복공제 위험·결제자 불일치 위험·ISA 병행 우선순위를 함께 반영했습니다.`;
-  const impact =
+      ? result.personal?.childTaxCount > 0
+        ? '지금은 카드 전략만 보는 것보다 자녀 공제 귀속과 교육비·의료비 점검 효과가 더 크게 작용할 가능성이 있습니다.'
+        : result.personal?.seniorCount > 0
+          ? '부모·조부모 입력이 있어 카드보다 가족공제와 경로우대 검토가 결과에 더 크게 반영됐습니다.'
+          : input.monthlyRent > 0
+            ? '월세가 입력되어 있어 카드 추가 사용보다 월세 요건과 중복 여부 점검이 더 중요한 축으로 반영됐습니다.'
+            : `입력한 소득(${formatMoney(input.income)}원)과 소비 패턴(${spendModeLabel})을 기준으로 카드 전략·납입 전략·인적공제·ISA 우선순위를 함께 해석했습니다.`
+      : input.children.length > 0
+        ? '맞벌이 부부에서는 자녀 공제 귀속과 교육비·의료비 결제 흐름이 핵심이라, 단순 합산보다 가족 배분 전략을 더 크게 반영했습니다.'
+        : `배우자별 소득과 소비를 분리해 각자 부족 구간을 추정하고, 중복공제 위험·결제자 불일치 위험·ISA 병행 우선순위를 함께 반영했습니다.`;
+  const impactList =
     result.mode === 'single'
-      ? '영향이 큰 입력값: 연봉, 카드/체크카드 비중, 인적공제(간편 또는 상세) 정보, 연금저축·IRP·ISA 상태'
-      : '영향이 큰 입력값: 본인/배우자 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보, 가구 ISA 상태';
+      ? [
+          `연봉과 ${spendModeLabel} 소비 입력으로 카드 부족 구간을 추정했습니다.`,
+          result.personal?.childTaxCount > 0 ? `8세 이상 자녀세액공제 검토 대상 ${result.personal.childTaxCount}명이 우선순위에 반영됐습니다.` : '',
+          result.personal?.seniorCount > 0 ? `70세 이상 가족 ${result.personal.seniorCount}명이 있어 경로우대 점검이 강화됐습니다.` : '',
+          input.pension + input.irp > 0 ? '연금저축·IRP 납입액이 있어 카드 전략과 계좌 전략을 함께 비교했습니다.' : '연금저축·IRP 입력이 적어 세액공제 여지 점검 문구를 더 앞에 배치했습니다.',
+          input.isa.status !== 'none' ? `ISA 상태(${labelIsaStatus(input.isa.status)})를 함께 반영했습니다.` : ''
+        ]
+      : [
+          '본인과 배우자의 연봉·카드 사용 패턴을 각각 나눠서 부족 구간을 계산했습니다.',
+          input.children.length > 0 ? `자녀 ${input.children.length}명 입력으로 자녀 공제 귀속 비교를 강화했습니다.` : '',
+          input.dependents.length > 0 ? `부양가족 ${input.dependents.length}명 입력으로 중복공제와 경로우대 가능성을 같이 봤습니다.` : '',
+          input.isa.status !== 'none' ? `가구 ISA 상태(${labelIsaStatus(input.isa.status)})를 함께 반영했습니다.` : ''
+        ];
 
   whyRecommendationBox.innerHTML = `
     <p><strong>왜 이런 추천이 나왔나요?</strong></p>
     <p>${topReason}</p>
-    <p>${impact}</p>
-    <p>이 추천은 확정 세액이 아니라 실행 행동의 우선순위를 정하기 위한 참고용 해석입니다.</p>
+    <ul class="content-list">
+      ${impactList.filter(Boolean).map((line) => `<li>${line}</li>`).join('')}
+    </ul>
+    <p>이 추천은 확정 세액이 아니라 실행 행동의 우선순위를 정하기 위한 참고용 해석입니다. 실제 신고 전에는 홈택스 미리보기와 국세청 문답으로 다시 확인하세요.</p>
   `;
+
+  if (deductionChecklistBox) {
+    deductionChecklistBox.innerHTML = `
+      <p><strong>누락 점검 리스트</strong></p>
+      <ul class="content-list">
+        ${collectDeductionChecklist(result, input).map((line) => `<li>${line}</li>`).join('')}
+      </ul>
+    `;
+  }
 }
 
 function renderUpdateHistory() {
@@ -3093,6 +3301,7 @@ setupTabsKeyboard();
 setupAccordions();
 bootstrapRepeatLists();
 renderFaq();
+renderStrategyContent();
 renderUpdateHistory();
 syncAccordionWithHash();
 window.addEventListener('hashchange', syncAccordionWithHash);

@@ -864,6 +864,7 @@
       <section class="card result-card result-why-card">
         <h3>4. 왜 이런 추천이 나왔나요?</h3>
         <div id="whyRecommendationBox" class="summary-box"></div>
+        <div id="deductionChecklistBox" class="summary-box"></div>
       </section>
 
       <section class="card result-card result-table-card">
@@ -926,9 +927,17 @@
           <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="guidePanel" id="guideTrigger">절세 가이드와 사용 예시</button>
           <div id="guidePanel" class="accordion-panel hidden">
             <section id="guideSection" class="prose guide-card">
-              <p><strong>카드/체크카드/현금영수증을 구분하는 이유:</strong> 공제 판단은 단순 지출 합계보다 결제수단 구성과 급여 대비 사용 구간의 영향을 받기 때문에, 같은 금액을 써도 전략이 달라질 수 있습니다.</p>
-              <p><strong>인적공제가 중요한 이유:</strong> 배우자와 부양가족의 소득·연령·관계 입력에 따라 기본공제 및 연계 항목 점검 우선순위가 크게 바뀝니다. 입력이 정확할수록 누락 경고가 현실적으로 동작합니다.</p>
-              <p><strong>연봉과 월평균 소비를 함께 보는 이유:</strong> 지금 패턴을 연말까지 유지했을 때의 예상치를 만들고, 남은 기간에 무리 없는 행동을 제안하기 위해서입니다.</p>
+              <p><strong>입력 결과를 먼저 보고 아래 가이드를 보세요.</strong> 이 섹션은 “무엇을 먼저 확인하면 절세에 유리한지”를 짧고 실전적으로 정리한 보조 설명입니다.</p>
+              <div id="strategyGuideGrid" class="strategy-guide-grid"></div>
+            </section>
+            <section class="prose guide-card">
+              <h3>홈택스 활용 전략</h3>
+              <div id="hometaxActionGuide" class="strategy-inline-list"></div>
+            </section>
+            <section class="prose guide-card">
+              <h3>올해 꼭 챙길 확대·신설 공제 체크</h3>
+              <p class="hint">적용 연도와 개인 요건이 엇갈리기 쉬운 항목이라, 결과를 본 뒤 공식 안내와 함께 다시 확인하는 용도로 정리했습니다.</p>
+              <div id="yearlyExpansionGrid" class="strategy-guide-grid compact"></div>
             </section>
             <section id="usageExamples" class="prose usage-card">
               <p><strong>예시 1: 1인 직장인</strong> 월평균 소비를 입력하면 연말 예상 사용액과 부족 구간이 제시됩니다.</p>

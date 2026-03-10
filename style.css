@@ -382,6 +382,60 @@ h4 {
   background: #fbfaf6;
 }
 
+.strategy-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.strategy-guide-grid.compact {
+  margin-top: 10px;
+}
+
+.strategy-guide-card {
+  grid-column: span 6;
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(196, 190, 176, 0.7);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 16px;
+}
+
+.strategy-guide-card.compact {
+  background: rgba(249, 247, 241, 0.88);
+}
+
+.strategy-guide-card h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--ink-strong);
+}
+
+.strategy-guide-card p {
+  margin: 0;
+  max-width: none;
+  font-size: 14px;
+}
+
+.strategy-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: rgba(36, 92, 84, 0.1);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.strategy-inline-list ul {
+  margin: 0;
+}
+
 .usage-card {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(244, 241, 233, 0.8) 100%);
 }
@@ -1367,6 +1421,10 @@ button:focus,
 }
 
 @media (max-width: 899px) {
+  .strategy-guide-card {
+    grid-column: span 12;
+  }
+
   .container {
     padding: 14px 14px 126px;
   }
