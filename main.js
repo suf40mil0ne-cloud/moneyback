@@ -580,6 +580,75 @@ function isChildLikeRelation(relation) {
   return relation === 'child' || relation === 'grandchild';
 }
 
+function setFieldBlockHidden(card, field, hidden) {
+  const block = card.querySelector(`[data-block="${field}"]`);
+  if (block) block.classList.toggle('hidden', hidden);
+}
+
+function updateChildCardUI(card) {
+  const read = (field) => card.querySelector(`[data-field="${field}"]`);
+  const ageMode = read('ageMode').value;
+  setFieldBlockHidden(card, 'lifeStage', ageMode !== 'lifeStage');
+  setFieldBlockHidden(card, 'birthYear', ageMode !== 'birthYear');
+  setFieldBlockHidden(card, 'exactAge', ageMode !== 'exactAge');
+
+  const name = read('name').value.trim() || card.querySelector('.repeat-card-title strong')?.textContent || '자녀';
+  const stageLabel =
+    ageMode === 'lifeStage'
+      ? read('lifeStage').options[read('lifeStage').selectedIndex]?.textContent || '생활단계 미선택'
+      : ageMode === 'birthYear'
+        ? `${sanitizeNumber(read('birthYear').value) || '-'}년생`
+        : `${sanitizeNumber(read('exactAge').value) || '-'}세`;
+  const payerLabel = read('payer').options[read('payer').selectedIndex]?.textContent || '결제자 미선택';
+  const summary = card.querySelector('[data-role="summary"]');
+  if (summary) summary.textContent = `${name} · ${stageLabel} · ${payerLabel}`;
+}
+
+function updateDependentCardUI(card) {
+  const read = (field) => card.querySelector(`[data-field="${field}"]`);
+  const ageMode = read('ageMode').value;
+  setFieldBlockHidden(card, 'ageBand', ageMode !== 'ageBand');
+  setFieldBlockHidden(card, 'exactAge', ageMode !== 'exactAge');
+
+  const relationLabel = read('relation').options[read('relation').selectedIndex]?.textContent || '관계 미선택';
+  const ageLabel =
+    ageMode === 'ageBand'
+      ? read('ageBand').options[read('ageBand').selectedIndex]?.textContent || '연령구간 미선택'
+      : `${sanitizeNumber(read('exactAge').value) || '-'}세`;
+  const badges = [];
+  if (read('incomeEligible').checked) badges.push('소득요건 충족');
+  if (read('disabled').checked) badges.push('장애인');
+  if (read('senior70').checked) badges.push('70세 이상');
+  const summary = card.querySelector('[data-role="summary"]');
+  if (summary) summary.textContent = `${relationLabel} · ${ageLabel}${badges.length ? ` · ${badges.join(', ')}` : ''}`;
+}
+
+function updatePersonalDependentCardUI(card) {
+  const read = (field) => card.querySelector(`[data-field="${field}"]`);
+  const relation = read('relation').value;
+  const ageMode = read('ageMode').value;
+  const isChildLike = isChildLikeRelation(relation);
+
+  setFieldBlockHidden(card, 'ageBand', ageMode !== 'ageBand');
+  setFieldBlockHidden(card, 'lifeStage', ageMode !== 'lifeStage' || !isChildLike);
+  setFieldBlockHidden(card, 'birthYear', ageMode !== 'birthYear');
+  setFieldBlockHidden(card, 'age', ageMode !== 'exactAge');
+
+  if (isChildLike && ageMode === 'ageBand' && !read('ageBand').value) read('ageBand').value = 'u60';
+  const relationLabel = read('relation').options[read('relation').selectedIndex]?.textContent || '관계 미선택';
+  const ageLabel =
+    ageMode === 'lifeStage'
+      ? read('lifeStage').options[read('lifeStage').selectedIndex]?.textContent || '생활단계 미선택'
+      : ageMode === 'ageBand'
+        ? read('ageBand').options[read('ageBand').selectedIndex]?.textContent || '연령구간 미선택'
+        : ageMode === 'birthYear'
+          ? `${sanitizeNumber(read('birthYear').value) || '-'}년생`
+          : `${sanitizeNumber(read('age').value) || '-'}세`;
+  const name = read('name').value.trim() || relationLabel;
+  const summary = card.querySelector('[data-role="summary"]');
+  if (summary) summary.textContent = `${name} · ${relationLabel} · ${ageLabel}`;
+}
+
 function createChildCard(data = {}) {
   const index = childList.children.length + 1;
   const card = document.createElement('article');
@@ -589,6 +658,7 @@ function createChildCard(data = {}) {
       <strong>자녀 ${index}</strong>
       <button type="button" class="remove-btn" data-remove="child">삭제</button>
     </div>
+    <p class="repeat-card-summary" data-role="summary">입력 전</p>
     <div class="grid two-col">
       <div>
         <label>이름/구분명</label>
@@ -602,22 +672,22 @@ function createChildCard(data = {}) {
           <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>나이 직접 입력</option>
         </select>
       </div>
-      <div>
+      <div data-block="lifeStage">
         <label>생활단계</label>
         <select data-field="lifeStage">
           <option value="infant" ${data.lifeStage === 'infant' ? 'selected' : ''}>영유아</option>
           <option value="preschool" ${data.lifeStage === 'preschool' ? 'selected' : ''}>미취학</option>
-          <option value="elementary" ${(data.lifeStage || 'elementary') === 'elementary' ? 'selected' : ''}>초등학생</option>
-          <option value="middle" ${data.lifeStage === 'middle' ? 'selected' : ''}>중학생</option>
-          <option value="high" ${data.lifeStage === 'high' ? 'selected' : ''}>고등학생</option>
-          <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인(대학생 포함)</option>
+          <option value="elementary" ${(data.lifeStage || 'elementary') === 'elementary' ? 'selected' : ''}>초등</option>
+          <option value="middle" ${data.lifeStage === 'middle' ? 'selected' : ''}>중등</option>
+          <option value="high" ${data.lifeStage === 'high' ? 'selected' : ''}>고등</option>
+          <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인</option>
         </select>
       </div>
-      <div>
+      <div data-block="birthYear">
         <label>출생연도(보조)</label>
         <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
       </div>
-      <div>
+      <div data-block="exactAge">
         <label>나이 직접 입력(보조)</label>
         <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="예: 14" />
       </div>
@@ -659,7 +729,13 @@ function createChildCard(data = {}) {
     childrenCountInput.value = String(childList.children.length);
   });
 
+  card.querySelectorAll('input, select').forEach((el) => {
+    el.addEventListener('input', () => updateChildCardUI(card));
+    el.addEventListener('change', () => updateChildCardUI(card));
+  });
+
   childList.appendChild(card);
+  updateChildCardUI(card);
 }
 
 function createDependentCard(data = {}) {
@@ -671,10 +747,16 @@ function createDependentCard(data = {}) {
       <strong>부양가족 ${index}</strong>
       <button type="button" class="remove-btn" data-remove="dependent">삭제</button>
     </div>
+    <p class="repeat-card-summary" data-role="summary">입력 전</p>
     <div class="grid two-col">
       <div>
         <label>관계</label>
-        <input data-field="relation" value="${data.relation || ''}" placeholder="부, 모, 조부모 등" />
+        <select data-field="relation">
+          <option value="부모" ${(data.relation || '부모') === '부모' ? 'selected' : ''}>부모</option>
+          <option value="조부모" ${data.relation === '조부모' ? 'selected' : ''}>조부모</option>
+          <option value="형제자매" ${data.relation === '형제자매' ? 'selected' : ''}>형제자매</option>
+          <option value="기타" ${data.relation === '기타' ? 'selected' : ''}>기타</option>
+        </select>
       </div>
       <div>
         <label>연령 입력 방식</label>
@@ -683,7 +765,7 @@ function createDependentCard(data = {}) {
           <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>정확한 나이 입력</option>
         </select>
       </div>
-      <div>
+      <div data-block="ageBand">
         <label>연령구간</label>
         <select data-field="ageBand">
           <option value="u60" ${data.ageBand === 'u60' ? 'selected' : ''}>60세 미만</option>
@@ -691,7 +773,7 @@ function createDependentCard(data = {}) {
           <option value="70p" ${data.ageBand === '70p' ? 'selected' : ''}>70세 이상</option>
         </select>
       </div>
-      <div>
+      <div data-block="exactAge">
         <label>정확한 나이(보조)</label>
         <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="0" />
       </div>
@@ -734,7 +816,13 @@ function createDependentCard(data = {}) {
     renumberCards(dependentList, '부양가족');
   });
 
+  card.querySelectorAll('input, select').forEach((el) => {
+    el.addEventListener('input', () => updateDependentCardUI(card));
+    el.addEventListener('change', () => updateDependentCardUI(card));
+  });
+
   dependentList.appendChild(card);
+  updateDependentCardUI(card);
 }
 
 function createPersonalDependentCard(data = {}) {
@@ -746,6 +834,7 @@ function createPersonalDependentCard(data = {}) {
       <strong>인적공제 부양가족 ${index}</strong>
       <button type="button" class="remove-btn" data-remove="personal-dependent">삭제</button>
     </div>
+    <p class="repeat-card-summary" data-role="summary">입력 전</p>
     <div class="grid two-col">
       <div>
         <label>이름/구분명</label>
@@ -771,7 +860,7 @@ function createPersonalDependentCard(data = {}) {
           <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>정확한 나이 입력</option>
         </select>
       </div>
-      <div>
+      <div data-block="ageBand">
         <label>연령구간 선택</label>
         <select data-field="ageBand">
           <option value="">선택 안 함</option>
@@ -780,7 +869,7 @@ function createPersonalDependentCard(data = {}) {
           <option value="70p" ${data.ageBand === '70p' ? 'selected' : ''}>70세 이상</option>
         </select>
       </div>
-      <div>
+      <div data-block="lifeStage">
         <label>자녀 생활단계</label>
         <select data-field="lifeStage">
           <option value="">선택 안 함</option>
@@ -793,11 +882,11 @@ function createPersonalDependentCard(data = {}) {
           <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인</option>
         </select>
       </div>
-      <div>
+      <div data-block="birthYear">
         <label>출생연도(보조)</label>
         <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
       </div>
-      <div>
+      <div data-block="age">
         <label>나이 직접 입력(보조)</label>
         <input data-field="age" data-money inputmode="numeric" value="${data.age || ''}" placeholder="직접 입력" />
       </div>
@@ -829,11 +918,18 @@ function createPersonalDependentCard(data = {}) {
   });
 
   card.querySelectorAll('input, select').forEach((el) => {
-    el.addEventListener('input', updatePersonalDependentStatuses);
-    el.addEventListener('change', updatePersonalDependentStatuses);
+    el.addEventListener('input', () => {
+      updatePersonalDependentCardUI(card);
+      updatePersonalDependentStatuses();
+    });
+    el.addEventListener('change', () => {
+      updatePersonalDependentCardUI(card);
+      updatePersonalDependentStatuses();
+    });
   });
 
   personalDependentList.appendChild(card);
+  updatePersonalDependentCardUI(card);
   updatePersonalDependentStatuses();
 }
 
@@ -841,6 +937,9 @@ function renumberCards(container, label) {
   Array.from(container.children).forEach((card, idx) => {
     const title = card.querySelector('.repeat-card-title strong');
     if (title) title.textContent = `${label} ${idx + 1}`;
+    if (container === childList) updateChildCardUI(card);
+    if (container === dependentList) updateDependentCardUI(card);
+    if (container === personalDependentList) updatePersonalDependentCardUI(card);
   });
 }
 

@@ -699,6 +699,14 @@ button:focus,
   padding: 14px;
 }
 
+.repeat-card-summary {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
 .repeat-card-title {
   margin: 0 0 10px;
   display: flex;
