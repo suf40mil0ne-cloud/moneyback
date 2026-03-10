@@ -82,6 +82,10 @@ const RULES = {
   irp: {
     yearlyGuideLimit: 9000000
   },
+  isa: {
+    taxFreeLimitLabel: '비과세 한도',
+    lowTaxLabel: '초과분 저율 분리과세'
+  },
   personalDeduction: {
     basicDeductionPerPerson: 1500000,
     incomeLimit: 1000000,
@@ -186,10 +190,39 @@ const FAQ_ITEMS = [
   {
     q: '카드보다 연금저축이 더 중요한 경우는 언제인가요?',
     a: '<p>이미 카드 관련 목표 구간을 충분히 채웠거나, 남은 기간이 짧아 소비 구조를 크게 바꾸기 어려운 경우에는 연금저축·IRP 같은 납입 전략 점검이 더 현실적일 수 있습니다.</p><p>반대로 현재 카드 부족 구간이 큰 경우에는 결제수단 비중 조정이 먼저일 수 있어, 결과 요약의 우선순위를 함께 확인해 주세요.</p>'
+  },
+  {
+    q: 'ISA는 연말정산 환급을 바로 늘려주나요?',
+    a: '<p>보통은 그렇지 않습니다. 연금저축·IRP처럼 납입 자체가 연말정산 세액공제로 바로 연결되는 구조와 달리, ISA는 투자수익 과세를 줄이는 절세 투자 계좌로 이해하는 편이 맞습니다.</p><p>다만 ISA를 오래 유지한 뒤 만기 자금을 연금계좌 전환 전략과 연결하면 연말정산 전체 설계에는 영향을 줄 수 있으므로, “즉시 환급”이 아니라 “세제 구조 확장” 관점에서 보시는 것이 좋습니다.</p>'
+  },
+  {
+    q: '연금저축/IRP와 ISA는 무엇이 다른가요?',
+    a: '<p>연금저축·IRP는 연말정산에서 세액공제 효과를 먼저 보는 계좌이고, ISA는 손익통산과 비과세 한도, 초과분 저율 분리과세를 통해 투자수익 과세를 줄이는 계좌입니다.</p><p>즉시 환급이 급하면 연금저축·IRP가 먼저일 수 있고, 이미 연금계좌를 어느 정도 활용 중이거나 장기 투자 절세가 중요하면 ISA 병행 또는 강화가 현실적일 수 있습니다.</p>'
+  },
+  {
+    q: 'ISA에서 S&P500에 투자한다는 말은 무슨 뜻인가요?',
+    a: '<p>이 사이트에서는 ISA 안에서 미국 상장 ETF를 직접 매수하는 의미로 단순화하지 않습니다. 보통은 국내상장 해외지수 ETF를 활용해 S&amp;P500, 나스닥100 등 글로벌 지수에 간접적으로 노출되는 구조를 설명합니다.</p><p>핵심은 특정 종목 추천이 아니라, ISA를 장기 투자용 절세계좌로 쓰면서 글로벌 지수형 자산을 어떤 방식으로 담을지 이해하는 데 있습니다.</p>'
+  },
+  {
+    q: 'ISA에서 미국 상장 ETF를 직접 살 수 있나요?',
+    a: '<p>이 가이드에서는 그 방향으로 안내하지 않습니다. 사용자 오해를 줄이기 위해 ISA에서는 국내상장 해외지수 ETF 활용 개념을 우선 설명하고, 미국 상장 ETF 직접매수처럼 받아들여질 표현은 피합니다.</p><p>따라서 결과 화면에서도 S&amp;P500형 노출이 필요하다면 “국내상장 해외지수 ETF 카테고리 활용” 수준으로만 제안합니다.</p>'
+  },
+  {
+    q: 'ISA를 3년 보유한 뒤에는 무엇을 확인해야 하나요?',
+    a: '<p>계좌를 오래 유지했다면 단순히 출금할지 여부만 보지 말고, 만기 시점과 세제 혜택 구조, 연금계좌 전환 가능성을 함께 확인해야 합니다. 특히 이미 연금저축·IRP를 활용 중이라면 만기 자금을 어떤 순서로 연계할지 점검할 가치가 있습니다.</p><p>결과 화면의 만기 알림은 바로 그 체크포인트를 놓치지 않도록 돕기 위한 장치입니다.</p>'
+  },
+  {
+    q: 'ISA 만기 자금은 그냥 출금하면 되나요?',
+    a: '<p>무조건 바로 출금하는 흐름으로 보기는 어렵습니다. 만기 시점에는 연금계좌 전환을 포함한 세제 연계 전략을 먼저 확인하고, 단순 출금이 더 나은지 비교하는 편이 안전합니다.</p><p>계좌 유지기간, 현재 연금계좌 활용도, 이후 투자 계획을 같이 봐야 하므로, 만기 직전에는 “출금 전 점검”이 우선입니다.</p>'
+  },
+  {
+    q: '연금저축/IRP를 먼저 채우고 ISA를 해야 하나요?',
+    a: '<p>즉시 연말정산 환급 효과가 더 중요하고 아직 연금저축·IRP 한도 여유가 크다면, 보통은 연금계좌 우선이 더 단순하고 실전적일 수 있습니다. 반대로 이미 연금계좌를 꽤 활용 중이거나 투자수익 절세 니즈가 분명하면 ISA를 병행하거나 우선 강화하는 전략도 가능합니다.</p><p>이 도구는 연봉, 월평균 지출, 연금 활용 상태, ISA 보유 상태를 함께 보고 그 우선순위를 행동 문장으로 정리합니다.</p>'
   }
 ];
 
 const UPDATE_HISTORY_ITEMS = [
+  '2026-03-10: ISA 입력, ISA 우선순위 엔진, 만기 알림, ISA FAQ/가이드 섹션 추가',
   '2026-03-09: 월평균 입력 기본 전환, 맞벌이 모드 월평균/누적 토글 보강, 연봉 빠른 선택 개선',
   '2026-03-09: 인적공제 상세 입력(반복 카드, 자동 판정, 충돌 배지) 확장',
   '2026-03-09: 정보형 콘텐츠 섹션, 정책 페이지 링크, FAQ 확장, 신뢰/면책 안내 강화'
@@ -211,6 +244,12 @@ const detailPriorityBadge = document.getElementById('detailPriorityBadge');
 const whyRecommendationBox = document.getElementById('whyRecommendationBox');
 const updateHistoryList = document.getElementById('updateHistoryList');
 const footerUpdateDate = document.getElementById('footerUpdateDate');
+const isaBadgeRow = document.getElementById('isaBadgeRow');
+const isaSummaryCard = document.getElementById('isaSummaryCard');
+const isaActionGuide = document.getElementById('isaActionGuide');
+const isaMaturityAlert = document.getElementById('isaMaturityAlert');
+const singleIsaCapacityHint = document.getElementById('singleIsaCapacityHint');
+const coupleIsaCapacityHint = document.getElementById('coupleIsaCapacityHint');
 
 const singleModeSection = document.getElementById('singleModeSection');
 const coupleModeSection = document.getElementById('coupleModeSection');
@@ -340,6 +379,124 @@ function computeMonthlyProjection(monthly) {
   const yearEndEstimate = monthly * 12;
   const remainingEstimate = monthly * remainingMonths;
   return { elapsedMonths, remainingMonths, currentEstimate, yearEndEstimate, remainingEstimate };
+}
+
+function estimateMonthlyInvestCapacity({ annualIncome = 0, monthlySpend = 0, monthlyPension = 0, monthlyIrp = 0 }) {
+  const monthlyIncome = annualIncome > 0 ? annualIncome / 12 : 0;
+  const reserved = monthlySpend + monthlyPension + monthlyIrp;
+  const raw = Math.max(0, monthlyIncome * 0.35 - reserved);
+  if (raw <= 100000) return 'u10';
+  if (raw <= 300000) return '10-30';
+  if (raw <= 500000) return '30-50';
+  return '50p';
+}
+
+function labelInvestCapacity(capacity) {
+  if (capacity === 'u10') return '월 10만원 이하';
+  if (capacity === '10-30') return '월 10~30만원';
+  if (capacity === '30-50') return '월 30~50만원';
+  if (capacity === '50p') return '월 50만원 이상';
+  return '아직 정하기 어려움';
+}
+
+function labelIsaStatus(status) {
+  if (status === 'active') return '이미 보유 중';
+  if (status === 'seasoned') return '보유 중이며 3년 이상 유지';
+  if (status === 'maturitySoon') return '곧 만기 예정';
+  if (status === 'maturityDecision') return '만기 처리 고민 중';
+  return '아직 없음';
+}
+
+function labelIsaPurpose(purpose) {
+  if (purpose === 'income') return '배당/인컴형 투자';
+  if (purpose === 'stable') return '예적금·채권 포함 안정형 운용';
+  if (purpose === 'unknown') return '아직 목적 미정';
+  return '미국/글로벌 지수 장기투자';
+}
+
+function resolvePensionLinkStatus(selected, pensionAmount, irpAmount) {
+  if (selected && selected !== 'unknown') return selected;
+  const total = pensionAmount + irpAmount;
+  if (total >= RULES.pension.combinedAnnualLimit * 0.8) return 'high';
+  if (total >= RULES.pension.combinedAnnualLimit * 0.35) return 'mid';
+  return 'low';
+}
+
+function labelPensionLinkStatus(status) {
+  if (status === 'high') return '연금저축/IRP를 거의 채우는 중';
+  if (status === 'mid') return '연금저축/IRP를 어느 정도 활용 중';
+  if (status === 'unknown') return '연금계좌 활용 상태 미정';
+  return '연금저축/IRP 활용 여지 큼';
+}
+
+function buildIsaInput({ status, purpose, pensionLinkStatus, selectedCapacity, estimatedCapacity, holder = '본인' }) {
+  return {
+    status,
+    purpose,
+    pensionLinkStatus,
+    capacity: selectedCapacity === 'auto' ? estimatedCapacity : selectedCapacity,
+    selectedCapacity,
+    estimatedCapacity,
+    holder
+  };
+}
+
+function getIsaPriorityProfile(isa, metrics) {
+  const reasons = [];
+  const actions = [];
+  const notes = [
+    'ISA는 당장 연말정산 세액공제를 크게 늘리는 계좌라기보다 투자수익 절세 중심 계좌입니다.',
+    'ISA에서는 해외 상장 ETF 직접매수보다 국내상장 해외지수 ETF 활용 설명이 더 적절합니다.',
+    '손익통산, 비과세 한도, 초과분 저율 분리과세, 만기 후 연금계좌 전환 가능성을 함께 보세요.'
+  ];
+  let priority = 'B. 연금 + ISA 병행형';
+
+  if (isa.status === 'seasoned' || isa.status === 'maturitySoon' || isa.status === 'maturityDecision') {
+    priority = 'D. 만기전환 전략형';
+    reasons.push('이미 ISA를 오래 보유했거나 만기 시점 판단이 가까워서 만기 후 행동이 핵심입니다.');
+    actions.push('현재는 ISA를 장기 투자용 절세계좌로 쓰고, 만기 시점에는 연금계좌 전환 여부를 반드시 점검하세요.');
+    actions.push('ISA 만기 후 연금계좌 전환이 가능한 시점이라면, 단순 출금보다 세제연계 전략을 먼저 확인하는 편이 좋습니다.');
+  } else if (isa.pensionLinkStatus === 'low' && (isa.capacity === 'u10' || metrics.pensionRatio < 0.35)) {
+    priority = 'A. 연금저축/IRP 우선형';
+    reasons.push('즉시 연말정산 환급 효과가 더 중요하고, 연금저축·IRP 활용 여지가 아직 큽니다.');
+    actions.push('지금은 ISA보다 연금저축/IRP 세액공제 여력을 먼저 활용하는 편이 더 유리할 수 있습니다.');
+    actions.push('ISA는 보조 계좌로 두고, 연금저축 자동이체를 먼저 안정화한 뒤 병행 여부를 보세요.');
+  } else if (isa.pensionLinkStatus === 'high' && (isa.capacity === '30-50' || isa.capacity === '50p' || metrics.income >= 70000000)) {
+    priority = 'C. ISA 우선 강화형';
+    reasons.push('연금계좌를 이미 충분히 활용 중이거나 장기 투자 절세 니즈가 더 큽니다.');
+    actions.push('연금계좌를 어느 정도 채운 뒤 남는 투자 여력은 ISA로 분산하는 전략이 현실적입니다.');
+    actions.push('ISA에서는 국내상장 해외지수 ETF 중심으로 장기 투자 구조를 잡는 설명이 더 적절합니다.');
+  } else {
+    reasons.push('세액공제와 투자 절세를 함께 챙길 수 있는 중간 구간으로 보입니다.');
+    actions.push('연금저축 자동이체와 ISA를 병행해 현금흐름을 분리하는 전략이 현실적입니다.');
+    actions.push('월 투자 여력이 크지 않다면 ISA는 소액 분할, 연금계좌는 세액공제 우선 순서로 보세요.');
+  }
+
+  if (isa.purpose === 'global') {
+    notes.push('S&P500 노출을 원한다면 ISA에서는 국내시장에 상장된 해외지수 추종 ETF를 활용하는 방식으로 안내합니다.');
+  } else if (isa.purpose === 'stable') {
+    notes.push('안정형 운용 목적이라면 예적금·채권 중심의 절세 운용 계좌로 해석하는 편이 맞습니다.');
+  } else if (isa.purpose === 'income') {
+    notes.push('배당/인컴형 목적이라면 계좌 안에서 장기 보유와 과세 구조를 함께 점검하세요.');
+  }
+
+  return {
+    priority,
+    reasons,
+    actions,
+    notes,
+    relationship:
+      isa.pensionLinkStatus === 'low'
+        ? '연금저축·IRP 세액공제가 먼저이고 ISA는 다음 단계 보완축에 가깝습니다.'
+        : isa.pensionLinkStatus === 'high'
+          ? '연금계좌를 어느 정도 활용 중이므로 ISA 비중을 올릴 근거가 있습니다.'
+          : '연금저축·IRP와 ISA를 병행해 세액공제와 투자 절세를 나누는 구조가 적합합니다.',
+    warning:
+      isa.status === 'maturitySoon' || isa.status === 'maturityDecision'
+        ? '만기 전 단순 출금 여부보다 연금계좌 전환 가능성과 세제 효과를 먼저 확인하세요.'
+        : 'ISA는 즉시 환급형 계좌가 아니므로 연말 직전 납입만으로 환급이 커진다고 보기 어렵습니다.',
+    maturityNeeded: ['seasoned', 'maturitySoon', 'maturityDecision'].includes(isa.status)
+  };
 }
 
 function getBaseCardLimit(income) {
@@ -813,6 +970,7 @@ function updateIncomeModeUI() {
   } else {
     state.income.mode = 'exact';
   }
+  updateSingleIsaCapacityHint();
 }
 
 function updateCoupleIncomeModeUI(spouse) {
@@ -832,6 +990,7 @@ function updateCoupleIncomeModeUI(spouse) {
     if (sub > 0 && !directToggle.checked) inputEl.value = formatMoney(sub);
   }
   state.inputMode[isA ? 'coupleIncomeModeA' : 'coupleIncomeModeB'] = mode;
+  updateCoupleIsaCapacityHint();
 }
 
 function updateSpendModeUI() {
@@ -844,6 +1003,7 @@ function updateSpendModeUI() {
     applyAllSingleSpendSelections();
     refreshEstimationPreview();
   }
+  updateSingleIsaCapacityHint();
 }
 
 function updateCoupleSpendModeUI() {
@@ -859,6 +1019,7 @@ function updateCoupleSpendModeUI() {
     applyAllCoupleSpendSelections('b');
     refreshCoupleEstimationPreview();
   }
+  updateCoupleIsaCapacityHint();
 }
 
 function refreshEstimationPreview() {
@@ -884,6 +1045,7 @@ function refreshEstimationPreview() {
     <p>남은 ${projection.remainingMonths}개월 예상 사용액: ${formatMoney(projection.remainingEstimate)}원</p>
     <p class="hint">현재 월평균 패턴을 그대로 유지한다고 가정한 예상/추정 값입니다.</p>
   `;
+  updateSingleIsaCapacityHint();
 }
 
 function calculateCategoryProjectionByPrefix(prefix) {
@@ -927,6 +1089,7 @@ function refreshCoupleEstimationPreview() {
     <p>남은 ${a.projection.remainingMonths}개월 가구 추정 사용액: ${formatMoney(houseRemaining)}원</p>
     <p class="hint">현재 월평균 패턴 유지 기준의 추정치이며, 실제 신고값이 아닌 행동 가이드용입니다.</p>
   `;
+  updateCoupleIsaCapacityHint();
 }
 
 function applySpendSelectionToInput(kind, prefix) {
@@ -1073,6 +1236,13 @@ function collectSingleInput() {
   state.inputMode.spendMode = spendMode;
   state.family.simpleInputs = simple;
   state.family.detailedPersonalDeductions = detailed;
+  const monthlySpend = spendMode === 'monthly' ? projection.monthlyTotal : projection.currentEstimate / Math.max(1, getNowMonths().elapsedMonths);
+  const estimatedCapacity = estimateMonthlyInvestCapacity({
+    annualIncome: incomeResolved.value,
+    monthlySpend,
+    monthlyPension: getMoneyInputValue('singlePension') / 12,
+    monthlyIrp: getMoneyInputValue('singleIrp') / 12
+  });
 
   return {
     mode: 'single',
@@ -1090,6 +1260,13 @@ function collectSingleInput() {
     monthlyRent: getMoneyInputValue('singleMonthlyRent'),
     pension: getMoneyInputValue('singlePension'),
     irp: getMoneyInputValue('singleIrp'),
+    isa: buildIsaInput({
+      status: document.getElementById('singleIsaStatus').value,
+      purpose: document.getElementById('singleIsaPurpose').value,
+      pensionLinkStatus: resolvePensionLinkStatus(document.getElementById('singlePensionLinkStatus').value, getMoneyInputValue('singlePension'), getMoneyInputValue('singleIrp')),
+      selectedCapacity: document.getElementById('singleInvestCapacity').value,
+      estimatedCapacity
+    }),
     credit,
     checkCash,
     market,
@@ -1170,6 +1347,17 @@ function collectCoupleInput() {
           remainingEstimate: 0
         };
 
+  const householdMonthlySpend =
+    spendMode === 'monthly'
+      ? (aMonthlyProjection.projection.yearEndEstimate + bMonthlyProjection.projection.yearEndEstimate) / 12
+      : projection.yearEndEstimate / Math.max(1, 12 - projection.remainingMonths || 1);
+  const estimatedCapacity = estimateMonthlyInvestCapacity({
+    annualIncome: aIncomeResolved.value + bIncomeResolved.value,
+    monthlySpend: householdMonthlySpend,
+    monthlyPension: (getMoneyInputValue('aPension') + getMoneyInputValue('bPension')) / 12,
+    monthlyIrp: (getMoneyInputValue('aIrp') + getMoneyInputValue('bIrp')) / 12
+  });
+
   return {
     mode: 'couple',
     spendMode,
@@ -1186,6 +1374,14 @@ function collectCoupleInput() {
       family: '생활단계/연령구간 선택 또는 직접 입력 혼합'
     },
     projection,
+    isa: buildIsaInput({
+      status: document.getElementById('coupleIsaStatus').value,
+      purpose: document.getElementById('coupleIsaPurpose').value,
+      pensionLinkStatus: resolvePensionLinkStatus(document.getElementById('couplePensionLinkStatus').value, getMoneyInputValue('aPension') + getMoneyInputValue('bPension'), getMoneyInputValue('aIrp') + getMoneyInputValue('bIrp')),
+      selectedCapacity: document.getElementById('coupleInvestCapacity').value,
+      estimatedCapacity,
+      holder: getSpouseLabelByIncome(aIncomeResolved.value, bIncomeResolved.value) === '균형 배분' ? '부부 병행' : `${getSpouseLabelByIncome(aIncomeResolved.value, bIncomeResolved.value)} 우선`
+    }),
     isMarriedRegistered: document.getElementById('isMarriedRegistered').checked,
     spouseA: {
       income: aIncomeResolved.value,
@@ -1412,8 +1608,60 @@ function renderCoupleSpendEstimationSummary(input, cardStats) {
   `;
 }
 
+function updateSingleIsaCapacityHint() {
+  if (!singleIsaCapacityHint) return;
+  const incomeResolved = getIncomeByPriority({
+    directInputEl: annualIncomeInput,
+    subSelectEl: incomeQuickSubBand,
+    bandSelectEl: incomeQuickBand,
+    allowDirect: incomeInputMode.value === 'exact' || incomeUseDirect.checked
+  });
+  const monthlySpend =
+    spendInputMode.value === 'monthly'
+      ? ['monthlyCreditCard', 'monthlyCheckCash', 'monthlyTraditionalMarket', 'monthlyTransit'].reduce((sum, id) => sum + getMoneyInputValue(id), 0)
+      : ['currentCreditCard', 'currentCheckCash', 'currentTraditionalMarket', 'currentTransit'].reduce((sum, id) => sum + getMoneyInputValue(id), 0) / Math.max(1, getNowMonths().elapsedMonths);
+  const estimate = estimateMonthlyInvestCapacity({
+    annualIncome: incomeResolved.value,
+    monthlySpend,
+    monthlyPension: getMoneyInputValue('singlePension') / 12,
+    monthlyIrp: getMoneyInputValue('singleIrp') / 12
+  });
+  singleIsaCapacityHint.textContent = `자동 추정 월 투자 여력: ${labelInvestCapacity(estimate)}`;
+}
+
+function updateCoupleIsaCapacityHint() {
+  if (!coupleIsaCapacityHint) return;
+  const aIncomeResolved = getIncomeByPriority({
+    directInputEl: aIncomeInput,
+    subSelectEl: aIncomeQuickSubBand,
+    bandSelectEl: aIncomeQuickBand,
+    allowDirect: aIncomeInputMode.value === 'exact' || aIncomeUseDirect.checked
+  });
+  const bIncomeResolved = getIncomeByPriority({
+    directInputEl: bIncomeInput,
+    subSelectEl: bIncomeQuickSubBand,
+    bandSelectEl: bIncomeQuickBand,
+    allowDirect: bIncomeInputMode.value === 'exact' || bIncomeUseDirect.checked
+  });
+  const monthlySpend =
+    coupleSpendInputMode.value === 'monthly'
+      ? ['aMonthlyCredit', 'aMonthlyCheckCash', 'aMonthlyMarket', 'aMonthlyTransit', 'bMonthlyCredit', 'bMonthlyCheckCash', 'bMonthlyMarket', 'bMonthlyTransit'].reduce((sum, id) => sum + getMoneyInputValue(id), 0)
+      : ['aCredit', 'aCheckCash', 'aMarket', 'aTransit', 'bCredit', 'bCheckCash', 'bMarket', 'bTransit'].reduce((sum, id) => sum + getMoneyInputValue(id), 0) / Math.max(1, getNowMonths().elapsedMonths);
+  const estimate = estimateMonthlyInvestCapacity({
+    annualIncome: aIncomeResolved.value + bIncomeResolved.value,
+    monthlySpend,
+    monthlyPension: (getMoneyInputValue('aPension') + getMoneyInputValue('bPension')) / 12,
+    monthlyIrp: (getMoneyInputValue('aIrp') + getMoneyInputValue('bIrp')) / 12
+  });
+  coupleIsaCapacityHint.textContent = `자동 추정 월 투자 여력: ${labelInvestCapacity(estimate)}`;
+}
+
 function buildSingleRecommendation(input) {
   const personal = analyzePersonalDeduction(input);
+  const isaProfile = getIsaPriorityProfile(input.isa, {
+    income: input.income,
+    pensionRatio: (input.pension + input.irp) / Math.max(1, RULES.pension.combinedAnnualLimit)
+  });
 
   const totalCard = input.credit + input.checkCash + input.market + input.transit;
   const card = computeCardTargetByPerson(input.income, totalCard, input.checkCash > input.credit ? 'check' : 'balanced');
@@ -1427,6 +1675,7 @@ function buildSingleRecommendation(input) {
   const summary = [
     `현재 기준으로는 남은 목표 ${formatMoney(card.shortfall)}원을 계획 지출 안에서 ${preferredType} 위주로 배치하는 편이 유리할 가능성이 높습니다.`,
     `연금저축+IRP 입력 합계는 ${formatMoney(input.pension + input.irp)}원입니다. 연간 가이드 상한 ${formatMoney(RULES.irp.yearlyGuideLimit)}원 대비 여유를 확인해 자동이체 금액을 조정해 보세요.`,
+    `ISA 우선순위는 ${isaProfile.priority}으로 해석했습니다. ${isaProfile.relationship}`,
     input.monthlyRent > 0
       ? '월세는 세액공제와 현금영수증 중 하나만 선택해 점검하는 방식이 안전합니다.'
       : '월세 입력이 없으므로 카드/현금영수증 증빙 누락 점검에 집중하는 전략이 적합합니다.',
@@ -1451,10 +1700,10 @@ function buildSingleRecommendation(input) {
     },
     {
       item: 'ISA',
-      current: '입력 없음(선택)',
+      current: `${labelIsaStatus(input.isa.status)} / ${labelInvestCapacity(input.isa.capacity)}`,
       target: '본인',
-      reason: '연말 직전 몰입금보다 월 분할 납입이 현실적입니다.',
-      caution: '상품/한도는 연도별 정책 변경 확인 필요'
+      reason: isaProfile.priority,
+      caution: isaProfile.warning
     },
     {
       item: '인적공제 점검',
@@ -1477,19 +1726,19 @@ function buildSingleRecommendation(input) {
       '올해 남은 기간이 짧다면 큰 소비 증액보다 결제수단 전환부터 진행하세요.',
       '월평균 지출 중 고정비를 체크카드/현금영수증으로 우선 배치하세요.',
       '인적공제는 배우자/자녀 소득요건만 먼저 확인하세요.',
-      'ISA는 소액 자동이체로 시작하세요.'
+      isaProfile.actions[0] || 'ISA는 소액 자동이체로 시작하세요.'
     ],
     balanced: [
       '신용카드 비중 일부를 체크카드로 이동해 공제 효율 균형을 맞추세요.',
       '연금저축/IRP는 월 자동이체를 유지하며 분기별 한도 여유를 확인하세요.',
       '인적공제 상세 입력으로 8세 이상 자녀/70세 이상 인원 자동판정을 활용하세요.',
-      '월평균 소비가 빠듯하면 추가 소비보다 명의/수단 조정이 우선입니다.'
+      isaProfile.actions[1] || '월평균 소비가 빠듯하면 추가 소비보다 명의/수단 조정이 우선입니다.'
     ],
     max: [
       '남은 기간 목표치를 월 단위로 쪼개 체크카드/현금영수증 전환량을 명확히 정하세요.',
       '연금저축/IRP/ISA 자동이체 금액을 함께 설정해 연말 부담을 분산하세요.',
       '기본공제 제외 가능 가족(소득요건 미충족)을 미리 정리해 누락을 줄이세요.',
-      '지금부터는 지출 규모보다 지출 구조를 바꾸는 전략이 핵심입니다.'
+      isaProfile.notes[isaProfile.notes.length - 1]
     ]
   };
 
@@ -1500,7 +1749,10 @@ function buildSingleRecommendation(input) {
   const todos = [
     monthlyAction,
     '배우자 또는 가족 공제 요건 다시 점검하기',
-    '연금저축 자동이체 가능 금액과 월세/의료비/교육비 누락 항목 확인하기'
+    '연금저축 자동이체 가능 금액과 월세/의료비/교육비 누락 항목 확인하기',
+    isaProfile.maturityNeeded
+      ? 'ISA 만기 전 연금계좌 전환 가능성과 단순 출금 대안을 비교하기'
+      : 'ISA를 쓴다면 국내상장 해외지수 ETF 등 활용 구조를 먼저 이해하기'
   ];
 
   return {
@@ -1511,11 +1763,18 @@ function buildSingleRecommendation(input) {
     scenarios: scenarioContent,
     todos,
     cardStats: { self: card },
-    personal
+    personal,
+    isa: isaProfile
   };
 }
 
 function buildCoupleRecommendation(input) {
+  const isaProfile = getIsaPriorityProfile(input.isa, {
+    income: input.spouseA.income + input.spouseB.income,
+    pensionRatio:
+      (input.spouseA.pension + input.spouseA.irp + input.spouseB.pension + input.spouseB.irp) /
+      Math.max(1, RULES.pension.combinedAnnualLimit * 2)
+  });
   const aTotalCard = input.spouseA.credit + input.spouseA.checkCash + input.spouseA.market + input.spouseA.transit;
   const bTotalCard = input.spouseB.credit + input.spouseB.checkCash + input.spouseB.market + input.spouseB.transit;
   const aCard = computeCardTargetByPerson(input.spouseA.income, aTotalCard, input.spouseA.checkCash > input.spouseA.credit ? 'check' : 'balanced');
@@ -1585,10 +1844,10 @@ function buildCoupleRecommendation(input) {
 
   allocations.push({
     item: 'ISA',
-    current: '부부 공통 관리(선택)',
-    target: '현금흐름 여유 큰 배우자 우선',
-    reason: '월 분할 납입이 실행 안정성이 높습니다.',
-    caution: '계좌별 요건/한도 최신 기준 확인 필요'
+    current: `${labelIsaStatus(input.isa.status)} / ${labelInvestCapacity(input.isa.capacity)}`,
+    target: input.isa.holder,
+    reason: isaProfile.priority,
+    caution: isaProfile.warning
   });
 
   const rentOverlap = (input.spouseA.rent > 0 && input.spouseA.checkCash > 0) || (input.spouseB.rent > 0 && input.spouseB.checkCash > 0);
@@ -1626,6 +1885,7 @@ function buildCoupleRecommendation(input) {
   const summary = [
     firstSummary,
     monthlySwitchAction,
+    `ISA 우선순위는 ${isaProfile.priority}으로 해석했습니다. ${isaProfile.relationship}`,
     '월세는 세액공제와 현금영수증 중 하나만 선택해 중복을 피해야 합니다.',
     warnings.some((line) => line.includes('의료비'))
       ? '자녀 의료비에서 결제자/귀속 엇갈림으로 누락 위험이 있습니다.'
@@ -1637,17 +1897,17 @@ function buildCoupleRecommendation(input) {
     simple: [
       '귀속자는 크게 바꾸지 말고 중복공제 방지부터 정리하세요.',
       `카드는 ${preferredCardHolder} 부족 구간 우선 채우세요.`,
-      '월세/의료비 증빙 경로를 먼저 확정하세요.'
+      isaProfile.actions[0] || '월세/의료비 증빙 경로를 먼저 확정하세요.'
     ],
     balanced: [
       '자녀 귀속을 1명 단위로 재점검해 교육비/의료비를 맞추세요.',
       '카드는 A/B 부족 구간을 월 단위로 나눠 채우세요.',
-      '연금저축/IRP/ISA 자동이체를 분산 설정하세요.'
+      isaProfile.actions[1] || '연금저축/IRP/ISA 자동이체를 분산 설정하세요.'
     ],
     max: [
       '부부 귀속을 항목별로 적극 최적화해 누락 가능성을 줄이세요.',
       '부족분 큰 배우자 명의에 계획 지출을 집중하세요.',
-      '의료비·월세·기부금·ISA 납입 흐름을 연말 전 확정하세요.'
+      isaProfile.notes[isaProfile.notes.length - 1]
     ]
   };
 
@@ -1658,7 +1918,10 @@ function buildCoupleRecommendation(input) {
     '월세는 세액공제로 갈지 현금영수증으로 갈지 하나만 선택하기',
     input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
       ? `${preferredCardHolder} 체크카드/현금영수증으로 월 ${formatMoney(preferredShortfall / input.projection.remainingMonths)}원 전환 계획 세우기`
-      : `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`
+      : `카드 추가 사용은 ${preferredCardHolder} 체크카드로 우선 배치하기`,
+    isaProfile.maturityNeeded
+      ? 'ISA 만기 자금은 출금 전에 연금계좌 전환 가능성부터 확인하기'
+      : '연금계좌와 ISA 자동이체를 병행할지 월 현금흐름 기준으로 결정하기'
   ];
 
   return {
@@ -1668,7 +1931,8 @@ function buildCoupleRecommendation(input) {
     warnings,
     scenarios: scenarioContent,
     todos,
-    cardStats: { aCard, bCard }
+    cardStats: { aCard, bCard },
+    isa: isaProfile
   };
 }
 
@@ -1776,17 +2040,57 @@ function renderFaq() {
   document.getElementById('faq-jsonld').textContent = JSON.stringify(faqLd);
 }
 
+function renderIsaSummary(result, input) {
+  if (!result.isa || !isaSummaryCard || !isaActionGuide || !isaBadgeRow || !isaMaturityAlert) return;
+  const profile = result.isa;
+  const isaInput = input.isa;
+
+  isaBadgeRow.innerHTML = [
+    `<span class="isa-pill">${profile.priority}</span>`,
+    `<span class="isa-pill">${labelIsaStatus(isaInput.status)}</span>`,
+    `<span class="isa-pill">${labelInvestCapacity(isaInput.capacity)}</span>`,
+    profile.maturityNeeded ? '<span class="isa-pill alert">만기 전략 점검 필요</span>' : ''
+  ].join('');
+
+  isaSummaryCard.innerHTML = [
+    { title: '현재 ISA 우선순위', text: profile.priority },
+    { title: '연금계좌와의 관계', text: profile.relationship },
+    { title: '추천 활용 방식', text: `${labelIsaPurpose(isaInput.purpose)} · ${isaInput.holder || '본인'} 기준` },
+    { title: '주의할 점', text: profile.warning },
+    { title: '만기 전략 필요 여부', text: profile.maturityNeeded ? '필요' : '현재는 장기 운용 설명 우선' }
+  ]
+    .map((item) => `<article class="isa-summary-item"><strong>${item.title}</strong><p>${item.text}</p></article>`)
+    .join('');
+
+  isaActionGuide.innerHTML = `
+    <p><strong>ISA 활용 방식 안내</strong></p>
+    ${profile.actions.map((line) => `<p>${line}</p>`).join('')}
+    ${profile.notes.map((line) => `<p>${line}</p>`).join('')}
+  `;
+
+  if (profile.maturityNeeded) {
+    isaMaturityAlert.classList.remove('hidden');
+    isaMaturityAlert.innerHTML = `
+      <p>ISA 만기 전략 점검 필요</p>
+      <p>연금계좌 전환 검토 구간에 들어왔을 수 있으니, 단순 출금 전 세제 혜택 확인을 권장합니다.</p>
+    `;
+  } else {
+    isaMaturityAlert.classList.add('hidden');
+    isaMaturityAlert.innerHTML = '';
+  }
+}
+
 function renderWhyRecommendation(result, input) {
   if (!whyRecommendationBox) return;
   const spendModeLabel = input.spendMode === 'cumulative' || (input.projection && input.projection.mode === 'cumulative') ? '누적 입력' : '월평균 입력';
   const topReason =
     result.mode === 'single'
-      ? `입력한 소득(${formatMoney(input.income)}원)과 소비 패턴(${spendModeLabel})을 기준으로 카드 전략·납입 전략·인적공제 점검 우선순위를 조합했습니다.`
-      : `배우자별 소득과 소비를 분리해 각자 부족 구간을 추정하고, 중복공제 위험·결제자 불일치 위험을 함께 반영했습니다.`;
+      ? `입력한 소득(${formatMoney(input.income)}원)과 소비 패턴(${spendModeLabel})을 기준으로 카드 전략·납입 전략·인적공제·ISA 우선순위를 조합했습니다.`
+      : `배우자별 소득과 소비를 분리해 각자 부족 구간을 추정하고, 중복공제 위험·결제자 불일치 위험·ISA 병행 우선순위를 함께 반영했습니다.`;
   const impact =
     result.mode === 'single'
-      ? '영향이 큰 입력값: 연봉, 카드/체크카드 비중, 인적공제(간편 또는 상세) 정보'
-      : '영향이 큰 입력값: 배우자 A/B 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보';
+      ? '영향이 큰 입력값: 연봉, 카드/체크카드 비중, 인적공제(간편 또는 상세) 정보, 연금저축·IRP·ISA 상태'
+      : '영향이 큰 입력값: 배우자 A/B 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보, 가구 ISA 상태';
 
   whyRecommendationBox.innerHTML = `
     <p><strong>왜 이런 추천이 나왔나요?</strong></p>
@@ -1808,6 +2112,7 @@ function renderAll(result, input) {
   renderScenario();
   renderTodos(result.todos);
   renderWhyRecommendation(result, input);
+  renderIsaSummary(result, input);
 
   if (result.mode === 'single') {
     renderPersonalSummary(result.personal, 'single');
@@ -1989,6 +2294,10 @@ spendInputMode.addEventListener('change', updateSpendModeUI);
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', refreshEstimationPreview);
 });
+['currentCreditCard', 'currentCheckCash', 'currentTraditionalMarket', 'currentTransit', 'singlePension', 'singleIrp', 'annualIncome'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateSingleIsaCapacityHint);
+});
 [
   'singleCreditBand', 'singleCreditSub', 'singleCreditUseDirect',
   'singleCheckBand', 'singleCheckSub', 'singleCheckUseDirect',
@@ -1998,11 +2307,19 @@ spendInputMode.addEventListener('change', updateSpendModeUI);
   const el = document.getElementById(id);
   if (el) el.addEventListener('change', refreshEstimationPreview);
 });
+['singleIsaStatus', 'singleIsaPurpose', 'singlePensionLinkStatus', 'singleInvestCapacity'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', updateSingleIsaCapacityHint);
+});
 
 coupleSpendInputMode.addEventListener('change', updateCoupleSpendModeUI);
 ['aMonthlyCredit', 'aMonthlyCheckCash', 'aMonthlyMarket', 'aMonthlyTransit', 'bMonthlyCredit', 'bMonthlyCheckCash', 'bMonthlyMarket', 'bMonthlyTransit'].forEach((id) => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', refreshCoupleEstimationPreview);
+});
+['aCredit', 'aCheckCash', 'aMarket', 'aTransit', 'bCredit', 'bCheckCash', 'bMarket', 'bTransit', 'aPension', 'aIrp', 'bPension', 'bIrp', 'aIncome', 'bIncome'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateCoupleIsaCapacityHint);
 });
 [
   'aCreditBand', 'aCreditSub', 'aCreditUseDirect',
@@ -2016,6 +2333,10 @@ coupleSpendInputMode.addEventListener('change', updateCoupleSpendModeUI);
 ].forEach((id) => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('change', refreshCoupleEstimationPreview);
+});
+['coupleIsaStatus', 'coupleIsaPurpose', 'couplePensionLinkStatus', 'coupleInvestCapacity'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', updateCoupleIsaCapacityHint);
 });
 
 aIncomeInputMode.addEventListener('change', () => updateCoupleIncomeModeUI('A'));
@@ -2043,3 +2364,5 @@ updateCoupleIncomeModeUI('A');
 updateCoupleIncomeModeUI('B');
 updateCoupleSpendModeUI();
 refreshCoupleEstimationPreview();
+updateSingleIsaCapacityHint();
+updateCoupleIsaCapacityHint();
