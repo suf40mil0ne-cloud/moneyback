@@ -727,6 +727,73 @@ button:focus,
   letter-spacing: 0.01em;
 }
 
+.spend-item-shell {
+  display: grid;
+  gap: 10px;
+  border: 1px solid rgba(196, 190, 176, 0.7);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 14px;
+}
+
+.spend-item-head {
+  display: grid;
+  gap: 6px;
+}
+
+.spend-item-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink-strong);
+}
+
+.spend-item-caption {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.spend-item-summary {
+  margin: 0;
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.spend-item-main,
+.spend-subpanel {
+  display: grid;
+  gap: 6px;
+}
+
+.spend-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spend-link-btn {
+  border: 1px solid rgba(196, 190, 176, 0.9);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 11px;
+  cursor: pointer;
+}
+
+.spend-link-btn.active {
+  border-color: rgba(36, 92, 84, 0.34);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.sr-only-toggle {
+  display: none;
+}
+
 .repeat-card-title {
   margin: 0 0 10px;
   display: flex;

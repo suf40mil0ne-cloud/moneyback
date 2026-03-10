@@ -299,6 +299,27 @@ const aCumulativeSpendWrap = document.getElementById('aCumulativeSpendWrap');
 const bMonthlySpendWrap = document.getElementById('bMonthlySpendWrap');
 const bCumulativeSpendWrap = document.getElementById('bCumulativeSpendWrap');
 
+const SPEND_FIELD_MAP = {
+  single: {
+    creditCard: { band: 'singleCreditBand', sub: 'singleCreditSub', direct: 'singleCreditUseDirect', input: 'monthlyCreditCard', label: '월평균 신용카드' },
+    checkCash: { band: 'singleCheckBand', sub: 'singleCheckSub', direct: 'singleCheckUseDirect', input: 'monthlyCheckCash', label: '월평균 체크카드+현금영수증' },
+    traditionalMarket: { band: 'singleMarketBand', sub: 'singleMarketSub', direct: 'singleMarketUseDirect', input: 'monthlyTraditionalMarket', label: '월평균 전통시장' },
+    transit: { band: 'singleTransitBand', sub: 'singleTransitSub', direct: 'singleTransitUseDirect', input: 'monthlyTransit', label: '월평균 대중교통' }
+  },
+  a: {
+    creditCard: { band: 'aCreditBand', sub: 'aCreditSub', direct: 'aCreditUseDirect', input: 'aMonthlyCredit', label: '월평균 신용카드' },
+    checkCash: { band: 'aCheckBand', sub: 'aCheckSub', direct: 'aCheckUseDirect', input: 'aMonthlyCheckCash', label: '월평균 체크카드+현금영수증' },
+    traditionalMarket: { band: 'aMarketBand', sub: 'aMarketSub', direct: 'aMarketUseDirect', input: 'aMonthlyMarket', label: '월평균 전통시장' },
+    transit: { band: 'aTransitBand', sub: 'aTransitSub', direct: 'aTransitUseDirect', input: 'aMonthlyTransit', label: '월평균 대중교통' }
+  },
+  b: {
+    creditCard: { band: 'bCreditBand', sub: 'bCreditSub', direct: 'bCreditUseDirect', input: 'bMonthlyCredit', label: '월평균 신용카드' },
+    checkCash: { band: 'bCheckBand', sub: 'bCheckSub', direct: 'bCheckUseDirect', input: 'bMonthlyCheckCash', label: '월평균 체크카드+현금영수증' },
+    traditionalMarket: { band: 'bMarketBand', sub: 'bMarketSub', direct: 'bMarketUseDirect', input: 'bMonthlyMarket', label: '월평균 전통시장' },
+    transit: { band: 'bTransitBand', sub: 'bTransitSub', direct: 'bTransitUseDirect', input: 'bMonthlyTransit', label: '월평균 대중교통' }
+  }
+};
+
 let activeMode = 'single';
 let activeScenarioId = 'simple';
 let latestResult = null;
@@ -353,6 +374,16 @@ function fillSubOptions(selectEl, values) {
   if (previousValue && values.map(String).includes(String(previousValue))) {
     selectEl.value = String(previousValue);
   }
+}
+
+function getSpendFieldRefs(prefix, kind) {
+  return SPEND_FIELD_MAP[prefix]?.[kind] || null;
+}
+
+function labelSpendResolvedMode(mode) {
+  if (mode === 'monthly-direct') return '직접 입력';
+  if (mode === 'monthly-select') return '선택형';
+  return '기본 선택';
 }
 
 function resolveSpendValue(kind, bandEl, subEl, directInputEl, directToggleEl) {
@@ -1196,30 +1227,167 @@ function refreshCoupleEstimationPreview() {
   updateCoupleIsaCapacityHint();
 }
 
-function applySpendSelectionToInput(kind, prefix) {
-  const fieldMapByPrefix = {
-    single: {
-      creditCard: { band: 'singleCreditBand', sub: 'singleCreditSub', direct: 'singleCreditUseDirect', input: 'monthlyCreditCard' },
-      checkCash: { band: 'singleCheckBand', sub: 'singleCheckSub', direct: 'singleCheckUseDirect', input: 'monthlyCheckCash' },
-      traditionalMarket: { band: 'singleMarketBand', sub: 'singleMarketSub', direct: 'singleMarketUseDirect', input: 'monthlyTraditionalMarket' },
-      transit: { band: 'singleTransitBand', sub: 'singleTransitSub', direct: 'singleTransitUseDirect', input: 'monthlyTransit' }
-    },
-    a: {
-      creditCard: { band: 'aCreditBand', sub: 'aCreditSub', direct: 'aCreditUseDirect', input: 'aMonthlyCredit' },
-      checkCash: { band: 'aCheckBand', sub: 'aCheckSub', direct: 'aCheckUseDirect', input: 'aMonthlyCheckCash' },
-      traditionalMarket: { band: 'aMarketBand', sub: 'aMarketSub', direct: 'aMarketUseDirect', input: 'aMonthlyMarket' },
-      transit: { band: 'aTransitBand', sub: 'aTransitSub', direct: 'aTransitUseDirect', input: 'aMonthlyTransit' }
-    },
-    b: {
-      creditCard: { band: 'bCreditBand', sub: 'bCreditSub', direct: 'bCreditUseDirect', input: 'bMonthlyCredit' },
-      checkCash: { band: 'bCheckBand', sub: 'bCheckSub', direct: 'bCheckUseDirect', input: 'bMonthlyCheckCash' },
-      traditionalMarket: { band: 'bMarketBand', sub: 'bMarketSub', direct: 'bMarketUseDirect', input: 'bMonthlyMarket' },
-      transit: { band: 'bTransitBand', sub: 'bTransitSub', direct: 'bTransitUseDirect', input: 'bMonthlyTransit' }
+function updateSpendItemSummary(prefix, kind) {
+  const refs = getSpendFieldRefs(prefix, kind);
+  if (!refs) return;
+  const bandEl = document.getElementById(refs.band);
+  const subEl = document.getElementById(refs.sub);
+  const directEl = document.getElementById(refs.direct);
+  const inputEl = document.getElementById(refs.input);
+  const summaryEl = document.querySelector(`[data-spend-summary="${prefix}-${kind}"]`);
+  if (!bandEl || !subEl || !directEl || !inputEl || !summaryEl) return;
+
+  const resolved = resolveSpendValue(kind, bandEl, subEl, inputEl, directEl);
+  const amountText = resolved.value ? `월 ${formatMoney(resolved.value)}원` : '거의 없음';
+  summaryEl.textContent = `현재: ${amountText} · 입력 방식: ${labelSpendResolvedMode(resolved.mode)}`;
+}
+
+function updateSpendPanels(prefix, kind) {
+  const refs = getSpendFieldRefs(prefix, kind);
+  if (!refs) return;
+  const bandEl = document.getElementById(refs.band);
+  const subEl = document.getElementById(refs.sub);
+  const directEl = document.getElementById(refs.direct);
+  const detailPanel = document.querySelector(`[data-spend-detail="${prefix}-${kind}"]`);
+  const directPanel = document.querySelector(`[data-spend-direct="${prefix}-${kind}"]`);
+  const detailBtn = document.querySelector(`[data-spend-toggle="detail-${prefix}-${kind}"]`);
+  const directBtn = document.querySelector(`[data-spend-toggle="direct-${prefix}-${kind}"]`);
+  if (!bandEl || !subEl || !directEl) return;
+
+  if (bandEl.value === 'direct') {
+    directEl.checked = true;
+    if (directPanel) directPanel.classList.remove('hidden');
+    if (detailPanel) detailPanel.classList.add('hidden');
+  }
+
+  if (detailBtn && detailPanel) detailBtn.classList.toggle('active', !detailPanel.classList.contains('hidden'));
+  if (directBtn && directPanel) directBtn.classList.toggle('active', !directPanel.classList.contains('hidden'));
+  updateSpendItemSummary(prefix, kind);
+}
+
+function toggleSpendAssistPanel(prefix, kind, target) {
+  const refs = getSpendFieldRefs(prefix, kind);
+  if (!refs) return;
+  const bandEl = document.getElementById(refs.band);
+  const directEl = document.getElementById(refs.direct);
+  const detailPanel = document.querySelector(`[data-spend-detail="${prefix}-${kind}"]`);
+  const directPanel = document.querySelector(`[data-spend-direct="${prefix}-${kind}"]`);
+  if (!bandEl || !directEl) return;
+
+  if (target === 'detail' && detailPanel) {
+    const willOpen = detailPanel.classList.contains('hidden');
+    detailPanel.classList.toggle('hidden', !willOpen);
+    if (directPanel) directPanel.classList.add('hidden');
+    if (!willOpen) {
+      // keep current sub selection, just close panel
     }
-  };
-  const fieldMap = fieldMapByPrefix[prefix];
-  if (!fieldMap) return { value: 0, mode: 'monthly-select' };
-  const refs = fieldMap[kind];
+  }
+
+  if (target === 'direct' && directPanel) {
+    const willOpen = directPanel.classList.contains('hidden');
+    directPanel.classList.toggle('hidden', !willOpen);
+    if (detailPanel) detailPanel.classList.add('hidden');
+    if (willOpen) {
+      bandEl.dataset.previousBand = bandEl.value && bandEl.value !== 'direct' ? bandEl.value : '';
+      directEl.checked = true;
+      bandEl.value = 'direct';
+    } else {
+      directEl.checked = false;
+      bandEl.value = bandEl.dataset.previousBand || '10-30';
+    }
+  }
+
+  if (target !== 'direct' && bandEl.value !== 'direct' && directPanel?.classList.contains('hidden')) {
+    directEl.checked = false;
+  }
+
+  updateSpendPanels(prefix, kind);
+}
+
+function buildSpendItemUI(prefix, kind) {
+  const refs = getSpendFieldRefs(prefix, kind);
+  if (!refs) return;
+  const bandEl = document.getElementById(refs.band);
+  const subEl = document.getElementById(refs.sub);
+  const directEl = document.getElementById(refs.direct);
+  const inputEl = document.getElementById(refs.input);
+  const container = bandEl?.parentElement;
+  if (!bandEl || !subEl || !directEl || !inputEl || !container || container.dataset.spendEnhanced === 'true') return;
+
+  const bandLabel = container.querySelector(`label[for="${refs.band}"]`);
+  const subLabel = container.querySelector(`label[for="${refs.sub}"]`);
+  const directLabel = directEl.closest('label');
+  const inputLabel = container.querySelector(`label[for="${refs.input}"]`);
+
+  const shell = document.createElement('section');
+  shell.className = 'spend-item-shell';
+  shell.dataset.spendEnhanced = 'true';
+  shell.innerHTML = `
+    <div class="spend-item-head">
+      <div>
+        <p class="spend-item-title">${refs.label}</p>
+        <p class="spend-item-caption">대략적인 월평균을 먼저 선택하세요.</p>
+      </div>
+      <p class="spend-item-summary" data-spend-summary="${prefix}-${kind}">현재: 입력 전</p>
+    </div>
+    <div class="spend-item-main"></div>
+    <div class="spend-item-actions">
+      <button type="button" class="spend-link-btn" data-spend-toggle="detail-${prefix}-${kind}">세부 조정</button>
+      <button type="button" class="spend-link-btn" data-spend-toggle="direct-${prefix}-${kind}">직접 입력</button>
+    </div>
+    <div class="spend-subpanel hidden" data-spend-detail="${prefix}-${kind}"></div>
+    <div class="spend-subpanel hidden" data-spend-direct="${prefix}-${kind}"></div>
+  `;
+
+  const mainWrap = shell.querySelector('.spend-item-main');
+  const detailWrap = shell.querySelector(`[data-spend-detail="${prefix}-${kind}"]`);
+  const directWrap = shell.querySelector(`[data-spend-direct="${prefix}-${kind}"]`);
+  if (bandLabel) mainWrap.appendChild(bandLabel);
+  mainWrap.appendChild(bandEl);
+  if (subLabel) detailWrap.appendChild(subLabel);
+  detailWrap.appendChild(subEl);
+  if (inputLabel) directWrap.appendChild(inputLabel);
+  directWrap.appendChild(inputEl);
+  if (directLabel) {
+    directLabel.classList.add('sr-only-toggle');
+    directWrap.appendChild(directLabel);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(shell);
+  container.dataset.spendEnhanced = 'true';
+
+  shell.querySelector(`[data-spend-toggle="detail-${prefix}-${kind}"]`).addEventListener('click', () => toggleSpendAssistPanel(prefix, kind, 'detail'));
+  shell.querySelector(`[data-spend-toggle="direct-${prefix}-${kind}"]`).addEventListener('click', () => toggleSpendAssistPanel(prefix, kind, 'direct'));
+
+  [bandEl, subEl, inputEl, directEl].forEach((el) => {
+    el.addEventListener('change', () => updateSpendPanels(prefix, kind));
+    el.addEventListener('input', () => updateSpendPanels(prefix, kind));
+  });
+
+  bandEl.addEventListener('change', () => {
+    if (bandEl.value !== 'direct') {
+      directEl.checked = false;
+      if (directWrap) directWrap.classList.add('hidden');
+    }
+    if (bandEl.value === 'direct' && directWrap) {
+      directWrap.classList.remove('hidden');
+    }
+    updateSpendPanels(prefix, kind);
+  });
+
+  updateSpendPanels(prefix, kind);
+}
+
+function enhanceSpendInputUI() {
+  Object.keys(SPEND_FIELD_MAP).forEach((prefix) => {
+    Object.keys(SPEND_FIELD_MAP[prefix]).forEach((kind) => buildSpendItemUI(prefix, kind));
+  });
+}
+
+function applySpendSelectionToInput(kind, prefix) {
+  const refs = getSpendFieldRefs(prefix, kind);
+  if (!refs) return { value: 0, mode: 'monthly-select' };
   const bandEl = document.getElementById(refs.band);
   const subEl = document.getElementById(refs.sub);
   const directEl = document.getElementById(refs.direct);
@@ -1238,6 +1406,7 @@ function applySpendSelectionToInput(kind, prefix) {
     subValue: resolved.subValue,
     exactValue: resolved.exactValue
   };
+  updateSpendItemSummary(prefix, kind);
   return resolved;
 }
 
@@ -2470,6 +2639,7 @@ bIncomeQuickBand.addEventListener('change', () => updateCoupleIncomeModeUI('B'))
 bIncomeQuickSubBand.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
 bIncomeUseDirect.addEventListener('change', () => updateCoupleIncomeModeUI('B'));
 
+enhanceSpendInputUI();
 ruleUpdateDate.textContent = RULES.meta.updatedAt;
 if (footerUpdateDate) footerUpdateDate.textContent = RULES.meta.updatedAt;
 setupMoneyInputs();
