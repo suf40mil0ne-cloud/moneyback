@@ -533,11 +533,11 @@ function isChildCreditEligibleAge(age) {
 
 function getSpouseLabelByIncome(aIncome, bIncome) {
   if (aIncome === bIncome) return '균형 배분';
-  return aIncome > bIncome ? '배우자 A' : '배우자 B';
+  return aIncome > bIncome ? '본인' : '배우자';
 }
 
 function getPreferredCardHolder(aCard, bCard) {
-  return aCard.shortfall >= bCard.shortfall ? '배우자 A' : '배우자 B';
+  return aCard.shortfall >= bCard.shortfall ? '본인' : '배우자';
 }
 
 function computeIncomeEligible(annualIncome, wageOnly, totalPay) {
@@ -718,8 +718,8 @@ function createChildCard(data = {}) {
       <div>
         <label>실제 결제자</label>
         <select data-field="payer">
-          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>배우자 A</option>
-          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자 B</option>
+          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
+          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
           <option value="child" ${data.payer === 'child' ? 'selected' : ''}>자녀 본인</option>
           <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
         </select>
@@ -806,8 +806,8 @@ function createDependentCard(data = {}) {
       <div>
         <label>실제 결제자</label>
         <select data-field="payer">
-          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>배우자 A</option>
-          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자 B</option>
+          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
+          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
           <option value="dependent" ${data.payer === 'dependent' ? 'selected' : ''}>부양가족 본인</option>
           <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
         </select>
@@ -1187,7 +1187,7 @@ function refreshCoupleEstimationPreview() {
 
   coupleEstimationPreview.innerHTML = `
     <p><strong>맞벌이 월평균 입력 기준 추정</strong></p>
-    <p>A 연말 예상: ${formatMoney(a.projection.yearEndEstimate)}원 / B 연말 예상: ${formatMoney(b.projection.yearEndEstimate)}원</p>
+    <p>본인 연말 예상: ${formatMoney(a.projection.yearEndEstimate)}원 / 배우자 연말 예상: ${formatMoney(b.projection.yearEndEstimate)}원</p>
     <p>가구 연말 예상 총사용액: ${formatMoney(houseYearEnd)}원</p>
     <p>남은 ${a.projection.remainingMonths}개월 가구 추정 사용액: ${formatMoney(houseRemaining)}원</p>
     <p class="hint">현재 월평균 패턴 유지 기준의 추정치이며, 실제 신고값이 아닌 행동 가이드용입니다.</p>
@@ -1644,7 +1644,7 @@ function validateInput(input) {
     return '';
   }
 
-  if (!input.spouseA.income || !input.spouseB.income) return '맞벌이 모드에서는 배우자 A/B 연봉(총급여)을 모두 입력해 주세요.';
+  if (!input.spouseA.income || !input.spouseB.income) return '맞벌이 모드에서는 본인과 배우자 연봉(총급여)을 모두 입력해 주세요.';
   if (!input.isMarriedRegistered) return '혼인신고 여부가 체크되지 않았습니다. 맞벌이 부부 최적화 모드 사용 전 상태를 확인해 주세요.';
   return '';
 }
@@ -1694,7 +1694,7 @@ function renderCoupleSpendEstimationSummary(input, cardStats) {
   }
 
   const preferred = getPreferredCardHolder(cardStats.aCard, cardStats.bCard);
-  const preferredShortfall = preferred === '배우자 A' ? cardStats.aCard.shortfall : cardStats.bCard.shortfall;
+  const preferredShortfall = preferred === '본인' ? cardStats.aCard.shortfall : cardStats.bCard.shortfall;
   const p = input.projection;
   const actionText =
     p.mode === 'monthly' && p.remainingMonths > 0
@@ -1890,8 +1890,8 @@ function buildCoupleRecommendation(input) {
   const warnings = [RULES.warnings.duplicateDependent];
 
   input.children.forEach((child) => {
-    const owner = recommendedChildOwner === '균형 배분' ? '배우자 A 우선(동률)' : recommendedChildOwner;
-    const payerLabel = child.payer === 'A' ? '배우자 A' : child.payer === 'B' ? '배우자 B' : child.payer === 'child' ? '자녀 본인' : '모름';
+    const owner = recommendedChildOwner === '균형 배분' ? '본인 우선(동률)' : recommendedChildOwner;
+    const payerLabel = child.payer === 'A' ? '본인' : child.payer === 'B' ? '배우자' : child.payer === 'child' ? '자녀 본인' : '모름';
     const mismatchMedical = child.medical > 0 && !['unknown', 'child'].includes(child.payer) && payerLabel !== owner;
 
     allocations.push({
@@ -1923,7 +1923,7 @@ function buildCoupleRecommendation(input) {
 
   allocations.push({
     item: '배우자 의료비',
-    current: `A ${formatMoney(input.spouseA.medical)}원 / B ${formatMoney(input.spouseB.medical)}원`,
+    current: `본인 ${formatMoney(input.spouseA.medical)}원 / 배우자 ${formatMoney(input.spouseB.medical)}원`,
     target: '실제 지출자 기준 분리',
     reason: '배우자 의료비는 실제 지출자 기준으로 분리 점검이 필요합니다.',
     caution: '각자 결제 내역 증빙 보관 필요'
@@ -1931,7 +1931,7 @@ function buildCoupleRecommendation(input) {
 
   allocations.push({
     item: '카드사용액 전략',
-    current: `A 부족 ${formatMoney(aCard.shortfall)}원 / B 부족 ${formatMoney(bCard.shortfall)}원`,
+    current: `본인 부족 ${formatMoney(aCard.shortfall)}원 / 배우자 부족 ${formatMoney(bCard.shortfall)}원`,
     target: `${preferredCardHolder} 우선`,
     reason: '카드 공제는 합산보다 배우자별 초과구간을 각각 채우는 구조가 중요합니다.',
     caution: '계획 없는 소비 증가 대신 명의/수단 조정 우선'
@@ -1939,7 +1939,7 @@ function buildCoupleRecommendation(input) {
 
   allocations.push({
     item: '연금저축/IRP',
-    current: `A ${formatMoney(input.spouseA.pension + input.spouseA.irp)}원 / B ${formatMoney(input.spouseB.pension + input.spouseB.irp)}원`,
+    current: `본인 ${formatMoney(input.spouseA.pension + input.spouseA.irp)}원 / 배우자 ${formatMoney(input.spouseB.pension + input.spouseB.irp)}원`,
     target: '한도 여유가 큰 배우자 우선',
     reason: '연말 몰아넣기보다 자동이체 유지가 누락 방지에 유리합니다.',
     caution: `연간 가이드 ${formatMoney(RULES.irp.yearlyGuideLimit)}원은 변동 가능`
@@ -1956,7 +1956,7 @@ function buildCoupleRecommendation(input) {
   const rentOverlap = (input.spouseA.rent > 0 && input.spouseA.checkCash > 0) || (input.spouseB.rent > 0 && input.spouseB.checkCash > 0);
   allocations.push({
     item: '월세',
-    current: `A 월세 ${formatMoney(input.spouseA.rent)}원 / B 월세 ${formatMoney(input.spouseB.rent)}원`,
+    current: `본인 월세 ${formatMoney(input.spouseA.rent)}원 / 배우자 월세 ${formatMoney(input.spouseB.rent)}원`,
     target: '월세 세액공제 또는 현금영수증 중 1개 선택',
     reason: '같은 지출 중복 적용을 피해야 합니다.',
     caution: RULES.warnings.rentCashOverlap
@@ -1964,7 +1964,7 @@ function buildCoupleRecommendation(input) {
   if (rentOverlap) warnings.push(RULES.warnings.rentCashOverlap);
 
   input.dependents.forEach((dep) => {
-    const recommended = dep.payer === 'B' ? '배우자 B' : '배우자 A';
+    const recommended = dep.payer === 'B' ? '배우자' : '본인';
     allocations.push({
       item: `기타 부양가족(${dep.relation})`,
       current: `나이 ${dep.age} / 소득요건 ${dep.incomeEligible ? '충족' : '미충족 또는 미확인'}`,
@@ -1976,10 +1976,10 @@ function buildCoupleRecommendation(input) {
 
   const firstSummary =
     input.children.length > 0
-      ? `자녀 ${input.children.length}명은 ${recommendedChildOwner === '균형 배분' ? '배우자 A 우선(동률)' : recommendedChildOwner} 귀속이 유리할 가능성이 높습니다.`
+      ? `자녀 ${input.children.length}명은 ${recommendedChildOwner === '균형 배분' ? '본인 우선(동률)' : recommendedChildOwner} 귀속이 유리할 가능성이 높습니다.`
       : '자녀 입력이 없어 카드·월세·의료비 중심으로 점검했습니다.';
 
-  const preferredShortfall = preferredCardHolder === '배우자 A' ? aCard.shortfall : bCard.shortfall;
+  const preferredShortfall = preferredCardHolder === '본인' ? aCard.shortfall : bCard.shortfall;
   const monthlySwitchAction =
     input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
       ? `남은 ${input.projection.remainingMonths}개월 동안 ${preferredCardHolder} 기준 월 ${formatMoney(preferredShortfall / input.projection.remainingMonths)}원 수준으로 체크카드/현금영수증 전환을 검토해 보세요.`
@@ -1993,7 +1993,7 @@ function buildCoupleRecommendation(input) {
     warnings.some((line) => line.includes('의료비'))
       ? '자녀 의료비에서 결제자/귀속 엇갈림으로 누락 위험이 있습니다.'
       : '자녀 의료비는 실제 지출자 기준과 귀속자 일치 여부를 최종 점검하세요.',
-    `입력 기준: 연봉 A ${labelIncomeMode(input.inputBasis.incomeA)}, 연봉 B ${labelIncomeMode(input.inputBasis.incomeB)}, 소비 ${labelSpendMode(input.inputBasis.spending)}, 가족 ${input.inputBasis.family}`
+    `입력 기준: 본인 연봉 ${labelIncomeMode(input.inputBasis.incomeA)}, 배우자 연봉 ${labelIncomeMode(input.inputBasis.incomeB)}, 소비 ${labelSpendMode(input.inputBasis.spending)}, 가족 ${input.inputBasis.family}`
   ];
 
   const scenarioContent = {
@@ -2193,7 +2193,7 @@ function renderWhyRecommendation(result, input) {
   const impact =
     result.mode === 'single'
       ? '영향이 큰 입력값: 연봉, 카드/체크카드 비중, 인적공제(간편 또는 상세) 정보, 연금저축·IRP·ISA 상태'
-      : '영향이 큰 입력값: 배우자 A/B 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보, 가구 ISA 상태';
+      : '영향이 큰 입력값: 본인/배우자 연봉, 배우자별 소비 패턴, 자녀/부양가족 입력, 결제자 정보, 가구 ISA 상태';
 
   whyRecommendationBox.innerHTML = `
     <p><strong>왜 이런 추천이 나왔나요?</strong></p>
