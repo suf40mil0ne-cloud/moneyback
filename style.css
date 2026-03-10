@@ -727,6 +727,36 @@ button:focus,
   letter-spacing: 0.01em;
 }
 
+.repeat-card-insight {
+  margin: -4px 0 12px;
+  color: var(--accent-ink);
+  font-size: 12px;
+}
+
+.family-card-layout {
+  display: grid;
+  gap: 10px;
+}
+
+.family-card-main,
+.family-card-panel {
+  display: grid;
+  gap: 6px;
+}
+
+.family-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.field-note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .spend-item-shell {
   display: grid;
   gap: 10px;
@@ -1015,6 +1045,66 @@ button:focus,
   color: var(--ink-soft);
 }
 
+.scenario-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.scenario-lead {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.scenario-summary-line {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(196, 190, 176, 0.68);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.84);
+  padding: 14px;
+}
+
+.scenario-summary-line p {
+  margin: 0;
+  color: var(--ink-strong);
+}
+
+.scenario-type {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.scenario-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.scenario-block {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(196, 190, 176, 0.58);
+  padding-top: 12px;
+}
+
+.scenario-block h4 {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-strong);
+}
+
+.scenario-block p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
 .scenario-list {
   margin: 0;
   padding-left: 18px;
@@ -1258,6 +1348,10 @@ button:focus,
   .grid.two-col {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 14px;
+  }
+
+  .scenario-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

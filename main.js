@@ -621,12 +621,43 @@ function setFieldBlockHidden(card, field, hidden) {
   if (block) block.classList.toggle('hidden', hidden);
 }
 
+function setAssistButtonState(card, actionName, activeValue) {
+  card.querySelectorAll(`[data-action="${actionName}"]`).forEach((button) => {
+    const targetMode = button.dataset.mode || button.dataset.panel || '';
+    button.classList.toggle('active', targetMode === activeValue);
+    button.setAttribute('aria-expanded', String(targetMode === activeValue));
+  });
+}
+
+function getChildReviewNotes(age) {
+  if (age == null) return ['연령 확인 필요'];
+  const notes = [];
+  notes.push(age <= RULES.personalDeduction.childBasicMaxAge ? '기본공제 검토' : '기본공제 나이 재확인');
+  notes.push(age >= RULES.personalDeduction.childTaxCreditAge ? '자녀세액공제 검토' : '자녀세액공제 시기 전');
+  notes.push(age < 19 ? '미성년 가능성 높음' : '성년 기준 확인');
+  return notes;
+}
+
+function getDependentReviewNotes({ age, incomeEligible, disabled, senior70 }) {
+  const notes = [];
+  if (incomeEligible) notes.push('소득요건 충족');
+  else notes.push('소득요건 확인 필요');
+  if (disabled) notes.push('장애인 추가공제 검토');
+  if (senior70 || (age != null && age >= RULES.personalDeduction.seniorAge)) notes.push('경로우대 검토');
+  if (age == null) notes.push('정확한 나이 확인 필요');
+  return notes;
+}
+
 function updateChildCardUI(card) {
   const read = (field) => card.querySelector(`[data-field="${field}"]`);
   const ageMode = read('ageMode').value;
+  const extraOpen = read('extraOpen').value === 'true';
   setFieldBlockHidden(card, 'lifeStage', ageMode !== 'lifeStage');
   setFieldBlockHidden(card, 'birthYear', ageMode !== 'birthYear');
   setFieldBlockHidden(card, 'exactAge', ageMode !== 'exactAge');
+  setFieldBlockHidden(card, 'expensePanel', !extraOpen);
+  setAssistButtonState(card, 'child-mode', ageMode === 'lifeStage' ? '' : ageMode);
+  setAssistButtonState(card, 'child-panel', extraOpen ? 'expense' : '');
 
   const name = read('name').value.trim() || card.querySelector('.repeat-card-title strong')?.textContent || '자녀';
   const stageLabel =
@@ -635,28 +666,56 @@ function updateChildCardUI(card) {
       : ageMode === 'birthYear'
         ? `${sanitizeNumber(read('birthYear').value) || '-'}년생`
         : `${sanitizeNumber(read('exactAge').value) || '-'}세`;
-  const payerLabel = read('payer').options[read('payer').selectedIndex]?.textContent || '결제자 미선택';
+  const modeLabel =
+    ageMode === 'lifeStage' ? '생활단계 입력' : ageMode === 'birthYear' ? '세부 조정 사용' : '정확히 입력 사용';
+  const age = getAgeFromQuick({
+    ageMode,
+    birthYear: sanitizeNumber(read('birthYear').value),
+    age: sanitizeNumber(read('exactAge').value),
+    lifeStage: read('lifeStage').value
+  });
+  const notes = getChildReviewNotes(age);
   const summary = card.querySelector('[data-role="summary"]');
-  if (summary) summary.textContent = `${name} · ${stageLabel} · ${payerLabel}`;
+  if (summary) summary.textContent = `${name} · ${stageLabel} · ${modeLabel}`;
+  const insight = card.querySelector('[data-role="insight"]');
+  if (insight) insight.textContent = `현재 판단: ${notes.join(' · ')}`;
 }
 
 function updateDependentCardUI(card) {
   const read = (field) => card.querySelector(`[data-field="${field}"]`);
   const ageMode = read('ageMode').value;
+  const extraOpen = read('extraOpen').value === 'true';
   setFieldBlockHidden(card, 'ageBand', ageMode !== 'ageBand');
+  setFieldBlockHidden(card, 'birthYear', ageMode !== 'birthYear');
   setFieldBlockHidden(card, 'exactAge', ageMode !== 'exactAge');
+  setFieldBlockHidden(card, 'expensePanel', !extraOpen);
+  setAssistButtonState(card, 'dependent-mode', ageMode === 'ageBand' ? '' : ageMode);
+  setAssistButtonState(card, 'dependent-panel', extraOpen ? 'expense' : '');
 
   const relationLabel = read('relation').options[read('relation').selectedIndex]?.textContent || '관계 미선택';
   const ageLabel =
     ageMode === 'ageBand'
       ? read('ageBand').options[read('ageBand').selectedIndex]?.textContent || '연령구간 미선택'
+      : ageMode === 'birthYear'
+        ? `${sanitizeNumber(read('birthYear').value) || '-'}년생`
       : `${sanitizeNumber(read('exactAge').value) || '-'}세`;
-  const badges = [];
-  if (read('incomeEligible').checked) badges.push('소득요건 충족');
-  if (read('disabled').checked) badges.push('장애인');
-  if (read('senior70').checked) badges.push('70세 이상');
+  const modeLabel = ageMode === 'ageBand' ? '연령구간 입력' : ageMode === 'birthYear' ? '세부 조정 사용' : '정확히 입력 사용';
+  const age = getAgeFromQuick({
+    ageMode,
+    ageBand: read('ageBand').value,
+    birthYear: sanitizeNumber(read('birthYear').value),
+    age: sanitizeNumber(read('exactAge').value)
+  });
+  const notes = getDependentReviewNotes({
+    age,
+    incomeEligible: read('incomeEligible').checked,
+    disabled: read('disabled').checked,
+    senior70: read('senior70').checked
+  });
   const summary = card.querySelector('[data-role="summary"]');
-  if (summary) summary.textContent = `${relationLabel} · ${ageLabel}${badges.length ? ` · ${badges.join(', ')}` : ''}`;
+  if (summary) summary.textContent = `${relationLabel} · ${ageLabel} · ${modeLabel}`;
+  const insight = card.querySelector('[data-role="insight"]');
+  if (insight) insight.textContent = `현재 판단: ${notes.join(' · ')}`;
 }
 
 function updatePersonalDependentCardUI(card) {
@@ -687,6 +746,8 @@ function updatePersonalDependentCardUI(card) {
 
 function createChildCard(data = {}) {
   const index = childList.children.length + 1;
+  const ageMode = data.ageMode || 'lifeStage';
+  const extraOpen = data.education || data.medical || data.insurance || data.donation || data.cardSpend || data.payer ? 'true' : 'false';
   const card = document.createElement('article');
   card.className = 'repeat-card';
   card.innerHTML = `
@@ -695,20 +756,15 @@ function createChildCard(data = {}) {
       <button type="button" class="remove-btn" data-remove="child">삭제</button>
     </div>
     <p class="repeat-card-summary" data-role="summary">입력 전</p>
-    <div class="grid two-col">
+    <p class="repeat-card-insight" data-role="insight">현재 판단: 연령 확인 필요</p>
+    <input type="hidden" data-field="ageMode" value="${ageMode}" />
+    <input type="hidden" data-field="extraOpen" value="${extraOpen}" />
+    <div class="family-card-layout">
       <div>
         <label>이름/구분명</label>
         <input data-field="name" value="${data.name || ''}" placeholder="자녀${index}" />
       </div>
-      <div>
-        <label>나이 입력 방식(권장: 생활단계)</label>
-        <select data-field="ageMode">
-          <option value="lifeStage" ${(data.ageMode || 'lifeStage') === 'lifeStage' ? 'selected' : ''}>생활단계 선택</option>
-          <option value="birthYear" ${data.ageMode === 'birthYear' ? 'selected' : ''}>출생연도 선택</option>
-          <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>나이 직접 입력</option>
-        </select>
-      </div>
-      <div data-block="lifeStage">
+      <div data-block="lifeStage" class="family-card-main">
         <label>생활단계</label>
         <select data-field="lifeStage">
           <option value="infant" ${data.lifeStage === 'infant' ? 'selected' : ''}>영유아</option>
@@ -719,42 +775,53 @@ function createChildCard(data = {}) {
           <option value="adult" ${data.lifeStage === 'adult' ? 'selected' : ''}>성인</option>
         </select>
       </div>
-      <div data-block="birthYear">
-        <label>출생연도(보조)</label>
+      <div class="family-card-actions">
+        <button type="button" class="spend-link-btn" data-action="child-mode" data-mode="birthYear" aria-expanded="false">세부 조정</button>
+        <button type="button" class="spend-link-btn" data-action="child-mode" data-mode="exactAge" aria-expanded="false">정확히 입력</button>
+        <button type="button" class="spend-link-btn" data-action="child-panel" data-panel="expense" aria-expanded="false">관련 지출 입력</button>
+      </div>
+      <div data-block="birthYear" class="family-card-panel hidden">
+        <label>출생연도 입력</label>
         <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 2016" />
+        <p class="field-note">출생연도를 알고 있다면 생활단계보다 조금 더 정확하게 판정할 수 있습니다.</p>
       </div>
-      <div data-block="exactAge">
-        <label>나이 직접 입력(보조)</label>
+      <div data-block="exactAge" class="family-card-panel hidden">
+        <label>정확한 나이 입력</label>
         <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="예: 14" />
+        <p class="field-note">정확한 나이를 입력하면 미성년 여부와 자녀세액공제 검토가 조금 더 명확해집니다.</p>
       </div>
-      <div>
-        <label>교육비 지출액</label>
-        <input data-field="education" data-money inputmode="numeric" value="${data.education || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>의료비 지출액</label>
-        <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>보험료 지출액</label>
-        <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>기부금 지출액</label>
-        <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>신용카드 등 사용액</label>
-        <input data-field="cardSpend" data-money inputmode="numeric" value="${data.cardSpend || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>실제 결제자</label>
-        <select data-field="payer">
-          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
-          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
-          <option value="child" ${data.payer === 'child' ? 'selected' : ''}>자녀 본인</option>
-          <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
-        </select>
+      <div data-block="expensePanel" class="family-card-panel hidden">
+        <div class="grid two-col">
+          <div>
+            <label>교육비 지출액</label>
+            <input data-field="education" data-money inputmode="numeric" value="${data.education || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>의료비 지출액</label>
+            <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>보험료 지출액</label>
+            <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>기부금 지출액</label>
+            <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>신용카드 등 사용액</label>
+            <input data-field="cardSpend" data-money inputmode="numeric" value="${data.cardSpend || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>실제 결제자</label>
+            <select data-field="payer">
+              <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
+              <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
+              <option value="child" ${data.payer === 'child' ? 'selected' : ''}>자녀 본인</option>
+              <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -765,6 +832,30 @@ function createChildCard(data = {}) {
     childrenCountInput.value = String(childList.children.length);
   });
 
+  card.querySelector('[data-field="lifeStage"]').addEventListener('change', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'lifeStage';
+    updateChildCardUI(card);
+  });
+  card.querySelector('[data-field="birthYear"]').addEventListener('input', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'birthYear';
+    updateChildCardUI(card);
+  });
+  card.querySelector('[data-field="exactAge"]').addEventListener('input', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'exactAge';
+    updateChildCardUI(card);
+  });
+  card.querySelectorAll('[data-action="child-mode"]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const modeInput = card.querySelector('[data-field="ageMode"]');
+      modeInput.value = modeInput.value === button.dataset.mode ? 'lifeStage' : button.dataset.mode;
+      updateChildCardUI(card);
+    });
+  });
+  card.querySelector('[data-action="child-panel"][data-panel="expense"]').addEventListener('click', () => {
+    const extraField = card.querySelector('[data-field="extraOpen"]');
+    extraField.value = extraField.value === 'true' ? 'false' : 'true';
+    updateChildCardUI(card);
+  });
   card.querySelectorAll('input, select').forEach((el) => {
     el.addEventListener('input', () => updateChildCardUI(card));
     el.addEventListener('change', () => updateChildCardUI(card));
@@ -776,6 +867,11 @@ function createChildCard(data = {}) {
 
 function createDependentCard(data = {}) {
   const index = dependentList.children.length + 1;
+  const ageMode = data.ageMode || 'ageBand';
+  const extraOpen =
+    data.coResident || data.livesTogether || data.senior70 || data.medical || data.donation || data.insurance || data.card || data.payer || data.birthYear
+      ? 'true'
+      : 'false';
   const card = document.createElement('article');
   card.className = 'repeat-card';
   card.innerHTML = `
@@ -784,7 +880,10 @@ function createDependentCard(data = {}) {
       <button type="button" class="remove-btn" data-remove="dependent">삭제</button>
     </div>
     <p class="repeat-card-summary" data-role="summary">입력 전</p>
-    <div class="grid two-col">
+    <p class="repeat-card-insight" data-role="insight">현재 판단: 소득요건 확인 필요</p>
+    <input type="hidden" data-field="ageMode" value="${ageMode}" />
+    <input type="hidden" data-field="extraOpen" value="${extraOpen}" />
+    <div class="family-card-layout">
       <div>
         <label>관계</label>
         <select data-field="relation">
@@ -794,14 +893,7 @@ function createDependentCard(data = {}) {
           <option value="기타" ${data.relation === '기타' ? 'selected' : ''}>기타</option>
         </select>
       </div>
-      <div>
-        <label>연령 입력 방식</label>
-        <select data-field="ageMode">
-          <option value="ageBand" ${(data.ageMode || 'ageBand') === 'ageBand' ? 'selected' : ''}>연령구간 선택</option>
-          <option value="exactAge" ${data.ageMode === 'exactAge' ? 'selected' : ''}>정확한 나이 입력</option>
-        </select>
-      </div>
-      <div data-block="ageBand">
+      <div data-block="ageBand" class="family-card-main">
         <label>연령구간</label>
         <select data-field="ageBand">
           <option value="u60" ${data.ageBand === 'u60' ? 'selected' : ''}>60세 미만</option>
@@ -809,40 +901,55 @@ function createDependentCard(data = {}) {
           <option value="70p" ${data.ageBand === '70p' ? 'selected' : ''}>70세 이상</option>
         </select>
       </div>
-      <div data-block="exactAge">
-        <label>정확한 나이(보조)</label>
-        <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="0" />
-      </div>
       <label class="inline-check"><input type="checkbox" data-field="incomeEligible" ${data.incomeEligible ? 'checked' : ''} />소득요건 충족 여부</label>
       <label class="inline-check"><input type="checkbox" data-field="disabled" ${data.disabled ? 'checked' : ''} />장애인 여부</label>
-      <label class="inline-check"><input type="checkbox" data-field="coResident" ${data.coResident ? 'checked' : ''} />동거 여부</label>
-      <label class="inline-check"><input type="checkbox" data-field="livesTogether" ${data.livesTogether ? 'checked' : ''} />생계 같이함</label>
-      <label class="inline-check"><input type="checkbox" data-field="senior70" ${data.senior70 ? 'checked' : ''} />70세 이상 여부</label>
-      <div></div>
-      <div>
-        <label>의료비 지출액</label>
-        <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
+      <div class="family-card-actions">
+        <button type="button" class="spend-link-btn" data-action="dependent-mode" data-mode="birthYear" aria-expanded="false">세부 조정</button>
+        <button type="button" class="spend-link-btn" data-action="dependent-mode" data-mode="exactAge" aria-expanded="false">정확히 입력</button>
+        <button type="button" class="spend-link-btn" data-action="dependent-panel" data-panel="expense" aria-expanded="false">관련 지출 입력</button>
       </div>
-      <div>
-        <label>기부금 지출액</label>
-        <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
+      <div data-block="birthYear" class="family-card-panel hidden">
+        <label>출생연도 입력</label>
+        <input data-field="birthYear" data-money inputmode="numeric" value="${data.birthYear || ''}" placeholder="예: 1952" />
+        <p class="field-note">출생연도를 알고 있다면 60세·70세 기준 판정을 더 안정적으로 볼 수 있습니다.</p>
       </div>
-      <div>
-        <label>보험료 지출액</label>
-        <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
+      <div data-block="exactAge" class="family-card-panel hidden">
+        <label>정확한 나이 입력</label>
+        <input data-field="exactAge" data-money inputmode="numeric" value="${data.exactAge || ''}" placeholder="0" />
+        <p class="field-note">정확한 나이를 넣으면 경로우대 가능성과 연령요건 판정이 더 분명해집니다.</p>
       </div>
-      <div>
-        <label>신용카드 등 사용액</label>
-        <input data-field="card" data-money inputmode="numeric" value="${data.card || ''}" placeholder="0" />
-      </div>
-      <div>
-        <label>실제 결제자</label>
-        <select data-field="payer">
-          <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
-          <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
-          <option value="dependent" ${data.payer === 'dependent' ? 'selected' : ''}>부양가족 본인</option>
-          <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
-        </select>
+      <div data-block="expensePanel" class="family-card-panel hidden">
+        <div class="grid two-col">
+          <label class="inline-check"><input type="checkbox" data-field="coResident" ${data.coResident ? 'checked' : ''} />동거 여부</label>
+          <label class="inline-check"><input type="checkbox" data-field="livesTogether" ${data.livesTogether ? 'checked' : ''} />생계 같이함</label>
+          <label class="inline-check"><input type="checkbox" data-field="senior70" ${data.senior70 ? 'checked' : ''} />70세 이상 여부</label>
+          <div></div>
+          <div>
+            <label>의료비 지출액</label>
+            <input data-field="medical" data-money inputmode="numeric" value="${data.medical || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>기부금 지출액</label>
+            <input data-field="donation" data-money inputmode="numeric" value="${data.donation || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>보험료 지출액</label>
+            <input data-field="insurance" data-money inputmode="numeric" value="${data.insurance || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>신용카드 등 사용액</label>
+            <input data-field="card" data-money inputmode="numeric" value="${data.card || ''}" placeholder="0" />
+          </div>
+          <div>
+            <label>실제 결제자</label>
+            <select data-field="payer">
+              <option value="A" ${data.payer === 'A' ? 'selected' : ''}>본인</option>
+              <option value="B" ${data.payer === 'B' ? 'selected' : ''}>배우자</option>
+              <option value="dependent" ${data.payer === 'dependent' ? 'selected' : ''}>부양가족 본인</option>
+              <option value="unknown" ${data.payer === 'unknown' ? 'selected' : ''}>모름</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -852,6 +959,30 @@ function createDependentCard(data = {}) {
     renumberCards(dependentList, '부양가족');
   });
 
+  card.querySelector('[data-field="ageBand"]').addEventListener('change', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'ageBand';
+    updateDependentCardUI(card);
+  });
+  card.querySelector('[data-field="birthYear"]').addEventListener('input', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'birthYear';
+    updateDependentCardUI(card);
+  });
+  card.querySelector('[data-field="exactAge"]').addEventListener('input', () => {
+    card.querySelector('[data-field="ageMode"]').value = 'exactAge';
+    updateDependentCardUI(card);
+  });
+  card.querySelectorAll('[data-action="dependent-mode"]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const modeInput = card.querySelector('[data-field="ageMode"]');
+      modeInput.value = modeInput.value === button.dataset.mode ? 'ageBand' : button.dataset.mode;
+      updateDependentCardUI(card);
+    });
+  });
+  card.querySelector('[data-action="dependent-panel"][data-panel="expense"]').addEventListener('click', () => {
+    const extraField = card.querySelector('[data-field="extraOpen"]');
+    extraField.value = extraField.value === 'true' ? 'false' : 'true';
+    updateDependentCardUI(card);
+  });
   card.querySelectorAll('input, select').forEach((el) => {
     el.addEventListener('input', () => updateDependentCardUI(card));
     el.addEventListener('change', () => updateDependentCardUI(card));
@@ -1021,12 +1152,14 @@ function parseDependentCards() {
     const read = (field) => card.querySelector(`[data-field="${field}"]`);
     const ageMode = read('ageMode').value;
     const ageBand = read('ageBand').value;
+    const birthYear = sanitizeNumber(read('birthYear').value);
     const exactAge = sanitizeNumber(read('exactAge').value);
-    const age = getAgeFromQuick({ ageMode, ageBand, age: exactAge });
+    const age = getAgeFromQuick({ ageMode, ageBand, birthYear, age: exactAge });
     return {
       relation: read('relation').value.trim() || `부양가족${idx + 1}`,
       ageMode,
       ageBand,
+      birthYear,
       exactAge,
       age,
       incomeEligible: read('incomeEligible').checked,
@@ -1994,26 +2127,7 @@ function buildSingleRecommendation(input) {
     }
   ];
 
-  const scenarioContent = {
-    simple: [
-      '올해 남은 기간이 짧다면 큰 소비 증액보다 결제수단 전환부터 진행하세요.',
-      '월평균 지출 중 고정비를 체크카드/현금영수증으로 우선 배치하세요.',
-      '인적공제는 배우자/자녀 소득요건만 먼저 확인하세요.',
-      isaProfile.actions[0] || 'ISA는 소액 자동이체로 시작하세요.'
-    ],
-    balanced: [
-      '신용카드 비중 일부를 체크카드로 이동해 공제 효율 균형을 맞추세요.',
-      '연금저축/IRP는 월 자동이체를 유지하며 분기별 한도 여유를 확인하세요.',
-      '인적공제 상세 입력으로 8세 이상 자녀/70세 이상 인원 자동판정을 활용하세요.',
-      isaProfile.actions[1] || '월평균 소비가 빠듯하면 추가 소비보다 명의/수단 조정이 우선입니다.'
-    ],
-    max: [
-      '남은 기간 목표치를 월 단위로 쪼개 체크카드/현금영수증 전환량을 명확히 정하세요.',
-      '연금저축/IRP/ISA 자동이체 금액을 함께 설정해 연말 부담을 분산하세요.',
-      '기본공제 제외 가능 가족(소득요건 미충족)을 미리 정리해 누락을 줄이세요.',
-      isaProfile.notes[isaProfile.notes.length - 1]
-    ]
-  };
+  const scenarioContent = buildSingleScenarioSet(input, personal, card, isaProfile, totalCard);
 
   const monthlyAction = input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
     ? `앞으로 월 ${formatMoney(card.shortfall / input.projection.remainingMonths)}원 수준으로 체크카드/현금영수증 전환 계획 세우기`
@@ -2166,23 +2280,7 @@ function buildCoupleRecommendation(input) {
     `입력 기준: 본인 연봉 ${labelIncomeMode(input.inputBasis.incomeA)}, 배우자 연봉 ${labelIncomeMode(input.inputBasis.incomeB)}, 소비 ${labelSpendMode(input.inputBasis.spending)}, 가족 ${input.inputBasis.family}`
   ];
 
-  const scenarioContent = {
-    simple: [
-      '귀속자는 크게 바꾸지 말고 중복공제 방지부터 정리하세요.',
-      `카드는 ${preferredCardHolder} 부족 구간 우선 채우세요.`,
-      isaProfile.actions[0] || '월세/의료비 증빙 경로를 먼저 확정하세요.'
-    ],
-    balanced: [
-      '자녀 귀속을 1명 단위로 재점검해 교육비/의료비를 맞추세요.',
-      '카드는 A/B 부족 구간을 월 단위로 나눠 채우세요.',
-      isaProfile.actions[1] || '연금저축/IRP/ISA 자동이체를 분산 설정하세요.'
-    ],
-    max: [
-      '부부 귀속을 항목별로 적극 최적화해 누락 가능성을 줄이세요.',
-      '부족분 큰 배우자 명의에 계획 지출을 집중하세요.',
-      isaProfile.notes[isaProfile.notes.length - 1]
-    ]
-  };
+  const scenarioContent = buildCoupleScenarioSet(input, aCard, bCard, isaProfile);
 
   const todos = [
     input.children.length > 0
@@ -2229,17 +2327,365 @@ function renderAllocations(rows) {
     .join('');
 }
 
+function summarizePrimaryFactors(lines) {
+  return lines.filter(Boolean).slice(0, 3);
+}
+
+function buildScenarioCard({
+  type,
+  audience,
+  why,
+  factors,
+  thisMonth,
+  yearEnd,
+  cautions,
+  accounts,
+  summary
+}) {
+  return {
+    type,
+    audience,
+    why,
+    factors: summarizePrimaryFactors(factors),
+    thisMonth: thisMonth.filter(Boolean),
+    yearEnd: yearEnd.filter(Boolean),
+    cautions: cautions.filter(Boolean),
+    accounts: accounts.filter(Boolean),
+    summary
+  };
+}
+
+function buildSingleScenarioSet(input, personal, card, isaProfile, totalCard) {
+  const hasChildren = personal.childTaxCount > 0;
+  const hasSenior = personal.seniorCount > 0;
+  const pensionTotal = input.pension + input.irp;
+  const lowCashflow = input.isa.capacity === 'u10' || input.isa.capacity === 'unknown';
+  const cardEfficiencyLow = totalCard > input.income * 0.22 && card.shortfall > input.income * 0.08;
+  const pensionFirst = pensionTotal < 3000000 && card.shortfall <= input.income * 0.04;
+  const isaFocused = isaProfile.maturityNeeded || isaProfile.priority.startsWith('C') || isaProfile.priority.startsWith('D');
+
+  const coreType = hasChildren
+    ? '자녀 공제 최적화형'
+    : hasSenior
+      ? '부모 부양가족 반영형'
+      : isaFocused
+        ? 'ISA 병행 또는 만기전환 점검형'
+        : pensionFirst
+          ? '연금저축/IRP 우선형'
+          : cardEfficiencyLow
+            ? '소비는 많지만 카드공제 효율이 낮은형'
+            : lowCashflow
+              ? '현금흐름이 빠듯한 실속형'
+              : '1인 직장인 기본형';
+
+  const topFactorLines = [
+    `연봉 ${formatMoney(input.income)}원 기준 카드 부족분 ${formatMoney(card.shortfall)}원이 계산에 크게 작용했습니다.`,
+    hasChildren ? `8세 이상 자녀세액공제 검토 대상 ${personal.childTaxCount}명이 반영됐습니다.` : '',
+    hasSenior ? `70세 이상 경로우대 검토 대상 ${personal.seniorCount}명이 반영됐습니다.` : '',
+    pensionTotal > 0 ? `연금저축·IRP 입력 합계 ${formatMoney(pensionTotal)}원이 세액공제 우선순위 판단에 반영됐습니다.` : '연금저축·IRP 입력이 작아 세액공제 여지 여부를 다시 볼 필요가 있습니다.',
+    `ISA 상태는 ${labelIsaStatus(input.isa.status)} / ${labelInvestCapacity(input.isa.capacity)}로 해석했습니다.`
+  ];
+
+  return {
+    simple: buildScenarioCard({
+      type: coreType,
+      audience:
+        coreType === '자녀 공제 최적화형'
+          ? '자녀를 입력했고 연령대에 따라 자녀세액공제·교육비 점검 우선순위가 생긴 사용자에게 맞습니다.'
+          : coreType === '부모 부양가족 반영형'
+            ? '부모님 또는 조부모 연령 구간이 공제 판단에 직접 영향을 주는 사용자에게 맞습니다.'
+            : coreType === '현금흐름이 빠듯한 실속형'
+              ? '월 여유자금이 크지 않아 큰 소비나 납입 변경보다 실수 방지가 중요한 사용자에게 맞습니다.'
+              : '복잡한 조정보다 올해 놓치기 쉬운 항목부터 정리하려는 1인 직장인에게 맞습니다.',
+      why:
+        coreType === '자녀 공제 최적화형'
+          ? '자녀 연령대가 입력되어 카드 공제보다 자녀세액공제와 교육비·의료비 귀속 점검의 우선순위가 높습니다.'
+          : coreType === '부모 부양가족 반영형'
+            ? '부모님 나이와 소득요건이 기본공제·경로우대 판단에 직접 연결되므로 가족 공제 점검이 먼저입니다.'
+            : coreType === '연금저축/IRP 우선형'
+              ? '카드 부족분보다 연금저축·IRP 세액공제 여력을 먼저 쓰는 편이 즉시 체감효과가 더 현실적일 수 있습니다.'
+              : coreType === 'ISA 병행 또는 만기전환 점검형'
+                ? 'ISA 자체는 즉시 환급형이 아니지만, 투자 절세와 만기 후 연금계좌 전환 전략이 동시에 중요해졌습니다.'
+                : '큰 구조 변경 없이도 카드·인적공제·계좌 점검만으로 누락을 줄일 수 있는 입력 패턴입니다.',
+      factors: topFactorLines,
+      thisMonth: [
+        card.shortfall > 0
+          ? `이번 달 계획 지출 중 ${formatMoney(Math.max(0, card.shortfall))}원 범위는 체크카드/현금영수증 비중으로 먼저 옮겨 보세요.`
+          : '카드 목표 구간은 어느 정도 채워진 것으로 보여 추가 소비보다 증빙 정리에 집중하세요.',
+        hasChildren ? '자녀 카드에서 교육비·의료비 결제자와 귀속자를 먼저 맞춰 두세요.' : '',
+        hasSenior ? '부모님 소득요건과 70세 이상 여부를 홈택스 제출 전 다시 확인하세요.' : '',
+        pensionFirst ? '연금저축 또는 IRP 자동이체를 우선 한 번 점검해 올해 납입 여력을 확인하세요.' : ''
+      ],
+      yearEnd: [
+        '누적 사용액이 크게 달라지면 월평균 대신 누적 입력으로 바꿔 다시 확인하세요.',
+        hasChildren ? '자녀별로 기본공제 귀속과 교육비·의료비 영수증 흐름을 같은 사람 기준으로 유지하세요.' : '가족 공제는 소득요건과 나이요건 증빙을 연말까지 한 번 더 정리하세요.',
+        isaFocused ? 'ISA는 장기 투자용 절세계좌로 보고, 만기 예정이면 단순 출금 전 연금계좌 전환 가능성을 먼저 비교하세요.' : 'ISA를 쓴다면 국내상장 해외지수 ETF 같은 카테고리 중심으로 구조를 이해한 뒤 소액 병행을 검토하세요.'
+      ],
+      cautions: [
+        personal.overlapWarning ? '한부모 공제와 부녀자 공제는 동시에 적용되지 않으니 최종 선택을 하나로 정리해야 합니다.' : '',
+        personal.ineligibleCount > 0 ? '소득요건이 불명확한 가족은 기본공제에서 빠질 수 있어 증빙이 필요합니다.' : '',
+        input.monthlyRent > 0 && input.checkCash > 0 ? RULES.warnings.rentCashOverlap : ''
+      ],
+      accounts: [
+        pensionFirst ? '연금저축/IRP: 카드 추가 사용보다 세액공제 한도 점검을 우선하세요.' : '연금저축/IRP: 월 자동이체를 유지하면서 한도 여유만 체크하는 편이 안정적입니다.',
+        isaProfile.actions[0] || 'ISA: 즉시 환급보다 투자수익 절세와 만기 전략을 보는 계좌로 이해하세요.'
+      ],
+      summary: `${coreType}으로 보입니다. 지금은 ${card.shortfall > 0 ? '카드 수단 조정과 공제 귀속 정리' : '공제 누락 방지와 계좌 전략 점검'}가 우선입니다.`
+    }),
+    balanced: buildScenarioCard({
+      type: hasChildren ? '자녀 공제 최적화형' : hasSenior ? '부모 부양가족 반영형' : lowCashflow ? '현금흐름이 빠듯한 실속형' : '1인 직장인 기본형',
+      audience: '지금 당장 가능한 행동과 연말까지 유지할 행동을 같이 관리하려는 사용자에게 맞습니다.',
+      why:
+        hasChildren
+          ? '자녀 연령대와 가족 입력이 들어와 있어 카드 공제만 보는 것보다 자녀 관련 귀속 정리가 훨씬 중요합니다.'
+          : hasSenior
+            ? '부모 부양가족 입력이 있어 연령·소득요건과 실제 지출자 정리가 핵심입니다.'
+            : '카드, 인적공제, 계좌 전략을 한쪽으로 치우치지 않게 가져가는 편이 현실적입니다.',
+      factors: topFactorLines,
+      thisMonth: [
+        card.shortfall > 0
+          ? `남은 기간 기준 월 ${formatMoney(card.shortfall / Math.max(1, input.projection.remainingMonths || 1))}원 수준으로 체크카드/현금영수증 전환량을 잡아 보세요.`
+          : '카드 공제는 과도하게 늘리지 말고, 이미 쓰는 지출의 결제수단만 정리하세요.',
+        pensionTotal < RULES.pension.pensionSavingAnnualLimit ? '연금저축·IRP는 남은 한도 여유를 보고 자동이체 금액을 조금씩 맞추세요.' : '연금저축·IRP는 이미 꽤 활용 중이므로 무리한 추가 납입보다 유지 전략이 적합합니다.',
+        hasChildren ? '자녀가 초등·중등으로 입력됐다면 교육비와 체험·학원비 증빙 흐름을 함께 점검하세요.' : '',
+        hasSenior ? '부모님이 70세 이상으로 입력됐다면 경로우대 추가공제 가능성을 먼저 확인하세요.' : ''
+      ],
+      yearEnd: [
+        '입력값 중 실제 값이 확정되면 선택형 대신 세부 조정 또는 직접 입력으로 업데이트하세요.',
+        '카드, 연금저축/IRP, ISA를 동시에 늘리기보다 우선순위를 한 번 정해 현금흐름을 분리하세요.',
+        isaProfile.actions[1] || 'ISA는 연금계좌를 어느 정도 활용한 뒤 남는 투자 여력으로 병행하는 편이 보통 더 현실적입니다.'
+      ],
+      cautions: [
+        '의료비와 교육비는 실제 지출자와 귀속자가 어긋나면 누락 가능성이 높습니다.',
+        personal.ineligibleCount > 0 ? '소득요건 미충족 가족이 있으면 기본공제 숫자부터 달라질 수 있습니다.' : '',
+        input.monthlyRent > 0 && input.checkCash > 0 ? RULES.warnings.rentCashOverlap : ''
+      ],
+      accounts: [
+        pensionTotal < RULES.irp.yearlyGuideLimit ? '연금저축/IRP: 세액공제 체감이 더 큰 경우가 많아 우선순위를 높게 보세요.' : '연금저축/IRP: 이미 어느 정도 활용 중이라면 유지 후 ISA 병행을 고려할 수 있습니다.',
+        isaProfile.relationship,
+        isaProfile.notes[0] || ''
+      ],
+      summary: '지금은 한쪽만 극단적으로 늘리기보다 카드 수단, 가족 공제 귀속, 계좌 자동이체를 같이 정리하는 균형형이 적합합니다.'
+    }),
+    max: buildScenarioCard({
+      type: isaFocused ? 'ISA 병행 또는 만기전환 점검형' : pensionFirst ? '연금저축/IRP 우선형' : cardEfficiencyLow ? '소비는 많지만 카드공제 효율이 낮은형' : '1인 직장인 기본형',
+      audience: '연말까지 행동을 적극 조정해 절세 여지를 최대한 챙기려는 사용자에게 맞습니다.',
+      why:
+        isaFocused
+          ? '이미 ISA 활용도가 높거나 만기 검토 구간이라 연금계좌와의 연결 전략까지 같이 보는 편이 유리합니다.'
+          : pensionFirst
+            ? '연금저축·IRP 세액공제 여지가 남아 있어 카드보다 계좌 전략이 더 즉시성 있는 변수입니다.'
+            : cardEfficiencyLow
+              ? '지출은 적지 않은데 공제 효율이 낮아 카드 수단 재배치가 핵심입니다.'
+              : '입력값을 보면 카드, 계좌, 가족 공제 모두 일부 조정 여지가 남아 있습니다.',
+      factors: topFactorLines,
+      thisMonth: [
+        card.shortfall > 0 ? `부족분 ${formatMoney(card.shortfall)}원을 월별 목표로 쪼개 결제수단을 재배치하세요.` : '카드 공제는 추가 소비보다 증빙 누락 제거 쪽이 더 효율적입니다.',
+        `연금저축+IRP ${formatMoney(pensionTotal)}원은 연간 가이드 ${formatMoney(RULES.irp.yearlyGuideLimit)}원과 비교해 남은 여지를 계산해 보세요.`,
+        isaProfile.maturityNeeded ? 'ISA 만기 예정이라면 출금 전에 연금계좌 전환 가능성과 조건부터 확인하세요.' : 'ISA를 쓴다면 투자수익 절세 계좌로 보고 월 투자 여력을 분리해 두세요.'
+      ],
+      yearEnd: [
+        '가족별로 기본공제 귀속 1인을 먼저 확정하고, 교육비·의료비·보험료도 같은 축으로 정리하세요.',
+        '월세, 현금영수증, 카드 사용액처럼 충돌 가능성이 있는 항목은 중복 적용 여부를 미리 분리하세요.',
+        isaProfile.notes[isaProfile.notes.length - 1] || 'ISA에서는 해외 상장 ETF 직접매수처럼 보이게 설명하지 말고 국내상장 해외지수 ETF 활용 구조로 이해하세요.'
+      ],
+      cautions: [
+        '맞는 전략이어도 무리한 추가 소비는 절세보다 현금흐름 악화가 먼저일 수 있습니다.',
+        personal.overlapWarning ? '한부모/부녀자 공제는 둘 중 하나만 적용될 수 있습니다.' : '',
+        personal.ineligibleCount > 0 ? '기본공제 대상이 바뀌면 전체 추천 우선순위도 달라집니다.' : ''
+      ],
+      accounts: [
+        '연금저축/IRP: 세액공제형 계좌로 우선순위를 먼저 판단하세요.',
+        isaProfile.relationship,
+        isaProfile.warning
+      ],
+      summary: '절세 극대화 관점에서는 카드보다 귀속 정리, 계좌 한도, ISA 만기 전략 같은 구조적 변수부터 정리하는 편이 효과가 큽니다.'
+    })
+  };
+}
+
+function buildCoupleScenarioSet(input, aCard, bCard, isaProfile) {
+  const hasChildren = input.children.length > 0;
+  const hasParents = input.dependents.some((dep) => (dep.age != null && dep.age >= RULES.personalDeduction.elderFamilyMinAge) || dep.senior70);
+  const lowCashflow = input.isa.capacity === 'u10' || input.isa.capacity === 'unknown';
+  const isaFocused = isaProfile.maturityNeeded || isaProfile.priority.startsWith('C') || isaProfile.priority.startsWith('D');
+  const preferredCardHolder = getPreferredCardHolder(aCard, bCard);
+  const combinedPension = input.spouseA.pension + input.spouseA.irp + input.spouseB.pension + input.spouseB.irp;
+  const coreType = hasChildren
+    ? '맞벌이 부부 공제 배분형'
+    : hasParents
+      ? '부모 부양가족 반영형'
+      : isaFocused
+        ? 'ISA 병행 또는 만기전환 점검형'
+        : lowCashflow
+          ? '현금흐름이 빠듯한 실속형'
+          : '맞벌이 부부 공제 배분형';
+  const factorLines = [
+    `본인 부족분 ${formatMoney(aCard.shortfall)}원, 배우자 부족분 ${formatMoney(bCard.shortfall)}원으로 카드 공제 여지가 갈립니다.`,
+    hasChildren ? `자녀 ${input.children.length}명 입력으로 자녀 공제와 교육비·의료비 귀속 정리가 핵심 변수입니다.` : '',
+    hasParents ? '부모 또는 조부모 입력이 있어 기본공제와 경로우대 판단이 함께 작동합니다.' : '',
+    `부부 연금저축·IRP 합계 ${formatMoney(combinedPension)}원이 계좌 전략 우선순위에 반영됐습니다.`,
+    `ISA 상태는 ${labelIsaStatus(input.isa.status)} / ${labelInvestCapacity(input.isa.capacity)}로 해석했습니다.`
+  ];
+
+  return {
+    simple: buildScenarioCard({
+      type: coreType,
+      audience: hasChildren ? '자녀와 생활비를 함께 관리하는 맞벌이 부부에게 맞습니다.' : '각자 연말정산은 하되, 겹치는 공제만 정리하려는 맞벌이 부부에게 맞습니다.',
+      why:
+        hasChildren
+          ? '맞벌이에서는 자녀 공제 귀속자를 먼저 정해야 교육비·의료비까지 같은 기준으로 묶을 수 있습니다.'
+          : hasParents
+            ? '부모 부양가족은 부부 중 한 사람에게만 귀속해야 하므로 중복공제 방지가 우선입니다.'
+            : '부부는 합산보다 각자 공제구간과 가족 귀속을 따로 보는 구조라 입력값 배분이 중요합니다.',
+      factors: factorLines,
+      thisMonth: [
+        hasChildren ? '자녀별로 기본공제 귀속자를 먼저 정하고, 교육비·의료비 영수증 명의도 같은 축으로 맞춰 두세요.' : '가족 공제는 부부 중 한 사람에게만 귀속되도록 먼저 표를 정리하세요.',
+        `카드는 ${preferredCardHolder} 부족 구간을 먼저 채우는 쪽으로 계획 지출을 배치하세요.`,
+        isaFocused ? 'ISA 만기 또는 3년 경과 구간이면 단순 출금보다 연금계좌 전환 가능성부터 확인하세요.' : ''
+      ],
+      yearEnd: [
+        '부부가 같은 자녀·부양가족을 동시에 넣지 않도록 제출 전 최종 귀속자를 다시 확인하세요.',
+        '의료비는 실제 지출자 기준이 중요하므로 가족별 결제자 흐름을 한 번 더 정리하세요.',
+        isaProfile.actions[0] || 'ISA는 즉시 환급형이 아니라 투자 절세 계좌라는 점을 결과 해설과 함께 보세요.'
+      ],
+      cautions: [
+        RULES.warnings.duplicateDependent,
+        input.children.some((child) => child.medical > 0 && !['unknown', 'child'].includes(child.payer)) ? '자녀 의료비는 결제자와 귀속자가 다르면 누락 위험이 커집니다.' : '',
+        (input.spouseA.rent > 0 && input.spouseA.checkCash > 0) || (input.spouseB.rent > 0 && input.spouseB.checkCash > 0) ? RULES.warnings.rentCashOverlap : ''
+      ],
+      accounts: [
+        '연금저축/IRP: 한도 여유가 큰 배우자부터 우선 확인하는 편이 보통 효율적입니다.',
+        isaProfile.relationship
+      ],
+      summary: '맞벌이 모드에서는 합산보다 귀속자 정리와 배우자별 카드 구간 확인이 먼저입니다.'
+    }),
+    balanced: buildScenarioCard({
+      type: hasChildren ? '자녀 공제 최적화형' : coreType,
+      audience: '부부가 서로 다른 소득·소비 구조를 갖고 있어, 한쪽에만 몰지 않고 비교하려는 경우에 맞습니다.',
+      why:
+        hasChildren
+          ? '자녀 공제는 소득이 더 높은 쪽이 유리한 경우가 많지만, 의료비와 카드 사용액 흐름에 따라 달라질 수 있습니다.'
+          : hasParents
+            ? '부모님 공제는 연령·소득요건과 결제자 흐름을 함께 봐야 하므로 단순 분배보다 확인 포인트가 많습니다.'
+            : '카드 부족분, 연금 활용도, ISA 상태를 같이 보면 한쪽에만 몰기보다 병행 전략이 현실적입니다.',
+      factors: factorLines,
+      thisMonth: [
+        hasChildren ? '자녀별로 교육비·보험료·의료비를 누가 냈는지 한 번 정리한 뒤 귀속자를 비교해 보세요.' : '부양가족별로 소득요건 충족 여부부터 체크해 중복공제 대상을 줄이세요.',
+        `카드는 ${preferredCardHolder} 쪽 부족분을 먼저 채우되, 다른 배우자는 추가 소비보다 증빙 정리 중심으로 가세요.`,
+        combinedPension < RULES.irp.yearlyGuideLimit * 1.3 ? '연금저축/IRP는 부부 중 납입 여지가 큰 쪽 자동이체를 먼저 손보세요.' : '연금저축/IRP는 이미 일정 수준 활용 중이라면 유지 후 ISA 병행 여부를 검토하세요.'
+      ],
+      yearEnd: [
+        '배우자별로 같은 지출을 중복해서 넣지 않도록 가족별 증빙 귀속표를 유지하세요.',
+        '카드와 현금영수증은 배우자별 초과구간을 따로 보는 구조라, 한 사람의 부족분부터 끝내는 편이 이해하기 쉽습니다.',
+        isaProfile.actions[1] || 'ISA는 연금계좌와 병행하되 투자 절세용이라는 성격을 구분해서 보세요.'
+      ],
+      cautions: [
+        '의료비와 신용카드 사용액은 실제 지출자 기준이 달라지면 결과가 바뀔 수 있습니다.',
+        hasParents ? '부모님이 70세 이상이라면 경로우대 추가공제는 기본공제 귀속자 기준으로 다시 확인해야 합니다.' : '',
+        RULES.warnings.duplicateDependent
+      ],
+      accounts: [
+        '연금저축/IRP: 부부 중 한도 여유가 큰 사람부터 채우는 편이 실무적으로 단순합니다.',
+        isaProfile.notes[0] || 'ISA: 국내상장 해외지수 ETF 같은 카테고리 중심 이해가 적절합니다.',
+        isaProfile.warning
+      ],
+      summary: '균형형에서는 자녀·부양가족 귀속, 카드 부족분, 계좌 자동이체를 배우자별로 나눠 보는 것이 핵심입니다.'
+    }),
+    max: buildScenarioCard({
+      type: isaFocused ? 'ISA 병행 또는 만기전환 점검형' : hasChildren ? '맞벌이 부부 공제 배분형' : '현금흐름이 빠듯한 실속형',
+      audience: '부부가 역할을 분리해 적극적으로 절세 구조를 최적화하려는 경우에 맞습니다.',
+      why:
+        isaFocused
+          ? '연금계좌 활용과 ISA 상태를 함께 보면, 단순히 카드만 조정하는 것보다 계좌 전략이 더 큰 변수가 됩니다.'
+          : hasChildren
+            ? '자녀가 있는 맞벌이는 귀속자 배분이 잘못되면 교육비·의료비·기본공제가 동시에 엇갈릴 수 있습니다.'
+            : '카드 부족분과 연금 납입 여지를 모두 같이 조정할 여지가 남아 있습니다.',
+      factors: factorLines,
+      thisMonth: [
+        `부족분이 더 큰 ${preferredCardHolder} 명의에 체크카드/현금영수증 전환 계획을 먼저 집중하세요.`,
+        hasChildren ? '자녀별 귀속자를 1명 단위로 확정하고, 의료비·교육비 영수증도 같은 사람 기준으로 재정리하세요.' : '부양가족 귀속자를 한 번 확정한 뒤 부부 중복 입력을 제거하세요.',
+        isaProfile.maturityNeeded ? 'ISA 만기 전환 전략은 연금계좌 전환 여부를 먼저 비교한 뒤 출금 여부를 결정하세요.' : 'ISA와 연금저축/IRP 자동이체를 동시에 늘릴지, 현금흐름 기준으로 우선순위를 나누세요.'
+      ],
+      yearEnd: [
+        '제출 직전에는 자녀·부양가족 귀속표, 실제 결제자, 월세/현금영수증 충돌 여부를 한 번에 점검하세요.',
+        '부부가 각자 카드 공제 구간을 넘겼는지 별도로 보고, 넘긴 뒤에는 추가 소비보다 증빙 보정에 집중하세요.',
+        isaProfile.notes[isaProfile.notes.length - 1] || 'ISA는 해외 상장 ETF 직접매수처럼 오해되지 않게 국내상장 해외지수 ETF 활용 개념으로 이해하세요.'
+      ],
+      cautions: [
+        RULES.warnings.duplicateDependent,
+        '무리하게 지출을 늘리면 절세 효과보다 가계 현금흐름 부담이 더 커질 수 있습니다.',
+        (input.spouseA.rent > 0 && input.spouseA.checkCash > 0) || (input.spouseB.rent > 0 && input.spouseB.checkCash > 0) ? RULES.warnings.rentCashOverlap : ''
+      ],
+      accounts: [
+        '연금저축/IRP: 세액공제형 계좌로서 즉시 체감효과가 큰지 먼저 판단하세요.',
+        isaProfile.relationship,
+        isaProfile.warning
+      ],
+      summary: '절세 극대화형에서는 배우자별 귀속과 카드 구간, 연금계좌, ISA 만기 전략까지 하나의 표로 관리하는 편이 안전합니다.'
+    })
+  };
+}
+
 function renderScenario() {
   if (!latestResult) return;
   const conf = RULES.scenario[activeScenarioId];
-  const actions = latestResult.scenarios[activeScenarioId] || [];
+  const scenario = latestResult.scenarios[activeScenarioId];
   const intro = latestResult.mode === 'couple' ? conf.coupleSummary : conf.singleSummary;
 
+  if (!scenario) {
+    scenarioPanel.innerHTML = '';
+    return;
+  }
+
   scenarioPanel.innerHTML = `
-    <p><strong>${conf.title}</strong> · ${intro}</p>
-    <ul class="scenario-list">
-      ${actions.map((line) => `<li>${line}</li>`).join('')}
-    </ul>
+    <div class="scenario-shell">
+      <p class="scenario-lead"><strong>${conf.title}</strong> · ${intro}</p>
+      <div class="scenario-summary-line">
+        <span class="scenario-type">${scenario.type}</span>
+        <p>${scenario.summary}</p>
+      </div>
+      <div class="scenario-grid">
+        <section class="scenario-block">
+          <h4>누구에게 맞는 시나리오인지</h4>
+          <p>${scenario.audience}</p>
+        </section>
+        <section class="scenario-block">
+          <h4>왜 이 시나리오가 추천됐는지</h4>
+          <p>${scenario.why}</p>
+        </section>
+        <section class="scenario-block">
+          <h4>가장 크게 작용한 입력값</h4>
+          <ul class="scenario-list">
+            ${scenario.factors.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+        </section>
+        <section class="scenario-block">
+          <h4>이번 달 바로 할 일</h4>
+          <ul class="scenario-list">
+            ${scenario.thisMonth.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+        </section>
+        <section class="scenario-block">
+          <h4>연말까지 유지할 행동</h4>
+          <ul class="scenario-list">
+            ${scenario.yearEnd.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+        </section>
+        <section class="scenario-block">
+          <h4>주의할 중복공제·누락 포인트</h4>
+          <ul class="scenario-list">
+            ${scenario.cautions.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+        </section>
+        <section class="scenario-block">
+          <h4>관련 계좌 전략</h4>
+          <ul class="scenario-list">
+            ${scenario.accounts.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+        </section>
+      </div>
+    </div>
   `;
 
   const activeTab = document.querySelector(`.tab-btn[data-tab="${activeScenarioId}"]`);
