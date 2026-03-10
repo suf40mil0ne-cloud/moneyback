@@ -2276,6 +2276,24 @@ function setupAccordions() {
   });
 }
 
+function openAccordionForTarget(target) {
+  if (!(target instanceof HTMLElement)) return;
+  const panel = target.classList.contains('accordion-panel') ? target : target.closest('.accordion-panel');
+  if (!panel) return;
+  const trigger = document.querySelector(`.accordion-trigger[aria-controls="${panel.id}"]`);
+  if (!trigger) return;
+  trigger.setAttribute('aria-expanded', 'true');
+  panel.classList.remove('hidden');
+}
+
+function syncAccordionWithHash() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  const target = document.querySelector(hash);
+  if (!target) return;
+  openAccordionForTarget(target);
+}
+
 function setupMoneyInputs() {
   document.addEventListener('input', (e) => {
     const target = e.target;
@@ -2459,6 +2477,8 @@ setupAccordions();
 bootstrapRepeatLists();
 renderFaq();
 renderUpdateHistory();
+syncAccordionWithHash();
+window.addEventListener('hashchange', syncAccordionWithHash);
 updateSpouseEligibilityText();
 updateIncomeModeUI();
 updateSpendModeUI();

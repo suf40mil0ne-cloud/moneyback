@@ -164,26 +164,25 @@ img {
 }
 
 .hero {
-  margin-top: 18px;
-  padding: 34px 0 10px;
+  margin-top: 14px;
+  padding: 12px 0 4px;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.8fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.75fr);
+  gap: 14px;
   align-items: start;
 }
 
 .hero-copy {
-  padding: 28px 28px 26px;
+  padding: 22px 22px 20px;
   border: 1px solid rgba(196, 190, 176, 0.5);
-  border-radius: 30px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(247, 245, 239, 0.98) 100%);
-  box-shadow: var(--shadow-card);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: none;
 }
 
 .hero-aside {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .hero-proof,
@@ -207,10 +206,31 @@ img {
   font-size: 14px;
 }
 
+.hero-mini {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
 .hero-points {
   list-style: none;
   display: grid;
   gap: 10px;
+}
+
+.hero-compact-points {
+  align-content: start;
+}
+
+.hero-compact-points p {
+  margin: 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(196, 190, 176, 0.5);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .hero-points li {
@@ -810,6 +830,10 @@ button:focus,
   background: #f8f7f1;
 }
 
+.result-why-card {
+  background: #fbfaf6;
+}
+
 .result-isa-card {
   background: linear-gradient(180deg, rgba(242, 247, 245, 0.95) 0%, rgba(255, 255, 255, 0.96) 100%);
 }
@@ -1024,7 +1048,7 @@ button:focus,
 }
 
 .faq-block {
-  margin-top: 34px;
+  margin-top: 0;
 }
 
 .faq-block > p {
@@ -1059,6 +1083,10 @@ button:focus,
   margin-top: 18px;
 }
 
+.muted-ad {
+  opacity: 0.82;
+}
+
 .ad-slot {
   border: 1px dashed rgba(120, 128, 136, 0.55);
   border-radius: 18px;
@@ -1091,6 +1119,32 @@ button:focus,
   margin: 34px auto 94px;
   max-width: var(--content-width);
   padding: 0 18px;
+}
+
+.info-section {
+  margin-top: 28px;
+}
+
+.info-section-head {
+  margin-bottom: 14px;
+}
+
+.info-section-head h2 {
+  margin-bottom: 8px;
+}
+
+.info-section-head p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.info-accordion-group .accordion-item {
+  background: rgba(255, 253, 248, 0.84);
+}
+
+.info-accordion-group .accordion-panel {
+  padding-top: 12px;
 }
 
 .site-footer::before {
@@ -1180,7 +1234,7 @@ button:focus,
   }
 
   .hero {
-    padding-top: 12px;
+    padding-top: 6px;
   }
 
   h2 {
