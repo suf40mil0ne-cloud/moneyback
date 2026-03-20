@@ -3182,6 +3182,52 @@ function updateSpouseEligibilityText() {
   spouseEligibilityText.textContent = eligible === true ? '가능' : eligible === false ? '불가' : '확인 필요';
 }
 
+function setStepperInputValue(input, value) {
+  const nextValue = String(Math.max(0, value));
+  input.value = nextValue === '0' ? '0' : formatMoney(Number(nextValue));
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function syncDeductionDisplays() {
+  const targets = ['minorChildrenCount', 'childTaxCreditEligibleCount', 'elderFamilyCount', 'seniorCount', 'disabledCount'];
+  targets.forEach((id) => {
+    const input = document.getElementById(id);
+    const display = document.querySelector(`[data-stepper-value="${id}"]`);
+    if (!input || !display) return;
+    display.textContent = String(sanitizeNumber(input.value));
+  });
+
+  const spouseLabel = document.querySelector('[data-switch-label="hasSpouse"]');
+  if (spouseLabel && hasSpouseInput) spouseLabel.textContent = hasSpouseInput.checked ? '있음' : '없음';
+}
+
+function setupDeductionScreen() {
+  document.querySelectorAll('[data-stepper-target]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.stepperTarget);
+      if (!(input instanceof HTMLInputElement)) return;
+      const current = sanitizeNumber(input.value);
+      const delta = Number(btn.dataset.stepperDelta || 0);
+      setStepperInputValue(input, current + delta);
+      syncDeductionDisplays();
+    });
+  });
+
+  ['minorChildrenCount', 'childTaxCreditEligibleCount', 'elderFamilyCount', 'seniorCount', 'disabledCount'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    input.addEventListener('input', syncDeductionDisplays);
+    input.addEventListener('change', syncDeductionDisplays);
+  });
+
+  if (hasSpouseInput) {
+    hasSpouseInput.addEventListener('change', syncDeductionDisplays);
+  }
+
+  syncDeductionDisplays();
+}
+
 function bootstrapRepeatLists() {
   childrenCountInput.value = '0';
 
@@ -3315,3 +3361,4 @@ updateCoupleSpendModeUI();
 refreshCoupleEstimationPreview();
 updateSingleIsaCapacityHint();
 updateCoupleIsaCapacityHint();
+setupDeductionScreen();
