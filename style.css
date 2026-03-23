@@ -1620,14 +1620,61 @@ textarea:focus,
   border-color: var(--line-strong);
 }
 
+.couple-stage-group {
+  gap: 12px;
+}
+
+#coupleModeSection > .planner-meta-inline,
+#coupleModeSection > .input-mode-block,
+#coupleEstimationPreview {
+  margin-top: 0;
+}
+
+#coupleModeSection > .input-mode-block,
+#coupleEstimationPreview {
+  padding: 0.82rem 0.9rem;
+  border-radius: 0.95rem;
+}
+
+#coupleEstimationPreview {
+  background: linear-gradient(180deg, rgba(0, 6, 102, 0.025), rgba(255, 255, 255, 0.96));
+}
+
+.couple-person-card {
+  padding: 1rem;
+  border-radius: 1.05rem;
+}
+
+.couple-person-card > .accordion-trigger {
+  min-height: 46px;
+  padding: 0 12px;
+  border-radius: 0.9rem;
+}
+
+.couple-person-card > .accordion-trigger[aria-expanded="true"] {
+  background: rgba(0, 6, 102, 0.04);
+  border-color: rgba(26, 35, 126, 0.12);
+}
+
 .couple-section-intro {
   margin-bottom: 12px;
 }
 
+.couple-section-intro {
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.9rem;
+}
+
+.couple-section-intro .hint {
+  font-size: 0.78rem;
+}
+
 .couple-basic-grid,
 .couple-spend-grid,
-.couple-extra-grid {
-  margin-bottom: 12px;
+.couple-extra-grid,
+#aCumulativeSpendWrap,
+#bCumulativeSpendWrap {
+  margin-bottom: 10px;
 }
 
 .couple-family-overview {
@@ -1654,22 +1701,36 @@ textarea:focus,
 }
 
 .couple-spend-grid > div,
-.couple-extra-grid > div {
-  padding: 0.85rem 0.9rem;
-  border-radius: 0.95rem;
+.couple-extra-grid > div,
+#aCumulativeSpendWrap > div,
+#bCumulativeSpendWrap > div {
+  padding: 0.78rem 0.82rem;
+  border-radius: 0.9rem;
   background: var(--surface-soft);
   border: 1px solid var(--line);
 }
 
 .couple-spend-grid label,
-.couple-extra-grid label {
-  margin-bottom: 8px;
+.couple-extra-grid label,
+#aCumulativeSpendWrap label,
+#bCumulativeSpendWrap label {
+  margin-bottom: 6px;
 }
 
 #spouseASection,
 #spouseBSection {
   display: grid;
-  gap: 10px;
+  gap: 8px;
+}
+
+#spouseASection .field-card-compact,
+#spouseBSection .field-card-compact {
+  min-height: 76px;
+}
+
+#spouseASection .field-card-compact input,
+#spouseBSection .field-card-compact input {
+  min-height: 46px;
 }
 
 #spouseASection > .grid,
@@ -1679,7 +1740,11 @@ textarea:focus,
 
 #spouseATrigger,
 #spouseBTrigger {
-  font-size: 1rem;
+  font-size: 0.96rem;
+}
+
+#familyTrigger {
+  font-size: 0.96rem;
 }
 
 .error {
@@ -1898,9 +1963,16 @@ textarea:focus,
   .spend-entry-card,
   .couple-spend-grid > div,
   .couple-extra-grid > div,
+  #aCumulativeSpendWrap > div,
+  #bCumulativeSpendWrap > div,
   .couple-family-toggle,
-  .couple-family-count {
+  .couple-family-count,
+  .couple-person-card {
     padding: 0.82rem;
+  }
+
+  .couple-person-card > .accordion-trigger {
+    min-height: 44px;
   }
 
   .mode-switch {
