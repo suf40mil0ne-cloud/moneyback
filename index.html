@@ -73,33 +73,34 @@
       </div>
     </header>
 
-    <header class="hero">
+    <header class="hero hero-simplified">
       <div class="hero-copy">
-        <h1>연말정산 행동 추천기</h1>
-        <p class="subtitle">연봉·지출·가족 정보만 입력하면 올해 절세 행동을 빠르게 추천합니다.</p>
-        <p class="hero-mini">정확한 환급액 계산보다 지금 바로 할 일을 정리하는 참고용 가이드입니다.</p>
+        <p class="section-kicker hero-kicker">실수 줄이는 연말정산 입력</p>
+        <h1>복잡한 계산보다, 지금 할 일을 먼저 정리하세요</h1>
+        <p class="subtitle">연봉과 기본 정보만 입력하면 카드·가족공제·연금저축·ISA까지 행동 우선순위로 정리해 드립니다.</p>
+        <p class="hero-mini">정확한 환급액 확정보다 놓치기 쉬운 항목을 빠르게 점검하는 참고용 도구입니다.</p>
         <div class="hero-actions">
           <a class="cta-link" href="#inputSection">바로 입력하기</a>
-          <a class="text-link" href="#infoSection">가이드는 아래에서 보기</a>
+          <a class="text-link" href="#results">결과 먼저 보기</a>
+        </div>
+        <div class="hero-trust-list" aria-label="서비스 특징">
+          <span>입력 3분</span>
+          <span>민감정보 불필요</span>
+          <span>결과는 행동 중심</span>
         </div>
       </div>
-      <aside class="hero-aside hero-compact-points">
-        <p>1인 / 맞벌이 모두 지원</p>
-        <p>월평균 / 누적 입력 모두 가능</p>
-        <p>카드 · 가족 · 연금 · ISA 흐름까지 함께 정리</p>
-      </aside>
     </header>
 
     <section id="inputSection" class="card planner-shell">
-      <div class="planner-head">
+      <div class="planner-head planner-head-compact">
         <div>
           <p class="section-kicker">입력</p>
-          <h2>입력</h2>
-          <p class="planner-subcopy">기본 정보부터 가족, 소비, 계좌 전략까지 순서대로 입력하면 결과는 행동 중심으로 정리됩니다.</p>
+          <h2>필수 정보만 먼저 입력하세요</h2>
+          <p class="planner-subcopy">기본 정보는 바로 펼쳐 두고, 소비·가족공제·ISA는 필요할 때만 열어 보도록 정리했습니다.</p>
         </div>
         <div class="planner-meta">
-          <strong>입력 팁</strong>
-          <p>정확한 숫자가 없어도 시작할 수 있습니다. 빠른 선택과 월평균 입력을 먼저 쓰고, 필요한 부분만 상세 입력으로 보완하세요.</p>
+          <strong>입력 순서</strong>
+          <p>1단계 기본 정보만 입력해도 결과를 볼 수 있습니다. 더 정확히 보고 싶을 때만 소비와 가족공제를 추가로 열어 보세요.</p>
         </div>
       </div>
       <form id="planner-form" novalidate>
@@ -115,11 +116,18 @@
           </label>
         </fieldset>
 
-        <section id="singleModeSection">
-          <div class="form-section-head">
-            <p class="section-kicker">1인 모드</p>
-            <h3>기본 정보와 공제 흐름을 먼저 입력하세요</h3>
-          </div>
+        <section id="singleModeSection" class="mode-stage-layout">
+          <section class="entry-stage entry-stage-open">
+            <div class="form-section-head">
+              <p class="section-kicker">1단계</p>
+              <h3>기본 정보</h3>
+              <p class="field-note">연봉과 기본 납입 정보까지만 입력해도 바로 추천을 시작할 수 있습니다.</p>
+            </div>
+            <div class="stage-tip-row" aria-label="입력 가이드">
+              <span>1인 / 맞벌이 모드 선택</span>
+              <span>연봉 입력 방식 선택</span>
+              <span>월세·연금저축·IRP는 선택 입력</span>
+            </div>
           <div class="input-mode-block">
             <label for="incomeInputMode">연봉 입력 방식</label>
             <select id="incomeInputMode">
@@ -166,65 +174,146 @@
             </div>
           </div>
 
-          <section class="isa-input-section">
-            <h3>ISA 활용 입력</h3>
-            <p class="hint">ISA는 즉시 세액공제형 계좌가 아니라 투자수익 절세 중심 계좌로 해석합니다. 월 투자 여력은 연봉·소비 입력을 바탕으로 자동 추정되며, 필요하면 직접 선택해 덮어쓸 수 있습니다.</p>
-            <div class="grid two-col">
-              <div>
-                <label for="singleIsaStatus">ISA 보유 상태</label>
-                <select id="singleIsaStatus">
-                  <option value="none" selected>아직 없음</option>
-                  <option value="active">이미 보유 중</option>
-                  <option value="seasoned">보유 중이며 3년 이상 유지</option>
-                  <option value="maturitySoon">곧 만기 예정(6개월 이내)</option>
-                  <option value="maturityDecision">만기 처리 고민 중</option>
-                </select>
-              </div>
-              <div>
-                <label for="singleIsaPurpose">ISA 활용 목적</label>
-                <select id="singleIsaPurpose">
-                  <option value="global" selected>미국/글로벌 지수 장기투자</option>
-                  <option value="income">배당/인컴형 투자</option>
-                  <option value="stable">예적금·채권 포함 안정형 운용</option>
-                  <option value="unknown">아직 잘 모르겠음</option>
-                </select>
-              </div>
-              <div>
-                <label for="singlePensionLinkStatus">연금계좌 상태 연동</label>
-                <select id="singlePensionLinkStatus">
-                  <option value="low" selected>연금저축 / IRP를 아직 충분히 활용하지 않음</option>
-                  <option value="mid">연금저축 / IRP를 어느 정도 활용 중</option>
-                  <option value="high">연금저축 / IRP를 거의 채우는 중</option>
-                  <option value="unknown">잘 모르겠음</option>
-                </select>
-              </div>
-              <div>
-                <label for="singleInvestCapacity">월 투자 여력</label>
-                <select id="singleInvestCapacity">
-                  <option value="auto" selected>자동 추정 사용</option>
-                  <option value="u10">월 10만원 이하</option>
-                  <option value="10-30">월 10~30만원</option>
-                  <option value="30-50">월 30~50만원</option>
-                  <option value="50p">월 50만원 이상</option>
-                  <option value="unknown">아직 정하기 어려움</option>
-                </select>
-                <p id="singleIsaCapacityHint" class="hint">자동 추정 월 투자 여력: 계산 전</p>
-              </div>
-            </div>
           </section>
 
-          <div class="form-section-head compact">
-            <p class="section-kicker">가족 정보</p>
-            <h3>인적공제(간편 입력)</h3>
+          <div class="accordion-item staged-accordion">
+            <button type="button" class="accordion-trigger stage-trigger" aria-expanded="false" aria-controls="singleSpendPanel" id="singleSpendTrigger">2단계 · 소비 정보</button>
+            <div id="singleSpendPanel" class="accordion-panel hidden">
+              <div class="section-intro section-intro-compact">
+                <p class="section-kicker">간편 입력</p>
+                <p class="hint">카드 사용 패턴만 빠르게 넣고 싶은 경우에 먼저 열어 보세요.</p>
+              </div>
+          <div class="input-mode-block">
+            <label for="spendInputMode">소비 입력 방식</label>
+            <select id="spendInputMode">
+              <option value="monthly" selected>월평균 입력(권장)</option>
+              <option value="cumulative">올해 누적 입력</option>
+            </select>
           </div>
+
+          <div id="monthlySpendWrap" class="grid two-col">
+            <div>
+              <label for="singleCreditBand">월평균 신용카드(선택형)</label>
+              <select id="singleCreditBand">
+                <option value="none">거의 없음</option>
+                <option value="u10">10만원 미만</option>
+                <option value="10-30" selected>10~30만원</option>
+                <option value="30-60">30~60만원</option>
+                <option value="60-100">60~100만원</option>
+                <option value="100-150">100~150만원</option>
+                <option value="150-200">150~200만원</option>
+                <option value="200-300">200~300만원</option>
+                <option value="300p">300만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleCreditSub">세부 선택</label>
+              <select id="singleCreditSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력</label>
+              <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
+              <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="singleCheckBand">월평균 체크카드+현금영수증(선택형)</label>
+              <select id="singleCheckBand">
+                <option value="none">거의 없음</option>
+                <option value="u10">10만원 미만</option>
+                <option value="10-30" selected>10~30만원</option>
+                <option value="30-60">30~60만원</option>
+                <option value="60-100">60~100만원</option>
+                <option value="100-150">100~150만원</option>
+                <option value="150-200">150~200만원</option>
+                <option value="200-300">200~300만원</option>
+                <option value="300p">300만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleCheckSub">세부 선택</label>
+              <select id="singleCheckSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력</label>
+              <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
+              <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="singleMarketBand">월평균 전통시장(선택형)</label>
+              <select id="singleMarketBand">
+                <option value="none">거의 없음</option>
+                <option value="u10" selected>10만원 미만</option>
+                <option value="10-30">10~30만원</option>
+                <option value="30-50">30~50만원</option>
+                <option value="50-70">50~70만원</option>
+                <option value="70p">70만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleMarketSub">세부 선택</label>
+              <select id="singleMarketSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력</label>
+              <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
+              <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+              <label for="singleTransitBand">월평균 대중교통(선택형)</label>
+              <select id="singleTransitBand">
+                <option value="none">거의 없음</option>
+                <option value="u5" selected>5만원 미만</option>
+                <option value="5-10">5~10만원</option>
+                <option value="10-20">10~20만원</option>
+                <option value="20-30">20~30만원</option>
+                <option value="30p">30만원 이상</option>
+                <option value="direct">직접 입력</option>
+              </select>
+              <label for="singleTransitSub">세부 선택</label>
+              <select id="singleTransitSub"><option value="">기본값</option></select>
+              <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력</label>
+              <label for="monthlyTransit">월평균 대중교통 사용액</label>
+              <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
+            </div>
+          </div>
+          <p class="hint">선택형 입력은 빠르게 방향을 보는 용도입니다. 실제 사용액을 정확히 알고 있다면 직접 입력으로 바꿔 주세요.</p>
+
+          <div id="estimationPreview" class="summary-box">
+            <p>입력을 마치면 예상 사용 흐름과 부족 구간을 여기서 바로 확인할 수 있습니다.</p>
+          </div>
+
+          <div id="cumulativeSpendWrap" class="grid two-col hidden">
+            <div>
+              <label for="currentCreditCard">올해 누적 신용카드</label>
+              <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" />
+            </div>
+            <div>
+              <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
+              <input id="currentCheckCash" data-money inputmode="numeric" placeholder="0" aria-label="1인 체크카드 및 현금영수증 사용액" />
+            </div>
+            <div>
+              <label for="currentTraditionalMarket">올해 누적 전통시장</label>
+              <input id="currentTraditionalMarket" data-money inputmode="numeric" placeholder="0" aria-label="1인 전통시장 사용액" />
+            </div>
+            <div>
+              <label for="currentTransit">올해 누적 대중교통</label>
+              <input id="currentTransit" data-money inputmode="numeric" placeholder="0" aria-label="1인 대중교통 사용액" />
+            </div>
+          </div>            </div>
+          </div>
+
+          <div class="accordion-item staged-accordion">
+            <button type="button" class="accordion-trigger stage-trigger" aria-expanded="false" aria-controls="singleFamilyPanel" id="singleFamilyTrigger">3단계 · 가족 / 인적공제</button>
+            <div id="singleFamilyPanel" class="accordion-panel hidden">
+              <div class="section-intro split-intro">
+                <div>
+                  <p class="section-kicker">간편 입력</p>
+                  <p class="hint">배우자, 자녀, 부모·조부모 수처럼 빠르게 판단 가능한 항목부터 먼저 입력합니다.</p>
+                </div>
+                <div>
+                  <p class="section-kicker">상세 입력</p>
+                  <p class="hint">귀속자나 소득요건을 더 정확히 점검하고 싶을 때만 아래 상세 입력을 열어 주세요.</p>
+                </div>
+              </div>
           <section class="deduction-screen" aria-label="가족 및 인적공제 입력">
             <div class="deduction-hero">
               <div>
-                <p class="deduction-step">Step 02 - Deductions</p>
-                <h4>Family &amp; Deductions</h4>
+                <p class="deduction-step">간편 입력</p>
+                <h4>가족과 인적공제</h4>
                 <p class="deduction-copy">인적공제 항목을 정확하게 입력하여 최대한의 환급 전략을 확보하세요. 기존 계산 로직은 유지되고, 입력 경험만 새 레이아웃으로 정리했습니다.</p>
               </div>
-              <div class="deduction-chip">Private Auditor</div>
+              <div class="deduction-chip">간단 점검</div>
             </div>
 
             <div class="deduction-grid">
@@ -342,10 +431,10 @@
           <p class="hint deduction-hint">간편 입력만으로도 기존처럼 추천됩니다. 더 정확한 인적공제 점검이 필요하면 아래 상세 입력을 열어 주세요.</p>
 
           <div class="accordion-item detail-panel">
-            <button type="button" class="accordion-trigger deduction-advanced-trigger" aria-expanded="false" aria-controls="detailedPersonalSection" id="detailedPersonalTrigger">상세 인적공제 입력(선택)</button>
+            <button type="button" class="accordion-trigger deduction-advanced-trigger" aria-expanded="false" aria-controls="detailedPersonalSection" id="detailedPersonalTrigger">상세 입력 열기</button>
             <div id="detailedPersonalSection" class="accordion-panel hidden">
               <section>
-                <h4>1) 근로자 본인 정보</h4>
+                <h4>근로자 기본 정보</h4>
                 <p class="hint">본인은 자동으로 기본공제 포함됩니다.</p>
                 <div class="grid two-col">
                   <div>
@@ -371,7 +460,7 @@
               </section>
 
               <section>
-                <h4>2) 배우자 정보</h4>
+                <h4>배우자 상세 정보</h4>
                 <div class="grid two-col">
                   <label class="inline-check"><input type="checkbox" id="detailHasSpouse" />배우자 있음 여부(간편 입력과 동기화)</label>
                   <div></div>
@@ -391,7 +480,7 @@
 
               <section>
                 <div class="list-header">
-                  <h4>3) 부양가족 반복 입력 카드</h4>
+                  <h4>부양가족 상세 카드</h4>
                   <button type="button" id="addPersonalChildQuickBtn" class="ghost-btn">자녀 1명 추가</button>
                   <button type="button" id="addPersonalParentQuickBtn" class="ghost-btn">부모 1명 추가</button>
                   <button type="button" id="addPersonalGrandParentQuickBtn" class="ghost-btn">조부모 1명 추가</button>
@@ -404,126 +493,72 @@
             </div>
           </div>
 
-          <div class="form-section-head compact">
-            <p class="section-kicker">소비 정보</p>
-            <h3>카드/현금 사용액</h3>
-          </div>
-          <div class="input-mode-block">
-            <label for="spendInputMode">소비 입력 방식</label>
-            <select id="spendInputMode">
-              <option value="monthly" selected>월평균 입력(권장)</option>
-              <option value="cumulative">올해 누적 입력</option>
-            </select>
+            </div>
           </div>
 
-          <div id="monthlySpendWrap" class="grid two-col">
-            <div>
-              <label for="singleCreditBand">월평균 신용카드(선택형)</label>
-              <select id="singleCreditBand">
-                <option value="none">거의 없음</option>
-                <option value="u10">10만원 미만</option>
-                <option value="10-30" selected>10~30만원</option>
-                <option value="30-60">30~60만원</option>
-                <option value="60-100">60~100만원</option>
-                <option value="100-150">100~150만원</option>
-                <option value="150-200">150~200만원</option>
-                <option value="200-300">200~300만원</option>
-                <option value="300p">300만원 이상</option>
-                <option value="direct">직접 입력</option>
-              </select>
-              <label for="singleCreditSub">세부 선택</label>
-              <select id="singleCreditSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력</label>
-              <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
-              <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
+          <div class="accordion-item staged-accordion staged-accordion-subtle">
+            <button type="button" class="accordion-trigger stage-trigger" aria-expanded="false" aria-controls="singleIsaPanel" id="singleIsaTrigger">4단계 · ISA 참고 전략</button>
+            <div id="singleIsaPanel" class="accordion-panel hidden">
+          <section class="isa-input-section">
+            <h3>ISA 참고 전략</h3>
+            <p class="hint">ISA는 연말정산 직접 공제 항목이 아니라 투자 절세 참고 항목입니다. 필요할 때만 열어 현재 상태와 만기 계획을 함께 점검해 보세요.</p>
+            <div class="grid two-col">
+              <div>
+                <label for="singleIsaStatus">ISA 보유 상태</label>
+                <select id="singleIsaStatus">
+                  <option value="none" selected>아직 없음</option>
+                  <option value="active">이미 보유 중</option>
+                  <option value="seasoned">보유 중이며 3년 이상 유지</option>
+                  <option value="maturitySoon">곧 만기 예정(6개월 이내)</option>
+                  <option value="maturityDecision">만기 처리 고민 중</option>
+                </select>
+              </div>
+              <div>
+                <label for="singleIsaPurpose">ISA 활용 목적</label>
+                <select id="singleIsaPurpose">
+                  <option value="global" selected>미국/글로벌 지수 장기투자</option>
+                  <option value="income">배당/인컴형 투자</option>
+                  <option value="stable">예적금·채권 포함 안정형 운용</option>
+                  <option value="unknown">아직 잘 모르겠음</option>
+                </select>
+              </div>
+              <div>
+                <label for="singlePensionLinkStatus">연금계좌 상태 연동</label>
+                <select id="singlePensionLinkStatus">
+                  <option value="low" selected>연금저축 / IRP를 아직 충분히 활용하지 않음</option>
+                  <option value="mid">연금저축 / IRP를 어느 정도 활용 중</option>
+                  <option value="high">연금저축 / IRP를 거의 채우는 중</option>
+                  <option value="unknown">잘 모르겠음</option>
+                </select>
+              </div>
+              <div>
+                <label for="singleInvestCapacity">월 투자 여력</label>
+                <select id="singleInvestCapacity">
+                  <option value="auto" selected>자동 추정 사용</option>
+                  <option value="u10">월 10만원 이하</option>
+                  <option value="10-30">월 10~30만원</option>
+                  <option value="30-50">월 30~50만원</option>
+                  <option value="50p">월 50만원 이상</option>
+                  <option value="unknown">아직 정하기 어려움</option>
+                </select>
+                <p id="singleIsaCapacityHint" class="hint">자동 추정 월 투자 여력: 입력 후 표시됩니다.</p>
+              </div>
             </div>
-            <div>
-              <label for="singleCheckBand">월평균 체크카드+현금영수증(선택형)</label>
-              <select id="singleCheckBand">
-                <option value="none">거의 없음</option>
-                <option value="u10">10만원 미만</option>
-                <option value="10-30" selected>10~30만원</option>
-                <option value="30-60">30~60만원</option>
-                <option value="60-100">60~100만원</option>
-                <option value="100-150">100~150만원</option>
-                <option value="150-200">150~200만원</option>
-                <option value="200-300">200~300만원</option>
-                <option value="300p">300만원 이상</option>
-                <option value="direct">직접 입력</option>
-              </select>
-              <label for="singleCheckSub">세부 선택</label>
-              <select id="singleCheckSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력</label>
-              <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
-              <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
-            </div>
-            <div>
-              <label for="singleMarketBand">월평균 전통시장(선택형)</label>
-              <select id="singleMarketBand">
-                <option value="none">거의 없음</option>
-                <option value="u10" selected>10만원 미만</option>
-                <option value="10-30">10~30만원</option>
-                <option value="30-50">30~50만원</option>
-                <option value="50-70">50~70만원</option>
-                <option value="70p">70만원 이상</option>
-                <option value="direct">직접 입력</option>
-              </select>
-              <label for="singleMarketSub">세부 선택</label>
-              <select id="singleMarketSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력</label>
-              <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
-              <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
-            </div>
-            <div>
-              <label for="singleTransitBand">월평균 대중교통(선택형)</label>
-              <select id="singleTransitBand">
-                <option value="none">거의 없음</option>
-                <option value="u5" selected>5만원 미만</option>
-                <option value="5-10">5~10만원</option>
-                <option value="10-20">10~20만원</option>
-                <option value="20-30">20~30만원</option>
-                <option value="30p">30만원 이상</option>
-                <option value="direct">직접 입력</option>
-              </select>
-              <label for="singleTransitSub">세부 선택</label>
-              <select id="singleTransitSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력</label>
-              <label for="monthlyTransit">월평균 대중교통 사용액</label>
-              <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
-            </div>
-          </div>
-          <p class="hint">선택형 입력값은 추정 계산용 기준값으로 반영됩니다. 정확한 계산이 필요하면 직접 입력을 사용하세요.</p>
+          </section>
 
-          <div id="estimationPreview" class="summary-box">
-            <p>월평균 입력 기준 자동 추정이 여기에 표시됩니다.</p>
-          </div>
-
-          <div id="cumulativeSpendWrap" class="grid two-col hidden">
-            <div>
-              <label for="currentCreditCard">올해 누적 신용카드</label>
-              <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" />
-            </div>
-            <div>
-              <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
-              <input id="currentCheckCash" data-money inputmode="numeric" placeholder="0" aria-label="1인 체크카드 및 현금영수증 사용액" />
-            </div>
-            <div>
-              <label for="currentTraditionalMarket">올해 누적 전통시장</label>
-              <input id="currentTraditionalMarket" data-money inputmode="numeric" placeholder="0" aria-label="1인 전통시장 사용액" />
-            </div>
-            <div>
-              <label for="currentTransit">올해 누적 대중교통</label>
-              <input id="currentTransit" data-money inputmode="numeric" placeholder="0" aria-label="1인 대중교통 사용액" />
             </div>
           </div>
         </section>
-
-        <section id="coupleModeSection" class="hidden">
+        <section id="coupleModeSection" class="hidden mode-stage-layout">
           <div class="form-section-head">
             <p class="section-kicker">맞벌이 모드</p>
-            <h3>배우자별 입력과 가족 귀속을 나눠 정리하세요</h3>
+            <h3>배우자별 정보를 나눠 넣고 귀속 흐름을 비교하세요</h3>
+            <p class="field-note">본인, 배우자, 가족 정보를 따로 정리하면 중복공제와 지출자 불일치 위험을 줄이기 쉽습니다.</p>
           </div>
-          <p class="hint">선택 입력은 비워두면 0으로 처리됩니다. 주민등록번호, 상세 주소 등 민감정보는 입력하지 않습니다.</p>
+          <div class="planner-meta planner-meta-inline">
+            <strong>입력 메모</strong>
+            <p>민감정보는 받지 않습니다. 본인과 배우자 입력은 따로 접혀 있어 필요한 쪽부터 열어 보시면 됩니다.</p>
+          </div>
           <div class="input-mode-block">
             <label for="coupleSpendInputMode">맞벌이 소비 입력 방식</label>
             <select id="coupleSpendInputMode">
@@ -532,12 +567,12 @@
             </select>
           </div>
           <div id="coupleEstimationPreview" class="summary-box">
-            <p>맞벌이 월평균 입력 기준 자동 추정이 여기에 표시됩니다.</p>
+            <p>입력을 마치면 배우자별 예상 사용 흐름과 부족 구간을 여기에서 확인할 수 있습니다.</p>
           </div>
 
-          <div class="accordion-group">
+          <div class="accordion-group couple-stage-group">
             <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-              <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="spouseASection" id="spouseATrigger">본인</button>
+              <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="spouseASection" id="spouseATrigger">1단계 · 본인 입력</button>
               <div id="spouseASection" class="accordion-panel">
                 <div class="grid two-col">
                   <div>
@@ -691,7 +726,7 @@
             </div>
 
             <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="spouseBSection" id="spouseBTrigger">배우자</button>
+              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="spouseBSection" id="spouseBTrigger">2단계 · 배우자 입력</button>
               <div id="spouseBSection" class="accordion-panel hidden">
                 <div class="grid two-col">
                   <div>
@@ -845,7 +880,7 @@
             </div>
 
             <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="familySection" id="familyTrigger">C. 공통 가족/부양가족 정보</button>
+              <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="familySection" id="familyTrigger">3단계 · 공통 가족과 부양가족</button>
               <div id="familySection" class="accordion-panel hidden">
                 <div class="grid two-col">
                   <label class="inline-check"><input type="checkbox" id="isMarriedRegistered" checked />혼인신고 여부</label>
@@ -873,53 +908,55 @@
             </div>
           </div>
 
-          <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-outlined text-primary">savings</span>
-                <h3 class="text-lg font-bold">ISA 전략 입력</h3>
-            </div>
-            <p class="hint">맞벌이 모드에서는 가구 공통 계획을 입력하되, 결과에서는 배우자별 연금 활용 정도와 현금흐름을 함께 보고 ISA 우선 대상을 정리합니다.</p>
-            <div class="grid two-col">
-              <div>
-                <label for="coupleIsaStatus">ISA 보유 상태</label>
-                <select id="coupleIsaStatus" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
-                  <option value="none" selected>아직 없음</option>
-                  <option value="active">이미 보유 중</option>
-                  <option value="seasoned">보유 중이며 3년 이상 유지</option>
-                  <option value="maturitySoon">곧 만기 예정(6개월 이내)</option>
-                  <option value="maturityDecision">만기 처리 고민 중</option>
-                </select>
-              </div>
-              <div>
-                <label for="coupleIsaPurpose">ISA 활용 목적</label>
-                <select id="coupleIsaPurpose" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
-                  <option value="global" selected>미국/글로벌 지수 장기투자</option>
-                  <option value="income">배당/인컴형 투자</option>
-                  <option value="stable">예적금·채권 포함 안정형 운용</option>
-                  <option value="unknown">아직 잘 모르겠음</option>
-                </select>
-              </div>
-              <div>
-                <label for="couplePensionLinkStatus">연금계좌 상태 연동</label>
-                <select id="couplePensionLinkStatus" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
-                  <option value="low" selected>연금저축 / IRP를 아직 충분히 활용하지 않음</option>
-                  <option value="mid">연금저축 / IRP를 어느 정도 활용 중</option>
-                  <option value="high">연금저축 / IRP를 거의 채우는 중</option>
-                  <option value="unknown">잘 모르겠음</option>
-                </select>
-              </div>
-              <div>
-                <label for="coupleInvestCapacity">월 투자 여력</label>
-                <select id="coupleInvestCapacity" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
-                  <option value="auto" selected>자동 추정 사용</option>
-                  <option value="u10">월 10만원 이하</option>
-                  <option value="10-30">월 10~30만원</option>
-                  <option value="30-50">월 30~50만원</option>
-                  <option value="50p">월 50만원 이상</option>
-                  <option value="unknown">아직 정하기 어려움</option>
-                </select>
-                <p id="coupleIsaCapacityHint" class="hint">자동 추정 월 투자 여력: 계산 전</p>
-              </div>
+          <div class="accordion-item staged-accordion staged-accordion-subtle">
+            <button type="button" class="accordion-trigger stage-trigger" aria-expanded="false" aria-controls="coupleIsaPanel" id="coupleIsaTrigger">4단계 · ISA 참고 전략</button>
+            <div id="coupleIsaPanel" class="accordion-panel hidden">
+              <section class="isa-input-section isa-secondary-panel">
+                <h3>ISA 참고 전략</h3>
+                <p class="hint">맞벌이 모드에서는 연말정산 직접 공제보다 가구 단위 현금흐름과 연금계좌 활용 상태를 보조적으로 점검하는 용도로 봐 주세요.</p>
+                <div class="grid two-col">
+                  <div>
+                    <label for="coupleIsaStatus">ISA 보유 상태</label>
+                    <select id="coupleIsaStatus" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
+                      <option value="none" selected>아직 없음</option>
+                      <option value="active">이미 보유 중</option>
+                      <option value="seasoned">보유 중이며 3년 이상 유지</option>
+                      <option value="maturitySoon">곧 만기 예정(6개월 이내)</option>
+                      <option value="maturityDecision">만기 처리 고민 중</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="coupleIsaPurpose">ISA 활용 목적</label>
+                    <select id="coupleIsaPurpose" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
+                      <option value="global" selected>미국/글로벌 지수 장기투자</option>
+                      <option value="income">배당/인컴형 투자</option>
+                      <option value="stable">예적금·채권 포함 안정형 운용</option>
+                      <option value="unknown">아직 잘 모르겠음</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="couplePensionLinkStatus">연금계좌 상태 연동</label>
+                    <select id="couplePensionLinkStatus" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
+                      <option value="low" selected>연금저축 / IRP를 아직 충분히 활용하지 않음</option>
+                      <option value="mid">연금저축 / IRP를 어느 정도 활용 중</option>
+                      <option value="high">연금저축 / IRP를 거의 채우는 중</option>
+                      <option value="unknown">잘 모르겠음</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="coupleInvestCapacity">월 투자 여력</label>
+                    <select id="coupleInvestCapacity" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
+                      <option value="auto" selected>자동 추정 사용</option>
+                      <option value="u10">월 10만원 이하</option>
+                      <option value="10-30">월 10~30만원</option>
+                      <option value="30-50">월 30~50만원</option>
+                      <option value="50p">월 50만원 이상</option>
+                      <option value="unknown">아직 정하기 어려움</option>
+                    </select>
+                    <p id="coupleIsaCapacityHint" class="hint">자동 추정 월 투자 여력: 입력 후 표시됩니다.</p>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </section>
@@ -930,33 +967,47 @@
     </section>
 
     <section id="results" class="results hidden space-y-6" aria-live="polite">
-      <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="material-symbols-outlined text-primary">assessment</span>
-          <h3 class="text-lg font-bold">결과 요약</h3>
+      <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100 results-priority-card">
+        <div class="results-priority-head">
+          <div>
+            <p class="section-kicker">결과</p>
+            <h2>지금 먼저 볼 내용</h2>
+            <p class="planner-subcopy">설명보다 먼저, 바로 실행할 항목과 중복공제 위험부터 확인할 수 있게 정리했습니다.</p>
+          </div>
+          <div class="meta-line">규칙 기준일: <span id="ruleUpdateDate">2026-03-09</span></div>
         </div>
-        <div class="meta-line">마지막 규칙 업데이트: <span id="ruleUpdateDate"></span></div>
         <div class="warning-badges" aria-label="주의 배지">
-          <span class="warn-badge">중복공제 주의</span>
-          <span class="warn-badge">실제 지출자 확인 필요</span>
-          <span class="warn-badge">월세/현금영수증 중복 불가</span>
-          <span class="warn-badge muted">참고용 가이드</span>
+          <span class="warn-badge">중복공제 여부 확인</span>
+          <span class="warn-badge">실제 지출자 다시 확인</span>
+          <span class="warn-badge">월세·현금영수증 중복 주의</span>
+          <span class="warn-badge muted">참고용 행동 가이드</span>
         </div>
-
-        <div class="summary-box note-box">정확한 신고 전 홈택스/회사 제출자료 최종 확인이 필요합니다.</div>
-
-        <section class="card result-card result-summary-card">
-          <p class="section-kicker">결과</p>
-          <h3>1. 한눈 요약</h3>
+        <div class="summary-box note-box">정확한 신고 전에는 홈택스 자료와 회사 제출 자료를 마지막으로 한 번 더 확인해 주세요.</div>
+        <div class="results-priority-grid">
+          <section class="priority-panel priority-panel-strong">
+            <h3>이번에 먼저 할 일 3개</h3>
+            <ul id="todoList" class="todo-list"></ul>
+          </section>
+          <section class="priority-panel">
+            <h3>절세 포인트 요약</h3>
+            <ul id="summaryList" class="plain-list"></ul>
+          </section>
+        </div>
+        <div class="results-snapshot-grid">
           <div id="spendEstimationSummary" class="summary-box"></div>
           <div id="personalDeductionSummary" class="summary-box"></div>
-          <p id="detailPriorityBadge" class="hint hidden">상세 입력 기준으로 계산 중</p>
-          <ul id="summaryList" class="plain-list"></ul>
-        </section>
+        </div>
+        <p id="detailPriorityBadge" class="hint hidden">상세 입력 기준으로 계산 중</p>
       </div>
 
       <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>2. 시나리오</h3>
+        <h3>한눈 요약</h3>
+        <div id="whyRecommendationBox" class="summary-box"></div>
+        <div id="deductionChecklistBox" class="summary-box"></div>
+      </div>
+
+      <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
+        <h3>시나리오</h3>
         <div class="flex bg-surface-container-low p-1 rounded-2xl mb-8">
           <button class="tab-btn flex-1 text-center py-3 rounded-xl cursor-pointer transition-all has-[:checked]:bg-white has-[:checked]:shadow-sm has-[:checked]:text-primary" type="button" data-tab="simple" role="tab" aria-selected="true" id="tab-simple">
             <span class="font-bold">심플</span>
@@ -972,18 +1023,7 @@
       </div>
 
       <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>3. 오늘 할 일</h3>
-        <ul id="todoList" class="todo-list"></ul>
-      </div>
-
-      <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>4. 왜 이런 추천이 나왔나요?</h3>
-        <div id="whyRecommendationBox" class="summary-box"></div>
-        <div id="deductionChecklistBox" class="summary-box"></div>
-      </div>
-
-      <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>5. 부부 배분 추천표</h3>
+        <h3>부부 배분 추천표</h3>
         <div class="table-wrap">
           <table class="result-table">
             <thead>
@@ -1001,7 +1041,7 @@
       </div>
 
       <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>6. ISA 요약</h3>
+        <h3>ISA 요약</h3>
         <div id="isaBadgeRow" class="isa-badge-row" aria-label="ISA 상태 배지"></div>
         <div id="isaSummaryCard" class="isa-summary-grid"></div>
         <div id="isaActionGuide" class="isa-action-guide summary-box"></div>
@@ -1009,7 +1049,7 @@
       </div>
 
       <div class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
-        <h3>7. 추천 해석 기준</h3>
+        <h3>추천 해석 기준</h3>
         <div id="rulesExplainBox" class="summary-box">
           <p>카드 사용 패턴은 월평균 또는 누적 입력 기준으로 추정 해석됩니다.</p>
           <p>인적공제 요약은 사용자가 입력한 가족 정보 기준으로 계산됩니다.</p>
@@ -1018,12 +1058,13 @@
         </div>
       </div>
     </section>
-
     <section id="infoSection" class="info-section">
-      <div class="info-section-head">
-        <p class="section-kicker">추가 정보</p>
-        <h2>가이드와 설명은 필요할 때만 아래에서 확인하세요</h2>
-        <p>입력과 결과를 먼저 보고, 세부 설명은 궁금한 항목만 펼쳐 읽을 수 있게 정리했습니다.</p>
+      <div class="info-section-head info-section-head-muted">
+        <div>
+          <p class="section-kicker">추가 정보</p>
+          <h2>가이드와 설명은 필요할 때만 열어 보세요</h2>
+          <p>입력과 결과를 먼저 확인하고, 궁금한 항목만 아래에서 펼쳐 읽을 수 있게 정리했습니다.</p>
+        </div>
       </div>
 
       <div class="accordion-group info-accordion-group">
@@ -1111,26 +1152,26 @@
     </section>
 
     <section class="ad-wrap muted-ad" aria-label="하단 광고 자리">
-      <div class="ad-slot ad-rect">광고 영역 Placeholder · 하단 광고</div>
+      <div class="ad-slot ad-rect">하단 광고 영역</div>
     </section>
 
     <section class="bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
       <p class="section-kicker">업데이트</p>
       <h2>규칙 업데이트 이력</h2>
       <ul id="updateHistoryList" class="content-list">
-        <li>업데이트 이력을 불러오는 중입니다.</li>
+        <li>최근 반영 내역을 곧 표시합니다.</li>
       </ul>
     </section>
   </main>
 
   <footer id="noticeSection" class="site-footer">
     <div class="footer-links">
-      <a href="/about.html">About</a>
-      <a href="/privacy.html">Privacy Policy</a>
-      <a href="/contact.html">Contact</a>
-      <a href="/disclaimer.html">Disclaimer</a>
+      <a href="/about.html">서비스 소개</a>
+      <a href="/privacy.html">개인정보처리방침</a>
+      <a href="/contact.html">문의하기</a>
+      <a href="/disclaimer.html">면책 안내</a>
     </div>
-    <p class="footer-meta">마지막 업데이트: <span id="footerUpdateDate">-</span></p>
+    <p class="footer-meta">마지막 업데이트: <span id="footerUpdateDate">2026-03-09</span></p>
     <p class="footer-meta">본 서비스는 참고용 행동 가이드입니다. 실제 공제/세액은 개인 상황과 신고 시점 세법에 따라 달라질 수 있습니다.</p>
   </footer>
 
