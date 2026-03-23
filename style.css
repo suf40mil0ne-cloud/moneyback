@@ -1624,20 +1624,45 @@ textarea:focus,
   gap: 12px;
 }
 
-#coupleModeSection > .planner-meta-inline,
-#coupleModeSection > .input-mode-block,
-#coupleEstimationPreview {
+.couple-common-stage {
+  gap: 12px;
+}
+
+.couple-common-stage .planner-meta-inline,
+.couple-common-stage .input-mode-block,
+.couple-common-stage #coupleEstimationPreview {
   margin-top: 0;
 }
 
-#coupleModeSection > .input-mode-block,
-#coupleEstimationPreview {
+.couple-common-stage .planner-meta-inline {
+  padding: 0.8rem 0.95rem;
+  border-radius: 0.95rem;
+  background: rgba(0, 6, 102, 0.03);
+}
+
+.couple-common-stage .input-mode-block,
+.couple-common-stage #coupleEstimationPreview {
   padding: 0.82rem 0.9rem;
   border-radius: 0.95rem;
 }
 
-#coupleEstimationPreview {
+.couple-common-stage .input-mode-block {
+  margin-bottom: 0;
+}
+
+.couple-common-stage #coupleEstimationPreview {
   background: linear-gradient(180deg, rgba(0, 6, 102, 0.025), rgba(255, 255, 255, 0.96));
+}
+
+.couple-shared-mode-block {
+  display: grid;
+  grid-template-columns: minmax(144px, 196px) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.couple-shared-mode-block label {
+  margin-bottom: 0;
 }
 
 .couple-person-card {
@@ -1654,6 +1679,11 @@ textarea:focus,
 .couple-person-card > .accordion-trigger[aria-expanded="true"] {
   background: rgba(0, 6, 102, 0.04);
   border-color: rgba(26, 35, 126, 0.12);
+}
+
+.couple-family-stage {
+  padding: 1rem;
+  border-radius: 1.05rem;
 }
 
 .couple-section-intro {
@@ -1954,7 +1984,8 @@ textarea:focus,
   .spend-grid,
   .couple-spend-grid,
   .couple-extra-grid,
-  .couple-family-overview {
+  .couple-family-overview,
+  .couple-shared-mode-block {
     grid-template-columns: 1fr;
   }
 
