@@ -76,7 +76,7 @@
     <header class="hero hero-simplified">
       <div class="hero-copy">
         <p class="section-kicker hero-kicker">실수 줄이는 연말정산 입력</p>
-        <h1>연말정산 행동부터 먼저 정리하세요</h1>
+        <h1><span class="hero-title-line">연말정산 행동부터</span> <span class="hero-title-line">먼저 정리하세요</span></h1>
         <p class="subtitle">연봉과 기본 정보만 입력하면 카드, 가족공제, 연금저축, ISA까지 어디부터 손봐야 하는지 바로 정리해 드립니다.</p>
         <p class="hero-mini">복잡한 계산 화면 대신, 실수 줄이기와 실행 우선순위 확인에 집중한 입력 도구입니다.</p>
         <div class="hero-actions">
@@ -91,7 +91,7 @@
     </header>
 
     <section id="inputSection" class="card planner-shell">
-      <div class="planner-head planner-head-compact">
+      <div class="planner-head planner-head-compact planner-head-inline">
         <div>
           <p class="section-kicker">입력</p>
           <h2>필수 정보만 먼저 입력하세요</h2>
@@ -127,7 +127,7 @@
               <span>연봉 입력 방식 선택</span>
               <span>월세·연금저축·IRP는 선택 입력</span>
             </div>
-          <div class="input-mode-block input-mode-block-strong">
+          <div class="input-mode-block input-mode-block-strong income-flow-block">
             <label for="incomeInputMode">연봉 입력 방식</label>
             <select id="incomeInputMode">
               <option value="quick" selected>대략 입력(빠른 선택)</option>
@@ -190,8 +190,9 @@
             </select>
           </div>
 
-          <div id="monthlySpendWrap" class="grid two-col">
-            <div>
+          <div id="monthlySpendWrap" class="grid two-col spend-grid">
+            <div class="spend-entry-card">
+              <p class="spend-entry-kicker">항목</p>
               <label for="singleCreditBand">월평균 신용카드(선택형)</label>
               <select id="singleCreditBand">
                 <option value="none">거의 없음</option>
@@ -211,7 +212,8 @@
               <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
               <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
             </div>
-            <div>
+            <div class="spend-entry-card">
+              <p class="spend-entry-kicker">항목</p>
               <label for="singleCheckBand">월평균 체크카드+현금영수증(선택형)</label>
               <select id="singleCheckBand">
                 <option value="none">거의 없음</option>
@@ -231,7 +233,8 @@
               <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
               <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
             </div>
-            <div>
+            <div class="spend-entry-card">
+              <p class="spend-entry-kicker">항목</p>
               <label for="singleMarketBand">월평균 전통시장(선택형)</label>
               <select id="singleMarketBand">
                 <option value="none">거의 없음</option>
@@ -248,7 +251,8 @@
               <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
               <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
             </div>
-            <div>
+            <div class="spend-entry-card">
+              <p class="spend-entry-kicker">항목</p>
               <label for="singleTransitBand">월평균 대중교통(선택형)</label>
               <select id="singleTransitBand">
                 <option value="none">거의 없음</option>
@@ -478,7 +482,7 @@
               </section>
 
               <section>
-                <div class="list-header">
+                <div class="list-header detail-action-bar">
                   <h4>부양가족 상세 카드</h4>
                   <button type="button" id="addPersonalChildQuickBtn" class="ghost-btn">자녀 1명 추가</button>
                   <button type="button" id="addPersonalParentQuickBtn" class="ghost-btn">부모 1명 추가</button>
@@ -578,7 +582,7 @@
                   <p class="hint">연봉 입력 방식 선택 → 소비 입력 방식 확인 → 카드 사용 입력 → 연금·월세 같은 추가 항목 입력 순서로 진행합니다.</p>
                 </div>
                 <div class="grid two-col basic-input-grid couple-basic-grid">
-                  <div class="input-mode-block input-mode-block-strong">
+                  <div class="input-mode-block input-mode-block-strong income-flow-block">
                     <label for="aIncomeInputMode">연봉 입력 방식</label>
                     <select id="aIncomeInputMode" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="quick" selected>대략 입력(빠른 선택)</option>
@@ -612,8 +616,9 @@
                   <p class="section-kicker">소비 입력</p>
                   <p class="hint">소비 입력 방식은 위에서 고른 맞벌이 기준을 그대로 따릅니다. 본인과 배우자 모두 같은 규칙으로 입력합니다.</p>
                 </div>
-                <div id="aMonthlySpendWrap" class="grid two-col couple-spend-grid">
-                  <div>
+                <div id="aMonthlySpendWrap" class="grid two-col couple-spend-grid spend-grid">
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="aCreditBand">월평균 신용카드(선택형)</label>
                     <select id="aCreditBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -633,7 +638,8 @@
                     <label for="aMonthlyCredit">월평균 신용카드</label>
                     <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="aCheckBand">월평균 체크카드+현금영수증(선택형)</label>
                     <select id="aCheckBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -653,7 +659,8 @@
                     <label for="aMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="aMarketBand">월평균 전통시장(선택형)</label>
                     <select id="aMarketBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -670,7 +677,8 @@
                     <label for="aMonthlyMarket">월평균 전통시장</label>
                     <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="aTransitBand">월평균 대중교통(선택형)</label>
                     <select id="aTransitBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -740,7 +748,7 @@
                   <p class="hint">본인 입력과 같은 방식으로 배우자 연봉, 소비, 추가 납입 정보를 같은 순서대로 넣습니다.</p>
                 </div>
                 <div class="grid two-col basic-input-grid couple-basic-grid">
-                  <div class="input-mode-block input-mode-block-strong">
+                  <div class="input-mode-block input-mode-block-strong income-flow-block">
                     <label for="bIncomeInputMode">연봉 입력 방식</label>
                     <select id="bIncomeInputMode" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="quick" selected>대략 입력(빠른 선택)</option>
@@ -774,8 +782,9 @@
                   <p class="section-kicker">소비 입력</p>
                   <p class="hint">배우자도 본인과 같은 소비 입력 방식으로 월평균 또는 누적 금액을 넣습니다.</p>
                 </div>
-                <div id="bMonthlySpendWrap" class="grid two-col couple-spend-grid">
-                  <div>
+                <div id="bMonthlySpendWrap" class="grid two-col couple-spend-grid spend-grid">
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="bCreditBand">월평균 신용카드(선택형)</label>
                     <select id="bCreditBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -795,7 +804,8 @@
                     <label for="bMonthlyCredit">월평균 신용카드</label>
                     <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="bCheckBand">월평균 체크카드+현금영수증(선택형)</label>
                     <select id="bCheckBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -815,7 +825,8 @@
                     <label for="bMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="bMarketBand">월평균 전통시장(선택형)</label>
                     <select id="bMarketBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -832,7 +843,8 @@
                     <label for="bMonthlyMarket">월평균 전통시장</label>
                     <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="spend-entry-card">
+                    <p class="spend-entry-kicker">항목</p>
                     <label for="bTransitBand">월평균 대중교통(선택형)</label>
                     <select id="bTransitBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="none">거의 없음</option>
@@ -926,14 +938,14 @@
                   <p class="section-kicker">상세 카드 입력</p>
                   <p class="hint">1인 모드의 상세 인적공제처럼, 맞벌이 모드에서는 자녀 카드와 기타 부양가족 카드로 귀속과 조건을 더 세밀하게 확인합니다.</p>
                 </div>
-                <div class="list-header">
+                <div class="list-header detail-action-bar">
                   <h4>자녀 상세 카드</h4>
                   <button type="button" id="syncChildrenBtn" class="ghost-btn">자녀 수만큼 카드 맞추기</button>
                   <button type="button" id="addChildBtn" class="ghost-btn">자녀 카드 추가</button>
                 </div>
                 <div id="childList" class="repeat-list"></div>
 
-                <div class="list-header">
+                <div class="list-header detail-action-bar">
                   <h4>기타 부양가족 상세 카드</h4>
                   <button type="button" id="addParentDependentBtn" class="ghost-btn">부모 1명 추가</button>
                   <button type="button" id="addGrandParentDependentBtn" class="ghost-btn">조부모 1명 추가</button>
