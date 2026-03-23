@@ -54,7 +54,7 @@
           <span class="brand-kicker">Moneyback</span>
           <strong>연말정산 행동 추천기</strong>
         </a>
-        <p class="top-nav-note">계산기보다 실행 가이드에 가까운 절세 도구</p>
+        <p class="top-nav-note">바로 입력하고 점검하는 연말정산 행동 도구</p>
       </div>
       <nav>
         <a href="/">홈</a>
@@ -76,17 +76,16 @@
     <header class="hero hero-simplified">
       <div class="hero-copy">
         <p class="section-kicker hero-kicker">실수 줄이는 연말정산 입력</p>
-        <h1>복잡한 계산보다, 지금 할 일을 먼저 정리하세요</h1>
-        <p class="subtitle">연봉과 기본 정보만 입력하면 카드·가족공제·연금저축·ISA까지 행동 우선순위로 정리해 드립니다.</p>
-        <p class="hero-mini">정확한 환급액 확정보다 놓치기 쉬운 항목을 빠르게 점검하는 참고용 도구입니다.</p>
+        <h1>연말정산, 무엇부터 할지 먼저 정리하세요</h1>
+        <p class="subtitle">연봉과 기본 정보만 입력하면 카드, 가족공제, 연금저축, ISA까지 어디부터 손봐야 하는지 바로 정리해 드립니다.</p>
+        <p class="hero-mini">복잡한 계산 화면 대신, 실수 줄이기와 실행 우선순위 확인에 집중한 입력 도구입니다.</p>
         <div class="hero-actions">
           <a class="cta-link" href="#inputSection">바로 입력하기</a>
           <a class="text-link" href="#results">결과 먼저 보기</a>
         </div>
         <div class="hero-trust-list" aria-label="서비스 특징">
-          <span>입력 3분</span>
-          <span>민감정보 불필요</span>
-          <span>결과는 행동 중심</span>
+          <span>입력 3분 안팎</span>
+          <span>민감정보 없이 확인</span>
         </div>
       </div>
     </header>
@@ -128,7 +127,7 @@
               <span>연봉 입력 방식 선택</span>
               <span>월세·연금저축·IRP는 선택 입력</span>
             </div>
-          <div class="input-mode-block">
+          <div class="input-mode-block input-mode-block-strong">
             <label for="incomeInputMode">연봉 입력 방식</label>
             <select id="incomeInputMode">
               <option value="quick" selected>대략 입력(빠른 선택)</option>
@@ -136,8 +135,8 @@
             </select>
           </div>
 
-          <div class="grid two-col">
-            <div id="quickIncomeWrap">
+          <div class="grid two-col basic-input-grid">
+            <div id="quickIncomeWrap" class="field-card field-card-guide">
               <label for="incomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
               <select id="incomeQuickBand">
                 <option value="3000">3천만원대</option>
@@ -153,22 +152,22 @@
               <select id="incomeQuickSubBand">
                 <option value="">기본 추천값 사용</option>
               </select>
-              <label class="inline-check"><input type="checkbox" id="incomeUseDirect" />정확한 금액 직접 입력 사용</label>
+              <label class="inline-check"><input type="checkbox" id="incomeUseDirect" />직접 입력으로 전환</label>
               <p class="hint">대략 추정 계산용 기준금액: <strong id="quickIncomeValueText">55,000,000원</strong></p>
             </div>
-            <div>
+            <div class="field-card field-card-strong">
               <label for="annualIncome">연봉(총급여, 원) *</label>
               <input id="annualIncome" data-money inputmode="numeric" placeholder="예: 55,000,000" aria-label="1인 연봉" />
             </div>
-            <div>
+            <div class="field-card field-card-compact">
               <label for="singleMonthlyRent">월세 지출액(선택)</label>
               <input id="singleMonthlyRent" data-money inputmode="numeric" placeholder="0" aria-label="1인 월세 지출액" />
             </div>
-            <div>
+            <div class="field-card field-card-compact">
               <label for="singlePension">연금저축 납입액(선택)</label>
               <input id="singlePension" data-money inputmode="numeric" placeholder="0" aria-label="1인 연금저축" />
             </div>
-            <div>
+            <div class="field-card field-card-compact">
               <label for="singleIrp">IRP 납입액(선택)</label>
               <input id="singleIrp" data-money inputmode="numeric" placeholder="0" aria-label="1인 IRP" />
             </div>
@@ -208,7 +207,7 @@
               </select>
               <label for="singleCreditSub">세부 선택</label>
               <select id="singleCreditSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력</label>
+              <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력 전환</label>
               <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
               <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
             </div>
@@ -228,7 +227,7 @@
               </select>
               <label for="singleCheckSub">세부 선택</label>
               <select id="singleCheckSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력</label>
+              <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력 전환</label>
               <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
               <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
             </div>
@@ -245,7 +244,7 @@
               </select>
               <label for="singleMarketSub">세부 선택</label>
               <select id="singleMarketSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력</label>
+              <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력 전환</label>
               <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
               <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
             </div>
@@ -262,7 +261,7 @@
               </select>
               <label for="singleTransitSub">세부 선택</label>
               <select id="singleTransitSub"><option value="">기본값</option></select>
-              <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력</label>
+              <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력 전환</label>
               <label for="monthlyTransit">월평균 대중교통 사용액</label>
               <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
             </div>
@@ -622,7 +621,7 @@
                     </select>
                     <label for="aCreditSub">세부 선택</label>
                     <select id="aCreditSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="aCreditUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="aCreditUseDirect" />직접 입력 전환</label>
                     <label for="aMonthlyCredit">월평균 신용카드</label>
                     <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -642,7 +641,7 @@
                     </select>
                     <label for="aCheckSub">세부 선택</label>
                     <select id="aCheckSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="aCheckUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="aCheckUseDirect" />직접 입력 전환</label>
                     <label for="aMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -659,7 +658,7 @@
                     </select>
                     <label for="aMarketSub">세부 선택</label>
                     <select id="aMarketSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="aMarketUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="aMarketUseDirect" />직접 입력 전환</label>
                     <label for="aMonthlyMarket">월평균 전통시장</label>
                     <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -676,7 +675,7 @@
                     </select>
                     <label for="aTransitSub">세부 선택</label>
                     <select id="aTransitSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="aTransitUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="aTransitUseDirect" />직접 입력 전환</label>
                     <label for="aMonthlyTransit">월평균 대중교통</label>
                     <input id="aMonthlyTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -776,7 +775,7 @@
                     </select>
                     <label for="bCreditSub">세부 선택</label>
                     <select id="bCreditSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="bCreditUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="bCreditUseDirect" />직접 입력 전환</label>
                     <label for="bMonthlyCredit">월평균 신용카드</label>
                     <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -796,7 +795,7 @@
                     </select>
                     <label for="bCheckSub">세부 선택</label>
                     <select id="bCheckSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="bCheckUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="bCheckUseDirect" />직접 입력 전환</label>
                     <label for="bMonthlyCheckCash">월평균 체크카드+현금영수증</label>
                     <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -813,7 +812,7 @@
                     </select>
                     <label for="bMarketSub">세부 선택</label>
                     <select id="bMarketSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="bMarketUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="bMarketUseDirect" />직접 입력 전환</label>
                     <label for="bMonthlyMarket">월평균 전통시장</label>
                     <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -830,7 +829,7 @@
                     </select>
                     <label for="bTransitSub">세부 선택</label>
                     <select id="bTransitSub" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본값</option></select>
-                    <label class="inline-check"><input type="checkbox" id="bTransitUseDirect" />직접 입력</label>
+                    <label class="inline-check"><input type="checkbox" id="bTransitUseDirect" />직접 입력 전환</label>
                     <label for="bMonthlyTransit">월평균 대중교통</label>
                     <input id="bMonthlyTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
