@@ -519,7 +519,7 @@ fieldset {
 .isa-guide-box,
 .scenario-block,
 .note-box {
-  border-radius: 1.5rem;
+  border-radius: 1.15rem;
 }
 
 .input-mode-block,
@@ -528,7 +528,7 @@ fieldset {
 .repeat-card,
 .ad-slot,
 .note-box {
-  padding: 1.2rem 1.25rem;
+  padding: 0.95rem 1rem;
   background: var(--surface-soft);
   border: 1px solid var(--line);
 }
@@ -643,13 +643,14 @@ textarea:focus,
 }
 
 .deduction-hero {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 18px;
-  padding: 1.5rem;
-  border-radius: 2rem;
-  background: linear-gradient(135deg, rgba(0, 6, 102, 0.06), rgba(137, 153, 255, 0.16));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(0, 6, 102, 0.03), rgba(137, 153, 255, 0.1));
 }
 
 .deduction-chip,
@@ -659,11 +660,11 @@ textarea:focus,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.2;
   text-align: center;
   text-wrap: balance;
 }
@@ -674,6 +675,99 @@ textarea:focus,
   background: #fff;
   color: var(--primary-container);
   border: 1px solid rgba(137, 153, 255, 0.24);
+}
+
+.deduction-chip {
+  justify-self: end;
+  align-self: start;
+  min-height: 30px;
+  box-shadow: none;
+}
+
+.deduction-step {
+  margin: 0 0 2px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--primary-container);
+}
+
+.deduction-copy {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.deduction-card-head.compact {
+  align-items: flex-start;
+}
+
+.deduction-checklist {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-radius: 0.95rem;
+}
+
+.deduction-checklist .checklist-row > div p,
+.couple-family-toggle p {
+  margin: 2px 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.deduction-checklist .checklist-row > div h5,
+.couple-family-toggle h5,
+.couple-family-count label {
+  font-size: 0.92rem;
+}
+
+.deduction-checklist .stepper-box.inline {
+  margin-top: 0;
+}
+
+.deduction-hint {
+  margin-top: 8px;
+}
+
+.income-flow-block label {
+  font-size: 0.82rem;
+}
+
+#quickIncomeWrap {
+  gap: 7px;
+}
+
+#quickIncomeWrap label[for="incomeQuickSubBand"],
+#aQuickIncomeWrap label[for="aIncomeQuickSubBand"],
+#bQuickIncomeWrap label[for="bIncomeQuickSubBand"] {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+#quickIncomeWrap .inline-check,
+#aQuickIncomeWrap .inline-check,
+#bQuickIncomeWrap .inline-check {
+  justify-self: start;
+  min-height: 34px;
+  padding: 0 12px 0 10px;
+  border-radius: 999px;
+  background: rgba(0, 6, 102, 0.05);
+  border: 1px solid rgba(26, 35, 126, 0.12);
+  color: var(--primary-container);
+  font-size: 0.76rem;
+}
+
+.field-card-strong label {
+  margin-bottom: 4px;
+}
+
+.couple-family-overview {
+  gap: 10px;
+}
+
+.repeat-list {
+  gap: 12px;
 }
 
 .warn-badge {
@@ -708,10 +802,10 @@ textarea:focus,
 .isa-guide-box,
 .scenario-block,
 .repeat-card {
-  padding: 1.25rem;
+  padding: 0.95rem;
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 1.5rem;
+  border-radius: 1rem;
 }
 
 .deduction-card-wide {
@@ -733,7 +827,12 @@ textarea:focus,
 .switch-field {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0.2rem 0.2rem 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(26, 35, 126, 0.12);
 }
 
 .switch-field input {
@@ -831,17 +930,17 @@ textarea:focus,
 }
 
 .mini-stepper-card {
-  padding: 1rem;
-  border-radius: 1.25rem;
+  padding: 0.8rem 0.85rem;
+  border-radius: 0.95rem;
   background: var(--surface-soft);
 }
 
 .checklist-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
-  padding: 14px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -888,8 +987,8 @@ textarea:focus,
 
 .list-header {
   flex-wrap: wrap;
-  margin: 14px 0;
-  row-gap: 10px;
+  margin: 10px 0;
+  row-gap: 8px;
 }
 
 .ghost-btn,
@@ -1498,9 +1597,9 @@ textarea:focus,
 
 .detail-action-bar {
   align-items: center;
-  gap: 10px 12px;
-  padding: 0.85rem 0.95rem;
-  border-radius: 1rem;
+  gap: 8px 10px;
+  padding: 0.72rem 0.8rem;
+  border-radius: 0.95rem;
   background: rgba(0, 6, 102, 0.03);
   border: 1px solid rgba(137, 153, 255, 0.14);
 }
@@ -1510,8 +1609,8 @@ textarea:focus,
 }
 
 .detail-action-bar .ghost-btn {
-  min-height: 38px;
-  padding: 0 12px;
+  min-height: 34px;
+  padding: 0 10px;
   border-radius: 999px;
   background: #fff;
 }
@@ -1537,16 +1636,17 @@ textarea:focus,
 
 .couple-family-toggle,
 .couple-family-count {
-  min-height: 88px;
+  min-height: 72px;
 }
 
 .couple-family-toggle {
-  padding: 0.85rem 0.95rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0.72rem 0.8rem;
 }
 
 .couple-family-count input {
-  max-width: 180px;
-  min-height: 48px;
+  max-width: 160px;
+  min-height: 44px;
 }
 
 .couple-family-detail-intro {
@@ -1837,6 +1937,19 @@ textarea:focus,
   .hero-trust-list,
   .stage-tip-row {
     gap: 8px;
+  }
+
+
+  .deduction-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .deduction-chip {
+    justify-self: start;
+  }
+
+  .detail-action-bar {
+    grid-template-columns: 1fr;
   }
 
   .hero-trust-list span,
