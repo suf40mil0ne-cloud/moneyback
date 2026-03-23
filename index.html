@@ -570,18 +570,22 @@
           </div>
 
           <div class="accordion-group couple-stage-group">
-            <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100 couple-person-card">
               <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="spouseASection" id="spouseATrigger">1단계 · 본인 입력</button>
               <div id="spouseASection" class="accordion-panel">
-                <div class="grid two-col">
-                  <div>
+                <div class="section-intro section-intro-compact couple-section-intro">
+                  <p class="section-kicker">입력 순서</p>
+                  <p class="hint">연봉 입력 방식 선택 → 소비 입력 방식 확인 → 카드 사용 입력 → 연금·월세 같은 추가 항목 입력 순서로 진행합니다.</p>
+                </div>
+                <div class="grid two-col basic-input-grid couple-basic-grid">
+                  <div class="input-mode-block input-mode-block-strong">
                     <label for="aIncomeInputMode">연봉 입력 방식</label>
                     <select id="aIncomeInputMode" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="quick" selected>대략 입력(빠른 선택)</option>
                       <option value="exact">정확히 입력(직접 숫자)</option>
                     </select>
                   </div>
-                  <div id="aQuickIncomeWrap">
+                  <div id="aQuickIncomeWrap" class="field-card field-card-guide">
                     <label for="aIncomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
                     <select id="aIncomeQuickBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="3000">3천만원대</option>
@@ -595,16 +599,20 @@
                     </select>
                     <label for="aIncomeQuickSubBand">구간 내 세부 선택</label>
                     <select id="aIncomeQuickSubBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본 추천값 사용</option></select>
-                    <label class="inline-check"><input type="checkbox" id="aIncomeUseDirect" />정확한 금액 직접 입력 사용</label>
+                    <label class="inline-check"><input type="checkbox" id="aIncomeUseDirect" />직접 입력으로 전환</label>
                     <p class="hint">기준금액: <strong id="aQuickIncomeValueText">55,000,000원</strong></p>
                   </div>
-                  <div>
+                  <div class="field-card field-card-strong">
                     <label for="aIncome">연봉(총급여) *</label>
                     <input id="aIncome" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
                 </div>
 
-                <div id="aMonthlySpendWrap" class="grid two-col">
+                <div class="section-intro section-intro-compact couple-section-intro couple-spend-intro">
+                  <p class="section-kicker">소비 입력</p>
+                  <p class="hint">소비 입력 방식은 위에서 고른 맞벌이 기준을 그대로 따릅니다. 본인과 배우자 모두 같은 규칙으로 입력합니다.</p>
+                </div>
+                <div id="aMonthlySpendWrap" class="grid two-col couple-spend-grid">
                   <div>
                     <label for="aCreditBand">월평균 신용카드(선택형)</label>
                     <select id="aCreditBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
@@ -681,7 +689,7 @@
                   </div>
                 </div>
 
-                <div id="aCumulativeSpendWrap" class="grid two-col hidden">
+                <div id="aCumulativeSpendWrap" class="grid two-col couple-spend-grid hidden">
                   <div>
                     <label for="aCredit">올해 누적 신용카드</label>
                     <input id="aCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
@@ -699,24 +707,24 @@
                     <input id="aTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
                 </div>
-                <div class="grid two-col">
-                  <div>
+                <div class="grid two-col couple-extra-grid">
+                  <div class="field-card field-card-compact">
                     <label for="aPension">연금저축 납입액(선택)</label>
                     <input id="aPension" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="aIrp">IRP 납입액(선택)</label>
                     <input id="aIrp" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="aRent">월세 지출액(선택)</label>
                     <input id="aRent" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="aMedical">의료비 본인 지출액(선택)</label>
                     <input id="aMedical" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="aDonation">기부금 본인 지출액(선택)</label>
                     <input id="aDonation" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
@@ -724,18 +732,22 @@
               </div>
             </div>
 
-            <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="accordion-item bg-surface-container-lowest rounded-lg p-6 shadow-sm border border-gray-100 couple-person-card">
               <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="spouseBSection" id="spouseBTrigger">2단계 · 배우자 입력</button>
               <div id="spouseBSection" class="accordion-panel hidden">
-                <div class="grid two-col">
-                  <div>
+                <div class="section-intro section-intro-compact couple-section-intro">
+                  <p class="section-kicker">입력 순서</p>
+                  <p class="hint">본인 입력과 같은 방식으로 배우자 연봉, 소비, 추가 납입 정보를 같은 순서대로 넣습니다.</p>
+                </div>
+                <div class="grid two-col basic-input-grid couple-basic-grid">
+                  <div class="input-mode-block input-mode-block-strong">
                     <label for="bIncomeInputMode">연봉 입력 방식</label>
                     <select id="bIncomeInputMode" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="quick" selected>대략 입력(빠른 선택)</option>
                       <option value="exact">정확히 입력(직접 숫자)</option>
                     </select>
                   </div>
-                  <div id="bQuickIncomeWrap">
+                  <div id="bQuickIncomeWrap" class="field-card field-card-guide">
                     <label for="bIncomeQuickBand">연봉 빠른 선택(천만원 단위)</label>
                     <select id="bIncomeQuickBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
                       <option value="3000">3천만원대</option>
@@ -749,16 +761,20 @@
                     </select>
                     <label for="bIncomeQuickSubBand">구간 내 세부 선택</label>
                     <select id="bIncomeQuickSubBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"><option value="">기본 추천값 사용</option></select>
-                    <label class="inline-check"><input type="checkbox" id="bIncomeUseDirect" />정확한 금액 직접 입력 사용</label>
+                    <label class="inline-check"><input type="checkbox" id="bIncomeUseDirect" />직접 입력으로 전환</label>
                     <p class="hint">기준금액: <strong id="bQuickIncomeValueText">55,000,000원</strong></p>
                   </div>
-                  <div>
+                  <div class="field-card field-card-strong">
                     <label for="bIncome">연봉(총급여) *</label>
                     <input id="bIncome" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
                 </div>
 
-                <div id="bMonthlySpendWrap" class="grid two-col">
+                <div class="section-intro section-intro-compact couple-section-intro couple-spend-intro">
+                  <p class="section-kicker">소비 입력</p>
+                  <p class="hint">배우자도 본인과 같은 소비 입력 방식으로 월평균 또는 누적 금액을 넣습니다.</p>
+                </div>
+                <div id="bMonthlySpendWrap" class="grid two-col couple-spend-grid">
                   <div>
                     <label for="bCreditBand">월평균 신용카드(선택형)</label>
                     <select id="bCreditBand" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold">
@@ -835,7 +851,7 @@
                   </div>
                 </div>
 
-                <div id="bCumulativeSpendWrap" class="grid two-col hidden">
+                <div id="bCumulativeSpendWrap" class="grid two-col couple-spend-grid hidden">
                   <div>
                     <label for="bCredit">올해 누적 신용카드</label>
                     <input id="bCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
@@ -853,24 +869,24 @@
                     <input id="bTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
                 </div>
-                <div class="grid two-col">
-                  <div>
+                <div class="grid two-col couple-extra-grid">
+                  <div class="field-card field-card-compact">
                     <label for="bPension">연금저축 납입액(선택)</label>
                     <input id="bPension" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="bIrp">IRP 납입액(선택)</label>
                     <input id="bIrp" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="bRent">월세 지출액(선택)</label>
                     <input id="bRent" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="bMedical">의료비 본인 지출액(선택)</label>
                     <input id="bMedical" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
-                  <div>
+                  <div class="field-card field-card-compact">
                     <label for="bDonation">기부금 본인 지출액(선택)</label>
                     <input id="bDonation" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
                   </div>
