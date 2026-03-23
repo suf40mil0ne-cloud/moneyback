@@ -149,6 +149,8 @@ main.container {
   display: inline-flex;
   flex-direction: column;
   gap: 2px;
+  max-width: min(100%, 18rem);
+  line-height: 1.1;
 }
 
 .brand-kicker,
@@ -167,7 +169,9 @@ main.container {
 .brand-mark strong {
   font-size: 1.25rem;
   font-weight: 800;
+  line-height: 1.08;
   letter-spacing: -0.04em;
+  text-wrap: balance;
   color: var(--primary-container);
 }
 
@@ -396,6 +400,7 @@ main.container {
 .planner-meta p,
 .info-section-head p {
   margin: 0;
+  line-height: 1.55;
 }
 
 .planner-meta {
@@ -458,6 +463,9 @@ fieldset {
   min-height: 48px;
   padding: 0 18px;
   border-radius: 14px;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
   color: #64748b;
   font-weight: 800;
   transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
@@ -605,6 +613,9 @@ textarea:focus,
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .deduction-chip,
@@ -1103,7 +1114,7 @@ textarea:focus,
   }
 
   .hero-aside {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1141,6 +1152,20 @@ textarea:focus,
     grid-template-columns: 1fr;
   }
 
+  .top-nav-bar {
+    gap: 10px;
+    align-items: start;
+    padding: 14px 0 8px;
+  }
+
+  .brand-mark {
+    max-width: 100%;
+  }
+
+  .brand-mark strong {
+    font-size: 1.06rem;
+  }
+
   .top-nav nav a,
   .footer-links a,
   .anchor-links a,
@@ -1151,6 +1176,14 @@ textarea:focus,
   .mode-chip span {
     width: 100%;
     justify-content: center;
+  }
+
+  .top-nav nav,
+  .footer-links,
+  .anchor-links,
+  .family-card-actions,
+  .spend-item-actions {
+    gap: 12px;
   }
 
   .top-nav nav {
@@ -1174,13 +1207,46 @@ textarea:focus,
     padding: 1.25rem;
   }
 
+  .hero {
+    gap: 1rem;
+    border-radius: 1.75rem;
+  }
+
   .hero h1 {
-    font-size: 2.2rem;
+    font-size: 2.05rem;
+    line-height: 1.06;
+  }
+
+  .hero-compact-points p {
+    padding: 12px 14px;
+  }
+
+  .mode-switch {
+    max-width: none;
+  }
+
+  .planner-head,
+  .info-section-head,
+  form,
+  .accordion-group,
+  .repeat-list,
+  .results,
+  .summary-box {
+    gap: 16px;
+  }
+
+  .list-header {
+    row-gap: 12px;
+  }
+
+  .checklist-row {
+    gap: 10px;
   }
 
   .warning-badges,
   .isa-badge-row {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .result-table {
@@ -1195,6 +1261,7 @@ textarea:focus,
   .notice {
     position: static;
     width: calc(100% - 20px);
+    padding: 0.95rem 1rem;
     border-radius: 24px;
   }
 }
