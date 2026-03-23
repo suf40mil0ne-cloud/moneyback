@@ -1414,6 +1414,23 @@ textarea:focus,
   margin-bottom: 12px;
 }
 
+.couple-family-overview {
+  margin-bottom: 12px;
+}
+
+.couple-family-toggle,
+.couple-family-count {
+  min-height: 116px;
+}
+
+.couple-family-count input {
+  max-width: 220px;
+}
+
+.couple-family-detail-intro {
+  margin-top: 4px;
+}
+
 .couple-spend-grid > div,
 .couple-extra-grid > div {
   padding: 0.95rem 1rem;
