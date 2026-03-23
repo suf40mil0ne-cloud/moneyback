@@ -198,9 +198,16 @@ main.container {
 .top-nav nav a,
 .anchor-links a,
 .footer-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
   color: #64748b;
   font-size: 0.92rem;
   font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
   transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
@@ -324,6 +331,8 @@ main.container {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
   font-weight: 700;
+  line-height: 1.4;
+  text-wrap: balance;
   backdrop-filter: blur(8px);
 }
 
@@ -368,8 +377,9 @@ main.container {
 .info-section-head {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 28px;
 }
 
 .planner-head h2,
@@ -394,9 +404,15 @@ main.container {
   background: linear-gradient(135deg, rgba(0, 6, 102, 0.05), rgba(68, 221, 193, 0.08));
 }
 
+.planner-meta strong {
+  display: block;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
 form {
   display: grid;
-  gap: 24px;
+  gap: 28px;
 }
 
 fieldset {
@@ -494,7 +510,7 @@ fieldset {
 
 .grid {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .two-col {
@@ -506,6 +522,7 @@ label {
   margin-bottom: 8px;
   font-size: 0.92rem;
   font-weight: 700;
+  line-height: 1.35;
   color: #475569;
 }
 
@@ -520,6 +537,7 @@ textarea {
   background: var(--surface-soft);
   color: var(--text);
   font-weight: 700;
+  line-height: 1.25;
   box-shadow: inset 0 0 0 1px transparent;
   outline: 0;
 }
@@ -544,20 +562,24 @@ textarea:focus,
 .inline-check,
 .toggle-row {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   padding: 16px 18px;
   border-radius: 1rem;
   background: var(--surface-soft);
   border: 1px solid var(--line);
   margin-bottom: 0;
+  line-height: 1.4;
 }
 
 .inline-check input,
 .toggle-row input {
+  flex: 0 0 auto;
   width: 18px;
   min-height: 18px;
   height: 18px;
+  margin-top: 2px;
   padding: 0;
   accent-color: var(--primary);
 }
@@ -642,9 +664,9 @@ textarea:focus,
 .spend-item-head,
 .flex {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 
 .switch-field {
@@ -691,7 +713,7 @@ textarea:focus,
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .stepper-btn,
@@ -737,6 +759,7 @@ textarea:focus,
   min-width: 42px;
   text-align: center;
   font-size: 1.25rem;
+  line-height: 1;
   font-weight: 800;
 }
 
@@ -799,21 +822,29 @@ textarea:focus,
 }
 
 .accordion-panel {
-  margin-top: 14px;
+  margin-top: 18px;
 }
 
 .list-header {
   flex-wrap: wrap;
-  margin: 12px 0;
+  margin: 14px 0;
+  row-gap: 10px;
 }
 
 .ghost-btn,
 .spend-link-btn,
 .remove-btn,
 .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
   padding: 11px 14px;
   border-radius: 999px;
   font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .remove-btn {
@@ -825,6 +856,8 @@ textarea:focus,
 .summary-box p,
 .prose p {
   margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.5;
 }
 
 .repeat-card-insight {
@@ -835,7 +868,29 @@ textarea:focus,
 .family-card-layout,
 .summary-box {
   display: grid;
-  gap: 12px;
+  gap: 14px;
+}
+
+.spend-item-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.spend-item-title,
+.spend-item-summary {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.spend-item-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.spend-item-main {
+  display: grid;
+  gap: 10px;
 }
 
 .family-card-actions,
@@ -887,7 +942,8 @@ textarea:focus,
 
 .warning-badges,
 .isa-badge-row {
-  grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
 }
 
 .scenario-shell {
@@ -905,6 +961,7 @@ textarea:focus,
   padding: 1rem 1.2rem;
   border-radius: 1.25rem;
   background: rgba(137, 153, 255, 0.12);
+  line-height: 1.45;
 }
 
 .scenario-summary-line p {
@@ -926,6 +983,7 @@ textarea:focus,
   padding: 14px 12px;
   text-align: left;
   vertical-align: top;
+  line-height: 1.45;
   border-bottom: 1px solid var(--line);
 }
 
@@ -971,6 +1029,7 @@ textarea:focus,
   padding: 1rem 1.25rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
+  line-height: 1.45;
   box-shadow: var(--shadow-sm);
 }
 
