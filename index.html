@@ -13,103 +13,7 @@
   <meta property="og:description" content="정확한 환급액 계산 대신, 1인/맞벌이 부부 최적화 기준으로 놓치지 않기 위한 행동을 추천합니다." />
   <meta property="og:url" content="https://moneyback.pages.dev/" />
   <link rel="canonical" href="https://moneyback.pages.dev/" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "surface-tint": "#006c47",
-                "on-primary-fixed": "#002113",
-                "on-tertiary-container": "#000417",
-                "primary": "#006c47",
-                "inverse-on-surface": "#f0f1f2",
-                "on-surface": "#191c1d",
-                "on-primary-fixed-variant": "#005235",
-                "on-primary": "#ffffff",
-                "primary-fixed": "#95f6c3",
-                "secondary": "#5e5e5e",
-                "surface-bright": "#f8f9fa",
-                "surface-container-lowest": "#ffffff",
-                "on-tertiary-fixed-variant": "#003ea6",
-                "error": "#ba1a1a",
-                "surface-dim": "#d9dadb",
-                "tertiary": "#0053d8",
-                "on-tertiary-fixed": "#00174a",
-                "on-secondary-container": "#646464",
-                "on-error-container": "#93000a",
-                "primary-container": "#1f875d",
-                "surface-container": "#edeeef",
-                "on-background": "#191c1d",
-                "surface-container-high": "#e7e8e9",
-                "tertiary-fixed-dim": "#b3c5ff",
-                "on-secondary-fixed": "#1b1c1c",
-                "background": "#f8f9fa",
-                "on-secondary": "#ffffff",
-                "surface": "#f8f9fa",
-                "surface-container-highest": "#e1e3e4",
-                "on-secondary-fixed-variant": "#474747",
-                "secondary-container": "#e4e2e2",
-                "on-tertiary": "#ffffff",
-                "error-container": "#ffdad6",
-                "outline": "#6e7a72",
-                "tertiary-fixed": "#dbe1ff",
-                "on-error": "#ffffff",
-                "primary-fixed-dim": "#79d9a9",
-                "tertiary-container": "#246cff",
-                "inverse-primary": "#79d9a9",
-                "inverse-surface": "#2e3132",
-                "outline-variant": "#bdc9c0",
-                "surface-variant": "#e1e3e4",
-                "on-primary-container": "#000703",
-                "secondary-fixed": "#e4e2e2",
-                "surface-container-low": "#f3f4f5",
-                "on-surface-variant": "#3e4942",
-                "secondary-fixed-dim": "#c8c6c6"
-              },
-              fontFamily: {
-                "headline": ["Inter", "Pretendard Variable", "sans-serif"],
-                "body": ["Inter", "Pretendard Variable", "sans-serif"],
-                "label": ["Inter", "Pretendard Variable", "sans-serif"]
-              },
-              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-            },
-          },
-        }
-      </script>
-  <style>
-          body {
-              font-family: 'Inter', 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-              -webkit-font-smoothing: antialiased;
-              background-color: #F8F9FA;
-          }
-          .material-symbols-outlined {
-              font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              vertical-align: middle;
-          }
-          input::-webkit-outer-spin-button,
-          input::-webkit-inner-spin-button {
-              -webkit-appearance: none;
-              margin: 0;
-          }
-          .ios-safe-bottom {
-              padding-bottom: env(safe-area-inset-bottom);
-          }
-          /* Enhanced Interactions */
-          input {
-              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          input:focus {
-              background-color: rgba(31, 135, 93, 0.05) !important;
-              box-shadow: 0 0 0 3px rgba(31, 135, 93, 0.1);
-          }
-      </style>
+  <link rel="stylesheet" href="./style.css" />
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7104324664246128" crossorigin="anonymous"></script>
 
   <script type="application/ld+json">
@@ -135,22 +39,65 @@
   </script>
   <script type="application/ld+json" id="faq-jsonld"></script>
 </head>
-<body class="text-on-surface selection:bg-primary-fixed">
-  <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl bg-[#F8F9FA]/80 dark:bg-gray-900/80">
-    <div class="text-2xl font-bold tracking-tighter text-[#006C47] dark:text-[#1F875D] flex items-center">MONEYBACK</div>
-    <div class="flex gap-4 items-center">
-      <span class="material-symbols-outlined text-gray-500">menu</span>
-      <span class="material-symbols-outlined text-[#006C47]">account_circle</span>
-    </div>
-  </header>
+<body>
+  <a class="skip-link" href="#inputSection">입력으로 바로가기</a>
+  <a class="skip-link" href="#faqSection">FAQ로 바로가기</a>
 
-  <main class="pt-24 pb-48 px-5 max-w-lg mx-auto" id="inputSection">
-    <section class="mb-10">
-      <h1 class="text-3xl font-bold tracking-tight mb-2 text-on-surface">연말정산 행동 추천기</h1>
-      <p class="text-on-surface-variant text-lg leading-relaxed">남은 기간, 당신의 환급금을 극대화할 최적의 액션 플랜을 제안합니다.</p>
-    </section>
+  <main class="container">
+    <header class="top-nav shell" aria-label="주요 탐색">
+      <div class="top-nav-bar">
+        <a href="/" class="brand-mark">
+          <span class="brand-kicker">Moneyback</span>
+          <strong>연말정산 행동 추천기</strong>
+        </a>
+        <p class="top-nav-note">계산기보다 실행 가이드에 가까운 절세 도구</p>
+      </div>
+      <nav>
+        <a href="/">홈</a>
+        <a href="#inputSection">입력</a>
+        <a href="#results">결과</a>
+        <a href="#infoSection">가이드</a>
+        <a href="#faqSection">FAQ</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/contact.html">문의하기</a>
+      </nav>
+      <div class="anchor-links">
+        <a href="#inputSection">입력으로 바로가기</a>
+        <a href="#results">결과 보기</a>
+        <a href="#infoSection">가이드 더보기</a>
+        <a href="#noticeSection">주의사항</a>
+      </div>
+    </header>
 
-    <section>
+    <header class="hero">
+      <div class="hero-copy">
+        <h1>연말정산 행동 추천기</h1>
+        <p class="subtitle">연봉·지출·가족 정보만 입력하면 올해 절세 행동을 빠르게 추천합니다.</p>
+        <p class="hero-mini">정확한 환급액 계산보다 지금 바로 할 일을 정리하는 참고용 가이드입니다.</p>
+        <div class="hero-actions">
+          <a class="cta-link" href="#inputSection">바로 입력하기</a>
+          <a class="text-link" href="#infoSection">가이드는 아래에서 보기</a>
+        </div>
+      </div>
+      <aside class="hero-aside hero-compact-points">
+        <p>1인 / 맞벌이 모두 지원</p>
+        <p>월평균 / 누적 입력 모두 가능</p>
+        <p>카드 · 가족 · 연금 · ISA 흐름까지 함께 정리</p>
+      </aside>
+    </header>
+
+    <section id="inputSection" class="card planner-shell">
+      <div class="planner-head">
+        <div>
+          <p class="section-kicker">입력</p>
+          <h2>입력</h2>
+          <p class="planner-subcopy">기본 정보부터 가족, 소비, 계좌 전략까지 순서대로 입력하면 결과는 행동 중심으로 정리됩니다.</p>
+        </div>
+        <div class="planner-meta">
+          <strong>입력 팁</strong>
+          <p>정확한 숫자가 없어도 시작할 수 있습니다. 빠른 선택과 월평균 입력을 먼저 쓰고, 필요한 부분만 상세 입력으로 보완하세요.</p>
+        </div>
+      </div>
       <form id="planner-form" novalidate>
         <fieldset class="mode-switch" aria-label="모드 선택">
           <legend>모드 선택</legend>
@@ -164,7 +111,7 @@
           </label>
         </fieldset>
 
-        <section id="singleModeSection" class="bg-surface-container-lowest rounded-lg p-6 mb-6 shadow-[0px_8px_24px_rgba(0,0,0,0.04)]">
+        <section id="singleModeSection">
           <div class="form-section-head">
             <p class="section-kicker">1인 모드</p>
             <h3>기본 정보와 공제 흐름을 먼저 입력하세요</h3>
@@ -199,19 +146,19 @@
             </div>
             <div>
               <label for="annualIncome">연봉(총급여, 원) *</label>
-              <input id="annualIncome" data-money inputmode="numeric" placeholder="예: 55,000,000" aria-label="1인 연봉" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface" />
+              <input id="annualIncome" data-money inputmode="numeric" placeholder="예: 55,000,000" aria-label="1인 연봉" />
             </div>
             <div>
               <label for="singleMonthlyRent">월세 지출액(선택)</label>
-              <input id="singleMonthlyRent" data-money inputmode="numeric" placeholder="0" aria-label="1인 월세 지출액" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface" />
+              <input id="singleMonthlyRent" data-money inputmode="numeric" placeholder="0" aria-label="1인 월세 지출액" />
             </div>
             <div>
               <label for="singlePension">연금저축 납입액(선택)</label>
-              <input id="singlePension" data-money inputmode="numeric" placeholder="0" aria-label="1인 연금저축" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface" />
+              <input id="singlePension" data-money inputmode="numeric" placeholder="0" aria-label="1인 연금저축" />
             </div>
             <div>
               <label for="singleIrp">IRP 납입액(선택)</label>
-              <input id="singleIrp" data-money inputmode="numeric" placeholder="0" aria-label="1인 IRP" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface" />
+              <input id="singleIrp" data-money inputmode="numeric" placeholder="0" aria-label="1인 IRP" />
             </div>
           </div>
 
@@ -484,7 +431,7 @@
               <select id="singleCreditSub"><option value="">기본값</option></select>
               <label class="inline-check"><input type="checkbox" id="singleCreditUseDirect" />직접 입력</label>
               <label for="monthlyCreditCard">월평균 신용카드 사용액</label>
-              <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="monthlyCreditCard" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
               <label for="singleCheckBand">월평균 체크카드+현금영수증(선택형)</label>
@@ -504,7 +451,7 @@
               <select id="singleCheckSub"><option value="">기본값</option></select>
               <label class="inline-check"><input type="checkbox" id="singleCheckUseDirect" />직접 입력</label>
               <label for="monthlyCheckCash">월평균 체크카드+현금영수증 사용액</label>
-              <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="monthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
               <label for="singleMarketBand">월평균 전통시장(선택형)</label>
@@ -521,7 +468,7 @@
               <select id="singleMarketSub"><option value="">기본값</option></select>
               <label class="inline-check"><input type="checkbox" id="singleMarketUseDirect" />직접 입력</label>
               <label for="monthlyTraditionalMarket">월평균 전통시장 사용액</label>
-              <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="monthlyTraditionalMarket" data-money inputmode="numeric" placeholder="0" />
             </div>
             <div>
               <label for="singleTransitBand">월평균 대중교통(선택형)</label>
@@ -538,7 +485,7 @@
               <select id="singleTransitSub"><option value="">기본값</option></select>
               <label class="inline-check"><input type="checkbox" id="singleTransitUseDirect" />직접 입력</label>
               <label for="monthlyTransit">월평균 대중교통 사용액</label>
-              <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="monthlyTransit" data-money inputmode="numeric" placeholder="0" />
             </div>
           </div>
           <p class="hint">선택형 입력값은 추정 계산용 기준값으로 반영됩니다. 정확한 계산이 필요하면 직접 입력을 사용하세요.</p>
@@ -550,24 +497,24 @@
           <div id="cumulativeSpendWrap" class="grid two-col hidden">
             <div>
               <label for="currentCreditCard">올해 누적 신용카드</label>
-              <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="currentCreditCard" data-money inputmode="numeric" placeholder="0" aria-label="1인 신용카드 사용액" />
             </div>
             <div>
               <label for="currentCheckCash">올해 누적 체크카드+현금영수증</label>
-              <input id="currentCheckCash" data-money inputmode="numeric" placeholder="0" aria-label="1인 체크카드 및 현금영수증 사용액" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="currentCheckCash" data-money inputmode="numeric" placeholder="0" aria-label="1인 체크카드 및 현금영수증 사용액" />
             </div>
             <div>
               <label for="currentTraditionalMarket">올해 누적 전통시장</label>
-              <input id="currentTraditionalMarket" data-money inputmode="numeric" placeholder="0" aria-label="1인 전통시장 사용액" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="currentTraditionalMarket" data-money inputmode="numeric" placeholder="0" aria-label="1인 전통시장 사용액" />
             </div>
             <div>
               <label for="currentTransit">올해 누적 대중교통</label>
-              <input id="currentTransit" data-money inputmode="numeric" placeholder="0" aria-label="1인 대중교통 사용액" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+              <input id="currentTransit" data-money inputmode="numeric" placeholder="0" aria-label="1인 대중교통 사용액" />
             </div>
           </div>
         </section>
 
-        <section id="coupleModeSection" class="hidden bg-surface-container-lowest rounded-lg p-6 mb-6 shadow-[0px_8px_24px_rgba(0,0,0,0.04)]">
+        <section id="coupleModeSection" class="hidden">
           <div class="form-section-head">
             <p class="section-kicker">맞벌이 모드</p>
             <h3>배우자별 입력과 가족 귀속을 나눠 정리하세요</h3>
@@ -615,7 +562,7 @@
                   </div>
                   <div>
                     <label for="aIncome">연봉(총급여) *</label>
-                    <input id="aIncome" data-money inputmode="numeric" placeholder="0" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface"/>
+                    <input id="aIncome" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
 
@@ -638,7 +585,7 @@
                     <select id="aCreditSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="aCreditUseDirect" />직접 입력</label>
                     <label for="aMonthlyCredit">월평균 신용카드</label>
-                    <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aCheckBand">월평균 체크카드+현금영수증(선택형)</label>
@@ -658,7 +605,7 @@
                     <select id="aCheckSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="aCheckUseDirect" />직접 입력</label>
                     <label for="aMonthlyCheckCash">월평균 체크카드+현금영수증</label>
-                    <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aMarketBand">월평균 전통시장(선택형)</label>
@@ -675,7 +622,7 @@
                     <select id="aMarketSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="aMarketUseDirect" />직접 입력</label>
                     <label for="aMonthlyMarket">월평균 전통시장</label>
-                    <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aTransitBand">월평균 대중교통(선택형)</label>
@@ -692,48 +639,48 @@
                     <select id="aTransitSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="aTransitUseDirect" />직접 입력</label>
                     <label for="aMonthlyTransit">월평균 대중교통</label>
-                    <input id="aMonthlyTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
 
                 <div id="aCumulativeSpendWrap" class="grid two-col hidden">
                   <div>
                     <label for="aCredit">올해 누적 신용카드</label>
-                    <input id="aCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aCheckCash">올해 누적 체크카드+현금영수증</label>
-                    <input id="aCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aMarket">올해 누적 전통시장</label>
-                    <input id="aMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aTransit">올해 누적 대중교통</label>
-                    <input id="aTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
                 <div class="grid two-col">
                   <div>
                     <label for="aPension">연금저축 납입액(선택)</label>
-                    <input id="aPension" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aPension" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aIrp">IRP 납입액(선택)</label>
-                    <input id="aIrp" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aIrp" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aRent">월세 지출액(선택)</label>
-                    <input id="aRent" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aRent" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aMedical">의료비 본인 지출액(선택)</label>
-                    <input id="aMedical" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aMedical" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="aDonation">기부금 본인 지출액(선택)</label>
-                    <input id="aDonation" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="aDonation" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
               </div>
@@ -769,7 +716,7 @@
                   </div>
                   <div>
                     <label for="bIncome">연봉(총급여) *</label>
-                    <input id="bIncome" data-money inputmode="numeric" placeholder="0" class="w-full h-[64px] px-6 bg-surface-container-low border-2 border-primary-container rounded-2xl focus:ring-0 text-xl font-bold transition-all text-on-surface"/>
+                    <input id="bIncome" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
 
@@ -792,7 +739,7 @@
                     <select id="bCreditSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="bCreditUseDirect" />직접 입력</label>
                     <label for="bMonthlyCredit">월평균 신용카드</label>
-                    <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMonthlyCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bCheckBand">월평균 체크카드+현금영수증(선택형)</label>
@@ -812,7 +759,7 @@
                     <select id="bCheckSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="bCheckUseDirect" />직접 입력</label>
                     <label for="bMonthlyCheckCash">월평균 체크카드+현금영수증</label>
-                    <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMonthlyCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bMarketBand">월평균 전통시장(선택형)</label>
@@ -829,7 +776,7 @@
                     <select id="bMarketSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="bMarketUseDirect" />직접 입력</label>
                     <label for="bMonthlyMarket">월평균 전통시장</label>
-                    <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMonthlyMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bTransitBand">월평균 대중교통(선택형)</label>
@@ -846,48 +793,48 @@
                     <select id="bTransitSub"><option value="">기본값</option></select>
                     <label class="inline-check"><input type="checkbox" id="bTransitUseDirect" />직접 입력</label>
                     <label for="bMonthlyTransit">월평균 대중교통</label>
-                    <input id="bMonthlyTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMonthlyTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
 
                 <div id="bCumulativeSpendWrap" class="grid two-col hidden">
                   <div>
                     <label for="bCredit">올해 누적 신용카드</label>
-                    <input id="bCredit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bCredit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bCheckCash">올해 누적 체크카드+현금영수증</label>
-                    <input id="bCheckCash" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bCheckCash" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bMarket">올해 누적 전통시장</label>
-                    <input id="bMarket" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMarket" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bTransit">올해 누적 대중교통</label>
-                    <input id="bTransit" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bTransit" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
                 <div class="grid two-col">
                   <div>
                     <label for="bPension">연금저축 납입액(선택)</label>
-                    <input id="bPension" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bPension" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bIrp">IRP 납입액(선택)</label>
-                    <input id="bIrp" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bIrp" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bRent">월세 지출액(선택)</label>
-                    <input id="bRent" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bRent" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bMedical">의료비 본인 지출액(선택)</label>
-                    <input id="bMedical" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bMedical" data-money inputmode="numeric" placeholder="0" />
                   </div>
                   <div>
                     <label for="bDonation">기부금 본인 지출액(선택)</label>
-                    <input id="bDonation" data-money inputmode="numeric" placeholder="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="bDonation" data-money inputmode="numeric" placeholder="0" />
                   </div>
                 </div>
               </div>
@@ -900,7 +847,7 @@
                   <label class="inline-check"><input type="checkbox" id="isMarriedRegistered" checked />혼인신고 여부</label>
                   <div>
                     <label for="childrenCount">자녀 수</label>
-                    <input id="childrenCount" data-money inputmode="numeric" value="0" class="w-full h-14 px-5 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-base font-semibold"/>
+                    <input id="childrenCount" data-money inputmode="numeric" value="0" />
                   </div>
                 </div>
 
@@ -971,10 +918,7 @@
         </section>
 
         <p id="formError" class="error" aria-live="polite"></p>
-        <button type="submit" class="w-full h-16 bg-primary text-on-primary rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-          <span>추천 받기</span>
-          <span class="material-symbols-outlined">auto_awesome</span>
-        </button>
+        <button type="submit" class="cta">추천 받기</button>
       </form>
     </section>
 
@@ -1173,28 +1117,5 @@
 
   <aside class="notice">참고용 절세 행동 추천 서비스입니다. 최종 신고 전 홈택스/회사 제출자료를 반드시 확인하세요.</aside>
   <script src="./main.js"></script>
-  <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-safe pt-2 backdrop-blur-2xl bg-[#F8F9FA]/80 dark:bg-gray-900/80 shadow-[0px_-8px_24px_rgba(0,0,0,0.04)] md:hidden">
-    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-[#1F875D] transition-colors h-14">
-      <span class="material-symbols-outlined">home</span>
-      <span class="font-['Pretendard_Variable'] font-medium text-[11px]">홈</span>
-    </div>
-    <div class="flex flex-col items-center justify-center text-[#006C47] dark:text-[#1F875D] font-bold h-14">
-      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calculate</span>
-      <span class="font-['Pretendard_Variable'] font-medium text-[11px]">환급계산</span>
-    </div>
-    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-[#1F875D] transition-colors h-14">
-      <span class="material-symbols-outlined">lightbulb</span>
-      <span class="font-['Pretendard_Variable'] font-medium text-[11px]">절세가이드</span>
-    </div>
-    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-[#1F875D] transition-colors h-14">
-      <span class="material-symbols-outlined">person</span>
-      <span class="font-['Pretendard_Variable'] font-medium text-[11px]">내정보</span>
-    </div>
-  </nav>
-  <div class="hidden">
-    <!-- Visual assets for data-alt requirement -->
-    <img data-alt="Abstract green and white geometric pattern representing financial growth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-zUooImNHcTdF9IIGJaZANyxTQMlEu2bXOieZEvvFVT_qgHdJRp_XC8uJMPrEa8L4oFw0ODYhKnLc3qS22Z0nf44s9PXirG2_An3qbytQOV8N5nl0M5iMs7qe7LW4UTtPL9GhDzth5nMqXzex_ri3gedYr_rkIf_AA0dIG4TjeqoiloaTtYteD_-cRsmiXuZXXARUDhbzkWeGim-vJGuYqoduIqczRFipUBwLE-24O-s7ADvR_H-zfV6bG7PWGHyJxPjENMOIxiiY"/>
-    <img data-alt="Minimalist flat illustration of a calculator and coins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDffLivEbm8PNUENK7mAZMX9govhNXcZgdzNGk2kocnlYxzoZ-gIDzz_l9QiCl96E7euNjPg0j75p0jTQNQaf96Tsd98TPxbf_w6OgtXgE7J3FHtgAk85WI-phPRlk2HNeb302duELtxxexK4LXX9PzJPSivdTWhEv9W-kLxW3erXwE5FA9poKzDZSmKvbXXuDceA_Cz2d0V-mnXywlVqUbnxuq-s7xCgupjyJggDZJ2vM7oYHFjDg2Yp_d7Emu99-cUGawW4NMdjkv"/>
-  </div>
 </body>
 </html>
