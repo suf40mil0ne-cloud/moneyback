@@ -44,6 +44,14 @@ body {
   line-height: 1.6;
 }
 
+.bg-background {
+  background: var(--background);
+}
+
+.text-on-surface {
+  color: var(--text);
+}
+
 h1,
 h2,
 h3,
@@ -330,7 +338,7 @@ main.container {
 .deduction-screen,
 .bg-surface-container-lowest,
 .card,
-.policy-card {
+.shell {
   background: var(--surface);
   border: 1px solid transparent;
   border-radius: 1.75rem;
