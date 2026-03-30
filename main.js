@@ -305,11 +305,12 @@ const YEARLY_EXPANSION_ITEMS = [
 ];
 
 const UPDATE_HISTORY_ITEMS = [
-  '2026-03-10: 절세전략 가이드, 홈택스 행동 가이드, 확대 공제 체크, 결과 누락 점검 리스트 보강',
-  '2026-03-10: ISA 입력, ISA 우선순위 엔진, 만기 알림, ISA FAQ/가이드 섹션 추가',
-  '2026-03-09: 월평균 입력 기본 전환, 맞벌이 모드 월평균/누적 토글 보강, 연봉 빠른 선택 개선',
-  '2026-03-09: 인적공제 상세 입력(반복 카드, 자동 판정, 충돌 배지) 확장',
-  '2026-03-09: 정보형 콘텐츠 섹션, 정책 페이지 링크, FAQ 확장, 신뢰/면책 안내 강화'
+  { date: '2026-03-10', text: '절세전략 가이드, 홈택스 행동 가이드, 확대 공제 체크, 결과 누락 점검 리스트 보강', tag: 'UX개선' },
+  { date: '2026-03-10', text: 'ISA 입력, ISA 우선순위 엔진, 만기 알림, ISA FAQ/가이드 섹션 추가', tag: '기능추가' },
+  { date: '2026-03-09', text: '월평균 입력 기본 전환, 맞벌이 모드 월평균/누적 토글 보강, 연봉 빠른 선택 개선', tag: 'UX개선' },
+  { date: '2026-03-09', text: '인적공제 상세 입력(반복 카드, 자동 판정, 충돌 배지) 확장', tag: '기능추가' },
+  { date: '2026-03-09', text: '정보형 콘텐츠 섹션, 정책 페이지 링크, FAQ 확장, 신뢰/면책 안내 강화', tag: 'UX개선' },
+  { date: '2026-02-01', text: '초기 배포 (1인 모드)', tag: '기능추가' },
 ];
 
 const TODO_STORAGE_KEY = 'moneyback-action-guide-v5';
@@ -322,6 +323,7 @@ const summaryList = document.getElementById('summaryList');
 const allocationBody = document.getElementById('allocationBody');
 const scenarioPanel = document.getElementById('scenarioPanel');
 const todoList = document.getElementById('todoList');
+const todoProgress = document.getElementById('todoProgress');
 const personalDeductionSummary = document.getElementById('personalDeductionSummary');
 const spendEstimationSummary = document.getElementById('spendEstimationSummary');
 const detailPriorityBadge = document.getElementById('detailPriorityBadge');
@@ -2152,23 +2154,48 @@ function updateCoupleIsaCapacityHint() {
 function buildSingleTodoItems(input, personal, card, isaProfile) {
   const items = [];
   if (card.shortfall > 0) {
-    items.push(
-      input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+    items.push({
+      text: input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
         ? `체크카드/현금영수증으로 월 ${formatMoney(card.shortfall / input.projection.remainingMonths)}원 전환 계획 세우기`
-        : '신용카드보다 체크카드/현금영수증 비중을 먼저 조정하기'
-    );
+        : '신용카드보다 체크카드/현금영수증 비중을 먼저 조정하기',
+      reason: `카드 공제 기준(소득의 25%)까지 남은 부족분이 ${formatMoney(card.shortfall)}원입니다. 체크카드/현금영수증 공제율(30%)이 신용카드(15%)보다 높습니다.`
+    });
   } else {
-    items.push('추가 소비보다 결제수단 구분과 증빙 누락부터 점검하기');
+    items.push({
+      text: '추가 소비보다 결제수단 구분과 증빙 누락부터 점검하기',
+      reason: '카드 공제 기준 사용액을 이미 채웠거나 근접한 상태입니다. 추가 소비보다 누락 영수증 확인이 더 효과적입니다.'
+    });
   }
 
-  if (input.monthlyRent > 0) items.push('월세 계약·전입·계좌이체 요건을 다시 확인하고 현금영수증과 중복 적용하지 않기');
-  else if (personal.childTaxCount > 0) items.push('자녀 기본공제 귀속과 교육비·의료비 결제자를 같은 흐름으로 정리하기');
-  else if (personal.seniorCount > 0) items.push('부모·조부모 소득요건과 70세 이상 여부를 다시 확인하기');
-  else items.push('배우자·부양가족 소득요건과 나이요건을 다시 확인하기');
+  if (input.monthlyRent > 0) items.push({
+    text: '월세 계약·전입·계좌이체 요건을 다시 확인하고 현금영수증과 중복 적용하지 않기',
+    reason: '월세 세액공제와 현금영수증은 같은 지출에 중복 적용할 수 없습니다. 요건 미충족 시 공제 자체가 불가합니다.'
+  });
+  else if (personal.childTaxCount > 0) items.push({
+    text: '자녀 기본공제 귀속과 교육비·의료비 결제자를 같은 흐름으로 정리하기',
+    reason: `자녀세액공제 대상 ${personal.childTaxCount}명이 입력되어 있습니다. 교육비·의료비는 기본공제 귀속자가 결제해야 공제가 됩니다.`
+  });
+  else if (personal.seniorCount > 0) items.push({
+    text: '부모·조부모 소득요건과 70세 이상 여부를 다시 확인하기',
+    reason: '부양가족 공제는 소득요건(연 100만원 이하)을 충족해야 합니다. 70세 이상이면 경로우대 추가공제가 적용됩니다.'
+  });
+  else items.push({
+    text: '배우자·부양가족 소득요건과 나이요건을 다시 확인하기',
+    reason: '인적공제는 소득요건과 나이요건을 모두 충족해야 합니다. 홈택스 연말정산 미리보기에서 대상자를 확인하세요.'
+  });
 
-  if (input.pension + input.irp < RULES.pension.pensionSavingAnnualLimit) items.push('연금저축 또는 IRP 자동이체 금액을 정하고 한도 여유를 점검하기');
-  else if (isaProfile.maturityNeeded) items.push('ISA 만기 자금은 출금 전에 연금계좌 전환 가능성을 먼저 비교하기');
-  else items.push('홈택스 연말정산 미리보기에서 남은 카드 전략과 누락 공제 후보를 확인하기');
+  if (input.pension + input.irp < RULES.pension.pensionSavingAnnualLimit) items.push({
+    text: '연금저축 또는 IRP 자동이체 금액을 정하고 한도 여유를 점검하기',
+    reason: `연금저축+IRP 합계 ${formatMoney(input.pension + input.irp)}원으로 연간 세액공제 한도(최대 ${formatMoney(RULES.pension.combinedAnnualLimit)}원) 여유가 있습니다.`
+  });
+  else if (isaProfile.maturityNeeded) items.push({
+    text: 'ISA 만기 자금은 출금 전에 연금계좌 전환 가능성을 먼저 비교하기',
+    reason: 'ISA 만기 자금을 연금계좌로 전환하면 전환금액의 10%(최대 300만원) 추가 세액공제를 받을 수 있습니다.'
+  });
+  else items.push({
+    text: '홈택스 연말정산 미리보기에서 남은 카드 전략과 누락 공제 후보를 확인하기',
+    reason: '홈택스 미리보기는 실제 신고 전 공제 항목 누락 여부를 빠르게 점검할 수 있습니다.'
+  });
 
   return items.slice(0, 3);
 }
@@ -2176,19 +2203,38 @@ function buildSingleTodoItems(input, personal, card, isaProfile) {
 function buildCoupleTodoItems(input, aCard, bCard, isaProfile, preferredCardHolder) {
   const items = [];
   const preferredShortfall = preferredCardHolder === '본인' ? aCard.shortfall : bCard.shortfall;
-  items.push(
-    input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
+  items.push({
+    text: input.projection && input.projection.mode === 'monthly' && input.projection.remainingMonths > 0
       ? `${preferredCardHolder} 기준 월 ${formatMoney(preferredShortfall / Math.max(1, input.projection.remainingMonths))}원 정도 체크카드/현금영수증 전환 계획 세우기`
-      : `${preferredCardHolder} 부족 구간부터 먼저 채우고 다른 배우자는 추가 소비보다 증빙 정리하기`
-  );
+      : `${preferredCardHolder} 부족 구간부터 먼저 채우고 다른 배우자는 추가 소비보다 증빙 정리하기`,
+    reason: `${preferredCardHolder}의 카드 공제 부족분이 ${formatMoney(preferredShortfall)}원입니다. 맞벌이는 카드 사용을 소득이 낮은 쪽에 집중하면 공제 효율이 높아집니다.`
+  });
 
-  if (input.children.length > 0) items.push('자녀별 기본공제 귀속자와 교육비·의료비 결제자를 한 표로 정리하기');
-  else if (input.dependents.length > 0) items.push('부양가족 귀속자를 부부 중 1인으로 확정하고 중복공제 가능성 제거하기');
-  else items.push('부부가 각자 가져갈 공제 항목을 먼저 정리하고 같은 항목을 중복 입력하지 않기');
+  if (input.children.length > 0) items.push({
+    text: '자녀별 기본공제 귀속자와 교육비·의료비 결제자를 한 표로 정리하기',
+    reason: '부부가 같은 자녀를 중복으로 기본공제 신청하면 나중에 추징될 수 있습니다. 귀속자와 결제자를 미리 일치시켜야 합니다.'
+  });
+  else if (input.dependents.length > 0) items.push({
+    text: '부양가족 귀속자를 부부 중 1인으로 확정하고 중복공제 가능성 제거하기',
+    reason: '부양가족 기본공제는 부부 중 한 명에게만 귀속할 수 있습니다. 중복 신청 시 가산세 대상이 됩니다.'
+  });
+  else items.push({
+    text: '부부가 각자 가져갈 공제 항목을 먼저 정리하고 같은 항목을 중복 입력하지 않기',
+    reason: '소득이 높은 쪽이 공제를 받으면 세율이 높아 절세 효과가 더 큽니다. 공제 배분을 먼저 확정하세요.'
+  });
 
-  if ((input.spouseA.rent || 0) > 0 || (input.spouseB.rent || 0) > 0) items.push('월세는 배우자별 계약·전입·계좌이체 요건을 다시 확인하고 카드성 공제와 충돌이 없는지 보기');
-  else if (isaProfile.maturityNeeded) items.push('가구 ISA 만기 자금은 단순 출금보다 연금계좌 전환 가능성을 먼저 확인하기');
-  else items.push('홈택스 미리보기와 맞춤형 안내 서비스에서 빠진 공제 후보를 부부 각각 확인하기');
+  if ((input.spouseA.rent || 0) > 0 || (input.spouseB.rent || 0) > 0) items.push({
+    text: '월세는 배우자별 계약·전입·계좌이체 요건을 다시 확인하고 카드성 공제와 충돌이 없는지 보기',
+    reason: '월세 공제는 세대주 또는 세대원 요건이 있고, 현금영수증과 중복 적용이 불가합니다.'
+  });
+  else if (isaProfile.maturityNeeded) items.push({
+    text: '가구 ISA 만기 자금은 단순 출금보다 연금계좌 전환 가능성을 먼저 확인하기',
+    reason: 'ISA 만기 자금을 연금계좌로 전환하면 전환금액의 10%(최대 300만원) 추가 세액공제를 받을 수 있습니다.'
+  });
+  else items.push({
+    text: '홈택스 미리보기와 맞춤형 안내 서비스에서 빠진 공제 후보를 부부 각각 확인하기',
+    reason: '홈택스 맞춤형 안내는 본인 명의 공제 항목 누락을 빠르게 확인할 수 있습니다.'
+  });
 
   return items.slice(0, 3);
 }
@@ -2832,16 +2878,28 @@ function renderTodos(items) {
   const key = `${latestResult.mode}-${activeScenarioId}`;
   const checkedState = storage[key] || items.map(() => false);
 
+  const updateProgress = (state) => {
+    if (!todoProgress) return;
+    const done = state.filter(Boolean).length;
+    todoProgress.textContent = done > 0 ? `${items.length}개 중 ${done}개 완료 ✓` : `${items.length}개`;
+    todoProgress.classList.toggle('todo-progress-done', done === items.length);
+  };
+
   todoList.innerHTML = items
-    .map(
-      (item, idx) => `
-      <li>
+    .map((item, idx) => {
+      const text = typeof item === 'string' ? item : item.text;
+      const reason = typeof item === 'string' ? null : item.reason;
+      return `<li>
         <input type="checkbox" id="todo-${idx}" ${checkedState[idx] ? 'checked' : ''} />
-        <label for="todo-${idx}" class="${checkedState[idx] ? 'done' : ''}">${item}</label>
-      </li>
-    `
-    )
+        <div class="todo-content">
+          <label for="todo-${idx}" class="${checkedState[idx] ? 'done' : ''}">${text}</label>
+          ${reason ? `<p class="todo-reason">${reason}</p>` : ''}
+        </div>
+      </li>`;
+    })
     .join('');
+
+  updateProgress(checkedState);
 
   items.forEach((_, idx) => {
     const input = document.getElementById(`todo-${idx}`);
@@ -2853,6 +2911,7 @@ function renderTodos(items) {
       next[key] = base;
       saveTodoState(next);
       label.classList.toggle('done', input.checked);
+      updateProgress(base);
     });
   });
 }
@@ -3029,7 +3088,14 @@ function renderWhyRecommendation(result, input) {
 
 function renderUpdateHistory() {
   if (!updateHistoryList) return;
-  updateHistoryList.innerHTML = UPDATE_HISTORY_ITEMS.map((item) => `<li>${item}</li>`).join('');
+  updateHistoryList.innerHTML = UPDATE_HISTORY_ITEMS.map((item) => {
+    const tagClass = item.tag === 'UX개선' ? 'tag-ux' : item.tag === '기능추가' ? 'tag-feature' : 'tag-rule';
+    return `<li class="update-item">
+      <span class="update-date">${item.date}</span>
+      <span class="update-text">${item.text}</span>
+      <span class="update-tag ${tagClass}">${item.tag}</span>
+    </li>`;
+  }).join('');
 }
 
 function renderAll(result, input) {
