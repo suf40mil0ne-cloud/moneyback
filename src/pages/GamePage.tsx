@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import './game.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
-const WS_URL  = import.meta.env.VITE_WS_URL  || '';
+const WS_URL  = import.meta.env.VITE_WS_URL  || 'wss://node-express--suf40mil0ne.replit.app/ws';
+const CHAT_API = 'https://node-express--suf40mil0ne.replit.app/api';
 
 function getUserId() {
   let v = localStorage.getItem('userId');
@@ -286,30 +287,59 @@ function ChatWidget() {
   const [messages, setMessages] = useState<{ messageId: number | string; type: string; nickname?: string; message: string }[]>([]);
   const [input, setInput]       = useState('');
   const [online, setOnline]     = useState(1);
-  const wsRef   = useRef<WebSocket | null>(null);
+  const [myNick, setMyNick]     = useState<string | null>(null);
+  const wsRef     = useRef<WebSocket | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
+  // 접속자 수 REST API로 폴링 (30초마다)
   useEffect(() => {
-    if (!WS_URL) return;
+    function fetchStats() {
+      fetch(`${CHAT_API}/chat/stats`)
+        .then(r => r.json())
+        .then(d => { if (d.onlineUsers != null) setOnline(d.onlineUsers); })
+        .catch(() => {});
+    }
+    fetchStats();
+    const t = setInterval(fetchStats, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
-    ws.onopen = () => ws.send(JSON.stringify({ type: 'join', userId: getUserId(), nickname: getNickname() }));
+
     ws.onmessage = e => {
-      const d = JSON.parse(e.data);
-      if (d.type === 'online_count') { setOnline(d.count); return; }
-      setMessages(p => [...p.slice(-100), d]);
+      let d: { type: string; message: string; nickname?: string; users?: number; timestamp?: string };
+      try { d = JSON.parse(e.data); } catch { return; }
+
+      // 접속자 수 업데이트
+      if (d.users != null) setOnline(d.users);
+
+      // 내 닉네임 추출 (첫 system 메시지)
+      if (d.type === 'system' && !myNick) {
+        const m = d.message.match(/^(.+)님이 입장했습니다/);
+        if (m) setMyNick(m[1]);
+      }
+
+      setMessages(p => [...p.slice(-100), { messageId: Date.now() + Math.random(), ...d }]);
     };
+
+    ws.onerror = () => {};
+    ws.onclose = () => {};
     return () => ws.close();
   }, []);
 
   function send() {
-    if (!input.trim()) return;
+    const text = input.trim();
+    if (!text) return;
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type: 'chat', message: input.trim() }));
+      // 서버가 plain string을 기대함
+      wsRef.current.send(text);
     } else {
-      setMessages(p => [...p, { messageId: Date.now(), type: 'chat', nickname: getNickname(), message: input.trim() }]);
+      // 오프라인 폴백
+      setMessages(p => [...p, { messageId: Date.now(), type: 'chat', nickname: myNick || '나', message: text }]);
     }
     setInput('');
   }
