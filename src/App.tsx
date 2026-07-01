@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import ChatWidget from './components/ChatWidget';
 import HomePage from './pages/HomePage';
-import GamePage from './pages/GamePage';
+import { GamePage } from './pages/GamePage';
 import { useAppStore } from './store/useAppStore';
 import { mockGames } from './utils/mockData';
 import { Game } from './types';
 
 export default function App() {
-  const { setGames, games } = useAppStore();
+  const { setGames } = useAppStore();
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
 
   useEffect(() => {
@@ -20,24 +20,12 @@ export default function App() {
     window.scrollTo(0, 0);
   }
 
-  function handleBack() {
-    setCurrentGame(null);
-  }
-
-  function handleNext() {
-    if (!currentGame) return;
-    const idx = games.findIndex(g => g.gameId === currentGame.gameId);
-    const next = games[(idx + 1) % games.length];
-    setCurrentGame(next);
-    window.scrollTo(0, 0);
-  }
-
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Header />
 
       {currentGame ? (
-        <GamePage game={currentGame} onBack={handleBack} onNext={handleNext} />
+        <GamePage />
       ) : (
         <HomePage onSelectGame={handleSelectGame} />
       )}
