@@ -157,132 +157,75 @@ body {
   margin: 16px 0;
 }
 
-/* ===== 게임 섹션 ===== */
+/* ===== 게임 섹션 (문서처럼) ===== */
 .game-section {
-  background: var(--bg-white);
   margin: 24px 0;
 }
 
-.game-instruction {
-  background: var(--light-blue);
-  border-left: 4px solid var(--primary-blue);
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  color: var(--primary-blue);
-  border-radius: 2px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.game-instruction .icon {
-  font-size: 16px;
-}
-
-/* 텍스트 비교 */
-.text-comparison {
-  display: grid;
-  gap: 12px;
-}
-
-/* 원문 박스 */
-.original-box {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 16px;
-}
-
-.original-box .label {
-  font-size: 12px;
-  color: var(--text-light);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.original-box .text {
-  font-size: 14px;
-  color: #555;
-  line-height: 1.7;
-}
-
-/* 게임 텍스트 박스 */
-.game-text-box {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 16px;
-}
-
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.game-text-box .label {
-  font-size: 12px;
-  color: var(--text-light);
-  font-weight: 600;
-}
-
-.timer {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--error-red);
-  font-family: 'Courier New', monospace;
-}
-
-/* 인터랙티브 텍스트 */
-.game-text-box .interactive {
-  font-size: 14px;
-  color: var(--text-normal);
-  line-height: 1.7;
-  margin-bottom: 12px;
-  word-break: break-all;
-}
-
-.char {
-  display: inline;
-}
-
-.error-word {
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 2px;
-  transition: all 0.15s ease;
+/* 문서 본문 래퍼 */
+.doc-body-wrapper {
   position: relative;
 }
 
-.error-word:hover {
-  background: #fff3cd;
-  box-shadow: inset 0 0 0 1px #ffe082;
+/* 타이머 - 우측 상단 작게 */
+.doc-timer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 12px;
+  color: var(--text-light);
+  font-family: 'Courier New', monospace;
+  user-select: none;
 }
 
-.error-word.found {
-  background: #ffcdd2;
+.doc-timer.timer-urgent {
   color: var(--error-red);
   font-weight: 600;
 }
 
-/* 진행 상황 */
-.game-progress {
-  background: var(--bg-light);
-  padding: 8px 12px;
+/* 문서 본문 */
+.doc-body {
+  font-size: 15px;
+  color: var(--text-normal);
+  line-height: 1.9;
+  padding-top: 4px;
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+
+/* 모든 글자 - 기본 */
+.char {
+  display: inline;
+  cursor: default;
   border-radius: 2px;
-  font-size: 13px;
+  transition: background 0.1s;
+}
+
+/* 호버 시 미묘한 하이라이트 (모든 글자) */
+.char:hover {
+  background: #fff9e6;
+  cursor: pointer;
+}
+
+/* 정답 찾은 글자 */
+.char.found {
+  background: #ffcdd2;
+  color: var(--error-red);
+  font-weight: 600;
+  cursor: default;
+}
+
+/* 발견 카운트 - 하단 작게 */
+.doc-hint {
+  margin-top: 12px;
+  font-size: 12px;
   color: var(--text-light);
+  text-align: right;
+  user-select: none;
 }
 
-.game-progress .found {
-  margin-right: 16px;
-}
-
-.game-progress strong {
+.doc-hint strong {
   color: var(--primary-blue);
-  font-weight: 700;
 }
 
 /* ===== 게임 결과 ===== */

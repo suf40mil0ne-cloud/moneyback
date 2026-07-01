@@ -161,45 +161,26 @@ export function GamePage() {
           </div>
 
           <div className="game-section">
-            <div className="game-instruction">
-              <span className="icon">📋</span>
-              <span>이 보도자료의 본문을 확인하시고 오류를 찾아주세요.</span>
-            </div>
-
-            <div className="text-comparison">
-              <div className="original-box">
-                <div className="label">【원문】</div>
-                <div className="text">{game.originalText}</div>
+            <div className="doc-body-wrapper">
+              <div className={`doc-timer ${timeLeft <= 10 ? 'timer-urgent' : ''}`}>
+                ⏱ 0:{timeLeft.toString().padStart(2, '0')}
               </div>
-
-              <div className="game-text-box">
-                <div className="label-row">
-                  <div className="label">【본문 - 오류 찾기】</div>
-                  <div className={`timer ${timeLeft <= 10 ? 'timer-urgent' : ''}`}>
-                    0:{timeLeft.toString().padStart(2, '0')}
-                  </div>
-                </div>
-
-                <div className="text interactive">
-                  {game.modifiedText.split('').map((char: string, i: number) => {
-                    const isFound = found.has(i);
-                    return (
-                      <span
-                        key={i}
-                        className={`char ${isFound ? 'found' : ''}`}
-                        onClick={() => handleWordClick(i)}
-                      >
-                        {char}
-                      </span>
-                    );
-                  })}
-                </div>
-
-                <div className="game-progress">
-                  <span className="found">
-                    발견: <strong>{found.size}/{game.errors.length}</strong>
-                  </span>
-                </div>
+              <div className="doc-body">
+                {game.modifiedText.split('').map((char: string, i: number) => {
+                  const isFound = found.has(i);
+                  return (
+                    <span
+                      key={i}
+                      className={`char ${isFound ? 'found' : ''}`}
+                      onClick={() => handleWordClick(i)}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
+              </div>
+              <div className="doc-hint">
+                발견: <strong>{found.size}</strong> / {game.errors.length}개
               </div>
             </div>
 
