@@ -2,286 +2,314 @@ import { useState, useEffect, useRef } from 'react';
 import './game.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
-const WS_URL = import.meta.env.VITE_WS_URL || '';
+const WS_URL  = import.meta.env.VITE_WS_URL  || '';
 
 function getUserId() {
-  let id = localStorage.getItem('userId');
-  if (!id) { id = `user_${Math.random().toString(36).slice(2, 10)}`; localStorage.setItem('userId', id); }
-  return id;
+  let v = localStorage.getItem('userId');
+  if (!v) { v = `user_${Math.random().toString(36).slice(2,10)}`; localStorage.setItem('userId', v); }
+  return v;
 }
 function getNickname() {
-  let n = localStorage.getItem('nickname');
-  if (!n) { n = `익명_${Math.floor(Math.random() * 90000) + 10000}`; localStorage.setItem('nickname', n); }
-  return n;
+  let v = localStorage.getItem('nickname');
+  if (!v) { v = `익명_${Math.floor(Math.random()*90000)+10000}`; localStorage.setItem('nickname', v); }
+  return v;
 }
 
-// 기본 게임 데이터 (API 없을 때 폴백)
-const FALLBACK_GAME = {
+type Segment = { text: string; isTypo: false } | { text: string; isTypo: true; index: number };
+
+const FALLBACK: { id: string; category: string; title: string; date: string; dept: string; segments: Segment[]; errorCount: number } = {
   id: 'game-001',
+  category: '정책뉴스',
   title: '숲에서 실현하는 청년창업을 돕다',
   date: '2026.07.01',
-  department: '산림청',
-  // 각 segment: { text: string, isTypo: boolean, index?: number }
+  dept: '산림청',
+  errorCount: 4,
   segments: [
-    { text: '산림청(청장 박은식)은 대전 케이더블류(KW) 컨벤션에서\n산림분야 청년', isTypo: false },
+    { text: '산림청(청장 박은식)은 대전 케이더블류(KW) 컨벤션에서 산림분야 청년', isTypo: false },
     { text: '청', isTypo: true, index: 0 },
     { text: '업가와 ', isTypo: false },
     { text: '전문', isTypo: false },
     { text: '거', isTypo: true, index: 1 },
-    { text: ' 등이 참석하는\n\'제5회 산림 청년포럼\'을 개최했', isTypo: false },
+    { text: ' 등이 참석하는 \'제5회 산림 청년포럼\'을 개최했', isTypo: false },
     { text: '머', isTypo: true, index: 2 },
     { text: '고 29일 밝혔', isTypo: false },
     { text: '더', isTypo: true, index: 3 },
     { text: '.', isTypo: false },
   ],
-  errorCount: 4,
 };
 
+const POPULAR_NEWS = [
+  { rank: 1, title: '영화 할인권부터 단기 육아휴직까지… 7월부터 달라지는 것들', dept: '기획재정부' },
+  { rank: 2, title: '자도 자도 피곤하다면? 수면무호흡증 무료 검사 받으세요', dept: '보건복지부' },
+  { rank: 3, title: '7월부터 공공기관 승용차 2부제 해제 결정', dept: '환경부' },
+  { rank: 4, title: '청년 도약계좌 6월 신청 현황 및 향후 일정 안내', dept: '금융위원회' },
+  { rank: 5, title: '2026년 하반기 공무원 채용 일정 발표', dept: '인사혁신처' },
+];
+
 export function GamePage() {
-  const [game, setGame] = useState<any>(FALLBACK_GAME);
-  const [found, setFound] = useState<Set<number>>(new Set());
+  const [game, setGame]         = useState(FALLBACK);
+  const [found, setFound]       = useState<Set<number>>(new Set());
   const [timeLeft, setTimeLeft] = useState(30);
-  const [isComplete, setIsComplete] = useState(false);
+  const [done, setDone]         = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [myRank, setMyRank] = useState<any>(null);
-  const [ranking, setRanking] = useState<any[]>([]);
+  const [myRank, setMyRank]     = useState<{ today: number | null; all: number | null } | null>(null);
+  const [ranking, setRanking]   = useState<{ userId: string; nickname: string; points: number }[]>([]);
 
   useEffect(() => {
     if (API_URL) {
-      fetch(`${API_URL}/games/today`)
-        .then(r => r.json())
-        .then(games => { if (games?.length > 0) setGame(games[0]); })
-        .catch(() => {});
+      fetch(`${API_URL}/games/today`).then(r => r.json()).then(gs => { if (gs?.length) setGame(gs[0]); }).catch(() => {});
+      fetch(`${API_URL}/rankings?userId=${getUserId()}`).then(r => r.json()).then(d => { setRanking(d.today || []); setMyRank(d.myRank); }).catch(() => {});
     }
-    loadRanking();
   }, []);
 
-  function loadRanking() {
-    if (!API_URL) return;
-    fetch(`${API_URL}/rankings?userId=${getUserId()}`)
-      .then(r => r.json())
-      .then(data => { setRanking(data.today || []); setMyRank(data.myRank); })
-      .catch(() => {});
-  }
-
   useEffect(() => {
-    if (isComplete || !game) return;
-    if (timeLeft === 0) { finishGame(found); return; }
-    const t = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    if (done || !game) return;
+    if (timeLeft === 0) { finish(found); return; }
+    const t = setTimeout(() => setTimeLeft(s => s - 1), 1000);
     return () => clearTimeout(t);
-  }, [timeLeft, isComplete, game]);
+  }, [timeLeft, done]);
 
-  function handleTypoClick(index: number) {
-    if (isComplete || found.has(index)) return;
+  function handleTypoClick(idx: number) {
+    if (done || found.has(idx)) return;
     const next = new Set(found);
-    next.add(index);
+    next.add(idx);
     setFound(next);
-    if (next.size === game.errorCount) finishGame(next);
+    if (next.size === game.errorCount) finish(next);
   }
 
-  function finishGame(foundSet: Set<number>) {
-    setIsComplete(true);
+  function finish(f: Set<number>) {
+    setDone(true);
     setShowResult(true);
-    if (API_URL) {
-      fetch(`${API_URL}/scores`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: getUserId(),
-          nickname: getNickname(),
-          gameId: game.id,
-          foundCount: foundSet.size,
-          totalErrors: game.errorCount,
-          timeSpent: 30 - timeLeft,
-          points: foundSet.size * 20,
-        }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.rankings) { setRanking(data.rankings.today || []); setMyRank(data.rankings.myRank); }
-        })
-        .catch(() => {});
-    }
+    if (!API_URL) return;
+    fetch(`${API_URL}/scores`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId(), nickname: getNickname(), gameId: game.id, foundCount: f.size, totalErrors: game.errorCount, timeSpent: 30 - timeLeft, points: f.size * 20 }),
+    }).then(r => r.json()).then(d => { if (d.rankings) { setRanking(d.rankings.today || []); setMyRank(d.rankings.myRank); } }).catch(() => {});
   }
 
   return (
     <>
-      {/* korea.kr 헤더 */}
-      <header id="header" className="kr-header">
+      {/* ── 헤더 ── */}
+      <header className="kr-header">
         <div className="kr-header-inner">
           <div className="kr-logo">정책브리핑</div>
-          <nav className="kr-nav">
+          <nav className="kr-gnb">
             <a href="#">뉴스</a>
             <a href="#" className="active">브리핑</a>
             <a href="#">정책자료</a>
             <a href="#">구독&amp;참여</a>
           </nav>
-          <div className="kr-utils">
+          <div className="kr-header-utils">
+            <button>닫기</button>
+            <span className="sep">|</span>
+            <button>공직메일</button>
+            <span className="sep">|</span>
+            <button>알림ON</button>
+            <span className="sep">|</span>
             <button>검색</button>
           </div>
         </div>
       </header>
 
-      <main id="main" className="kr-main">
-        {/* 브레드크럼 */}
-        <div className="kr-breadcrumb">
-          <span>홈</span><span className="sep">&gt;</span>
-          <span>브리핑룸</span><span className="sep">&gt;</span>
+      {/* ── 브레드크럼 ── */}
+      <div className="kr-sub-header">
+        <nav className="kr-breadcrumb">
+          <span>홈</span><span className="sep">›</span>
+          <span>브리핑룸</span><span className="sep">›</span>
           <span className="current">보도자료</span>
-        </div>
+        </nav>
+      </div>
 
-        <div className="kr-layout">
-          {/* 기사 본문 */}
-          <article className="kr-article">
-            {/* 기사 헤더 */}
-            <div className="article-head">
-              <div className="article-actions">
-                <button>공유</button>
-                <button>댓글</button>
-                <button>인쇄</button>
-                <button>목록</button>
-              </div>
-              <h1 className="article-title">{game.title}</h1>
-              <div className="article-info">
-                <span className="article-date">{game.date}</span>
-                <span className="article-sep">|</span>
-                <span className="article-dept">{game.department}</span>
-              </div>
-              <hr className="article-divider" />
-            </div>
+      {/* ── 메인 ── */}
+      <main id="kr-main">
+        <div className="area_contents">
 
-            {/* 기사 본문 (게임 영역) */}
-            <div className="article-cont">
-              {/* 첨부파일 (장식) */}
-              <div className="file-list">
-                <span className="file-icon">📎</span>
-                <a href="#">보도자료_산림청_청년포럼.hwp</a>
-                <a href="#">보도자료_산림청_청년포럼.pdf</a>
+          {/* SNS 툴바 */}
+          <aside className="as_sns">
+            <ul>
+              <li><button type="button"><span className="sns-icon">🔗</span><span>공유</span></button></li>
+              <li><button type="button"><span className="sns-icon">💬</span><span>댓글</span></button></li>
+              <li><button type="button"><span className="sns-icon">🖨</span><span>인쇄</span></button></li>
+              <li><button type="button"><span className="sns-icon">☰</span><span>목록</span></button></li>
+            </ul>
+          </aside>
+
+          {/* 본문 */}
+          <div className="article_wrap">
+            <div className="container">
+
+              {/* 기사 헤더 */}
+              <div className="article_head">
+                <span className="head">{game.category}</span>
+                <h1>{game.title}</h1>
+                <div className="variety">
+                  <div className="info">
+                    <span>{game.date}</span>
+                    <span>{game.dept}</span>
+                  </div>
+                  <div className="tool">
+                    <button type="button">글자크기</button>
+                    <button type="button">인쇄하기</button>
+                    <button type="button">음성듣기</button>
+                    <button type="button">목록</button>
+                  </div>
+                </div>
               </div>
 
-              <div className="article-body">
-                {/* 타이머 (본문 위 우측, 아주 작게) */}
-                {!isComplete && (
-                  <span className={`inline-timer ${timeLeft <= 10 ? 'urgent' : ''}`}>
-                    ⏱ 0:{timeLeft.toString().padStart(2, '0')}
-                  </span>
+              {/* 기사 본문 */}
+              <div className="article_body">
+
+                {/* 첨부파일 */}
+                <div className="atc_file">
+                  <div className="file_title">첨부파일</div>
+                  <ul>
+                    <li><span className="file_icon">📎</span><a href="#">보도자료_{game.dept}_{game.title.slice(0,10)}.hwp</a><span className="file_size">(245KB)</span></li>
+                    <li><span className="file_icon">📎</span><a href="#">보도자료_{game.dept}_{game.title.slice(0,10)}.pdf</a><span className="file_size">(312KB)</span></li>
+                  </ul>
+                </div>
+
+                {/* 핵심 본문 */}
+                <div className="view_cont">
+                  {!done && (
+                    <span className={`game-timer${timeLeft <= 10 ? ' urgent' : ''}`}>
+                      ⏱ 0:{timeLeft.toString().padStart(2, '0')}
+                    </span>
+                  )}
+                  <p>
+                    {game.segments.map((seg, i) =>
+                      seg.isTypo ? (
+                        <span
+                          key={i}
+                          className={`typo${found.has(seg.index) ? ' found' : ''}`}
+                          onClick={() => handleTypoClick(seg.index)}
+                        >
+                          {seg.text}
+                        </span>
+                      ) : (
+                        <span key={i}>{seg.text}</span>
+                      )
+                    )}
+                  </p>
+                  <div className="game-hint">
+                    찾은 오류: <strong>{found.size}</strong> / {game.errorCount}
+                  </div>
+                </div>
+
+                {/* 결과 */}
+                {showResult && (
+                  <div className="game-result">
+                    <div className="result-row">
+                      <span className="result-check">✓</span>
+                      <span>{found.size}개 발견 &nbsp;·&nbsp; {30 - timeLeft}초 &nbsp;·&nbsp; {found.size * 20}점</span>
+                    </div>
+                    <div className="result-ranks">
+                      <span>오늘 순위 <strong>{myRank?.today ? `#${myRank.today}` : '—'}</strong></span>
+                      <span>전체 순위 <strong>{myRank?.all ? `#${myRank.all}` : '—'}</strong></span>
+                    </div>
+                    <button className="btn-next" onClick={() => window.location.reload()}>다음 보도자료 →</button>
+                  </div>
                 )}
 
-                {/* 실제 본문 - 오타 글자만 span으로 */}
-                <p className="article-paragraph">
-                  {(game.segments || []).map((seg: any, i: number) => {
-                    if (!seg.isTypo) {
-                      return seg.text.split('\n').map((line: string, j: number) => (
-                        j === 0 ? line : <span key={`${i}-${j}`}><br />{line}</span>
-                      ));
-                    }
-                    const isFound = found.has(seg.index);
-                    return (
-                      <span
-                        key={i}
-                        className={`typo${isFound ? ' found' : ''}`}
-                        onClick={() => handleTypoClick(seg.index)}
-                        title={isFound ? '찾았습니다!' : undefined}
-                      >
-                        {seg.text}
-                      </span>
-                    );
-                  })}
-                </p>
-
-                {/* 발견 카운트 */}
-                <div className="inline-hint">
-                  찾은 오류: <strong>{found.size}</strong> / {game.errorCount}
+                {/* 하단 정보 */}
+                <div className="atc_bottom">
+                  <div className="view_info">
+                    <span>👁 조회수 1,234</span>
+                    <span>👍 공감 45</span>
+                    <span>↗ 공유 12</span>
+                  </div>
                 </div>
+
               </div>
-
-              {/* 결과 */}
-              {showResult && (
-                <div className="result-box">
-                  <div className="result-summary">
-                    <span className="result-check">✓</span>
-                    <span>{found.size}개 발견 · {30 - timeLeft}초 · {found.size * 20}점</span>
-                  </div>
-                  <div className="result-ranks">
-                    <span>오늘 순위 <strong>{myRank?.today ? `#${myRank.today}` : '-'}</strong></span>
-                    <span>전체 순위 <strong>{myRank?.all ? `#${myRank.all}` : '-'}</strong></span>
-                  </div>
-                  <button className="btn-retry" onClick={() => window.location.reload()}>
-                    다음 보도자료 →
-                  </button>
-                </div>
-              )}
             </div>
-
-            {/* 하단 메타 */}
-            <div className="article-footer">
-              <span>조회수 1,234</span>
-              <span className="article-sep">|</span>
-              <span>공감 45</span>
-            </div>
-          </article>
+          </div>
 
           {/* 사이드바 */}
-          <aside className="kr-sidebar">
-            <div className="sidebar-box">
-              <h3>오늘 순위 TOP5</h3>
-              {ranking.length === 0 ? (
-                <p className="sidebar-empty">아직 기록 없음</p>
-              ) : (
-                <ol className="rank-list">
-                  {ranking.slice(0, 5).map((r: any, i: number) => (
-                    <li key={r.userId} className={r.userId === getUserId() ? 'me' : ''}>
-                      <span className="rank-no">{i + 1}</span>
-                      <span className="rank-nick">{r.nickname}</span>
-                      <span className="rank-pt">{r.points}pt</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
+          <aside className="as_side">
+
+            {/* 정책 NOW 배너 */}
+            <div className="side_row">
+              <div className="side_title">정책 NOW</div>
+              <div className="policy_banner_placeholder">정책브리핑 NOW</div>
             </div>
 
-            <ChatWidget />
+            {/* 실시간 인기뉴스 */}
+            <div className="side_row">
+              <div className="side_title">실시간 인기뉴스</div>
+              <ul className="lst">
+                {POPULAR_NEWS.map(n => (
+                  <li key={n.rank}>
+                    <a href="#">
+                      <div className="thumb-placeholder">{n.dept}</div>
+                      <div className="text">
+                        <span className="rank">{n.rank}</span>
+                        <strong>{n.title}</strong>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 오늘 순위 (API 연결 시) */}
+            {ranking.length > 0 && (
+              <div className="side_row">
+                <div className="side_title">오늘 순위</div>
+                <ul className="lst">
+                  {ranking.slice(0, 5).map((r, i) => (
+                    <li key={r.userId}>
+                      <a href="#">
+                        <div className="text">
+                          <span className="rank">{i + 1}</span>
+                          <strong style={{ fontSize: '13px' }}>{r.nickname} — {r.points}pt</strong>
+                        </div>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
           </aside>
+
         </div>
       </main>
+
+      {/* 채팅 위젯 */}
+      <ChatWidget />
     </>
   );
 }
 
-// ─── 채팅 위젯 ────────────────────────────────────────────
+/* ── 채팅 위젯 ──────────────────────────────────────────── */
 function ChatWidget() {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [input, setInput] = useState('');
-  const [online, setOnline] = useState(1);
-  const wsRef = useRef<WebSocket | null>(null);
+  const [messages, setMessages] = useState<{ messageId: number | string; type: string; nickname?: string; message: string }[]>([]);
+  const [input, setInput]       = useState('');
+  const [online, setOnline]     = useState(1);
+  const wsRef   = useRef<WebSocket | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   useEffect(() => {
     if (!WS_URL) return;
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
     ws.onopen = () => ws.send(JSON.stringify({ type: 'join', userId: getUserId(), nickname: getNickname() }));
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      if (data.type === 'online_count') { setOnline(data.count); return; }
-      setMessages(prev => [...prev.slice(-100), data]);
+    ws.onmessage = e => {
+      const d = JSON.parse(e.data);
+      if (d.type === 'online_count') { setOnline(d.count); return; }
+      setMessages(p => [...p.slice(-100), d]);
     };
     return () => ws.close();
   }, []);
 
-  function handleSend() {
+  function send() {
     if (!input.trim()) return;
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ type: 'chat', message: input.trim() }));
     } else {
-      setMessages(prev => [...prev, {
-        messageId: Date.now(), type: 'chat',
-        userId: getUserId(), nickname: getNickname(), message: input.trim(),
-      }]);
+      setMessages(p => [...p, { messageId: Date.now(), type: 'chat', nickname: getNickname(), message: input.trim() }]);
     }
     setInput('');
   }
@@ -294,7 +322,7 @@ function ChatWidget() {
       </div>
       <div className="chat-messages">
         {messages.length === 0 && <p className="chat-empty">채팅을 시작해보세요!</p>}
-        {messages.map((m: any) => (
+        {messages.map(m => (
           <div key={m.messageId} className={`chat-msg ${m.type}`}>
             {m.type === 'system'
               ? <span className="chat-system">{m.message}</span>
@@ -305,13 +333,8 @@ function ChatWidget() {
         <div ref={bottomRef} />
       </div>
       <div className="chat-input-row">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSend()}
-          placeholder="메시지 입력..."
-        />
-        <button onClick={handleSend}>전송</button>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="메시지 입력..." />
+        <button onClick={send}>전송</button>
       </div>
     </div>
   );

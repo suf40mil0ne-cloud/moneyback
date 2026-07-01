@@ -1,0 +1,913 @@
+@charset "UTF-8";
+/* =========================================
+==== 주의 ==================================
+web, mobile 공통 css
+============================================
+========================================== */
+/* ================================== 보도자료 tag p margin-bottom 제거 ================================== */
+.view_cont[data-title="경제사회노동위원회"] p,
+.view_cont[data-title="관세청"] p,
+.view_cont[data-title="교육부"] p,
+.view_cont[data-title="국무조정실"] p,
+.view_cont[data-title="국민권익위원회"] p,
+.view_cont[data-title="국토교통부"] p,
+.view_cont[data-title="금융위원회"] p,
+.view_cont[data-title="농림축산식품부"] p,
+.view_cont[data-title="농촌진흥청"] p,
+.view_cont[data-title="문화재청"] p,
+.view_cont[data-title="법무부"] p,
+.view_cont[data-title="법제처"] p,
+.view_cont[data-title="산업통상자원부"] p,
+.view_cont[data-title="새만금개발청"] p,
+.view_cont[data-title="소방청"] p,
+.view_cont[data-title="여성가족부"] p,
+.view_cont[data-title="외교부"] p,
+.view_cont[data-title="원자력안전위원회"] p,
+.view_cont[data-title="인사혁신처"] p,
+.view_cont[data-title="저출산고령사회위원회"] p,
+.view_cont[data-title="조달청"] p,
+.view_cont[data-title="질병관리청"] p,
+.view_cont[data-title="해양경찰청"] p,
+.view_cont[data-title="해양수산부"] p,
+.view_cont[data-title="환경부"] p {margin-bottom: 0 !important;}
+.view_cont .blank {color: #1974dd; display: inline;}
+.view_cont .blank:after {content: '\e980'; font-family: "xeicon"; display: inline-block; font-size: 0.875rem; position: relative; top: -0.125rem;}
+
+/* ==================================  관련기사 링크 ================================== */
+.related_links {background-color: #f4f5fa; border: 1px solid #dedede; padding: 35px 20px; display: flex; flex-direction: column; align-items: center; width: 100%;}
+.related_links strong {font-size: 17px; font-weight: 400; line-height: 1; color: #0c0c0c !important;}
+.related_links strong:before{font-family:'xeicon'; content:'\e9aa'; display:inline-block; font-size:20px; color:#0c0c0c; vertical-align: middle; position: relative; top: -1px; margin-right: 5px;}
+.related_links strong b {font-weight: 700;}
+.related_links ul {display: flex; flex-wrap: wrap; justify-content: center; gap:7px 5px; margin-top: 20px;}
+.related_links ul a {border-radius: 50px; border: 1px solid #ae55e9; background: #fff; padding: 5px 30px; font-weight: 500; color: #a64ce2; font-size: 17px; letter-spacing: -0.05em; transition:all 0.2s;}
+.related_links ul a[target='_blank'] i:after {content: '\e980'; display: inline-block; font-family: 'xeicon'; margin-left: 4px; font-size: 18px; vertical-align: middle; position: relative; top: -2px;}
+.related_links ul a:hover {background: linear-gradient(90deg, #9955f1 0%, #dc47de 100%); color: #fff; border: 1px solid transparent; text-decoration: underline; text-underline-position: under;}
+
+@media all and (max-width:720px) {
+	body.mobile .related_links ul {flex-direction: column; width: 100%;}
+	body.mobile .related_links ul li {width: 100%;}
+	body.mobile .related_links ul a {width: 100%; text-align: center;}
+}
+
+/* ================================== 주말여행 / 인포그래픽 ================================== */
+/* common */
+.weekend_style {margin:0 auto; width: 100%;}
+.weekend_style img {max-width:100%; margin:0;}
+.weekend_style ul {padding:0; margin:0;}
+.weekend_style ul li {padding:0; margin:0; list-style:none;}
+.weekend_style a[target='_blank'] {border-bottom:1px solid #1974dd; color:#1974dd; background:url('https://www.korea.kr/newsWeb/resources/temp/images/000196/blank2_on_.png') right 56% no-repeat; padding-right:15px;}
+.weekend_style .travel_tit {margin-top:35px; color:#000; font-weight:bold; margin-bottom:-20px;}
+.weekend_style .travel_txt {margin-top:35px; text-align: justify;}
+.weekend_style .travel_img {margin-top:20px; text-align:center; font-size:0; line-height:0; position: relative; left: 50%; transform: translateX(-50%); width:720px; max-width: 720px; display: flex; justify-content: center;}
+.weekend_style .travel_tit + .travel_img {margin-top:35px;}
+.weekend_style .travel_txt + .travel_img {margin-top:35px;}
+.weekend_style .travel_img + .travel_txt {margin-top:20px;}
+
+.weekend_style .travel_tit.type1 {position:relative; padding-left:10px;}
+.weekend_style .travel_tit.type1:before {content: ''; position: absolute; top: 50%; left: 0; margin-top: -10px; display:inline-block; width:4px; height:20px; background-color: #0a97cd; vertical-align: middle;}
+.weekend_style .travel_tit.type1 + .travel_tit {margin-top: 20px;}
+.weekend_style .travel_tit.type1 + .travel_info.st1 {margin-top: 30px;}
+.weekend_style .travel_img:first-child + .travel_txt {margin-top:35px;}
+
+.weekend_style .travel_img strong {display:block; margin:10px 0 0 0; font-size:13px; color:#000; line-height:18px; vertical-align:top; font-weight: 600;}
+.weekend_style .travel_img div {display:inline-block; padding:0; margin:0 0.5%; vertical-align:top; word-break: keep-all;}
+.weekend_style .travel_img.type2 div, .weekend_style .travel_img.type3 div {margin: 0 0.5%;}
+
+.weekend_style .travel_info.st1 + .travel_tit.type1 {margin-top: 50px;}
+.weekend_style .travel_info {margin-top:20px; font-size:17px; line-height:1.8em;}
+.weekend_style .travel_info strong {color: #000;}
+.weekend_style .travel_info li {text-indent:-6px; padding:0 0 0 12px;}
+.weekend_style .travel_info li:before {content:'-'; display:inline-block; margin-right:5px;}
+.weekend_style .travel_info li.none {text-indent:0; padding:0 0 0 0;}
+.weekend_style .travel_info li.none:before {display: none;}
+.weekend_style .travel_info a {border-bottom:1px solid #1974dd; color:#1974dd; background:url('https://www.korea.kr/newsWeb/resources/temp/images/000196/blank2_on_.png') right 56% no-repeat; padding-right:15px; text-indent: 0;}
+.weekend_style .travel_info.st1 {position: relative; padding:30px;}
+.weekend_style .travel_info.st1:before,
+.weekend_style .travel_info.st1:after {content:''; display:inline-block; width:100%; height: 10px; position: absolute; left: 0; background: url('http://www.korea.kr/newsWeb/resources/temp/images/000120/bg_infobx_pattern.gif') 10px 0 repeat-x;} .weekend_style .travel_info.st1:before {top: 0;}
+.weekend_style .travel_info.st1:after {bottom: 0;}
+.weekend_style .travel_info.st1 ul:before,
+.weekend_style .travel_info.st1 ul:after {content:''; display:inline-block; width:10px; height:100%; position: absolute; top: 0; bottom:0; background: url('http://www.korea.kr/newsWeb/resources/temp/images/000120/bg_infobx_pattern1.gif') 0 10px repeat-y;} .weekend_style .travel_info.st1 ul:before {left: 0;}
+.weekend_style .travel_info.st1 ul:after {right: 0;}
+.weekend_style .travel_info.st1 strong {display: block; color:#1974dd;}
+.weekend_style .travel_info.st1 li:before {content:'-'; display:inline-block; margin-right:5px; vertical-align:top;}
+.weekend_style .travel_info.st1 li.none:before {display: none;}
+.weekend_style .travel_info.st1 ul + strong {margin-top: 20px;}
+
+.weekend_style .travel_info.st2 {margin-top: 35px; padding: 10px; background: linear-gradient(-45deg, #dee2e6 25%, #fff 0, #fff 50%, #dee2e6 0, #dee2e6 75%, #fff 0 ); background-size:4px 4px;}
+.weekend_style .travel_info.st2 > div {background-color: #fff; padding: 15px;}
+
+.weekend_style .travel_info_text {position: relative; text-align:center; margin-top:35px; padding: 30px 0;}
+.weekend_style .travel_info_text:before {content: ''; display: block; position: absolute; top: 0; left: 50%; transform: translateX(-50%); height: 2px; width: 80px; background-color:#000;}
+.weekend_style .travel_info_text:after {content: ''; display: block; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 2px; width: 80px; background-color:#000;}
+.weekend_style .travel_source {font-size:15px; line-height:1.5em; text-align:right; margin-top:35px;}
+.weekend_style .travel_notice {font-size:15px; line-height:1.5em; text-align:right; margin-top:15px; font-weight: 700;}
+.weekend_style .travel_link {margin-top:15px;}
+.weekend_style .travel_link a[target='_blank'] {padding:0; background:none; border-bottom:none;}
+@media only screen and (max-width:699px) {
+	.weekend_style .travel_img.type3 {flex-wrap: wrap;}
+	.weekend_style .travel_img.type3 div {margin: 0.5%;}
+
+	.weekend_style .travel_img strong {font-size:13px; font-weight:normal; line-height:18px;}
+	.weekend_style img {max-width:100%;}
+	.weekend_style .travel_info br {display:none;}
+	.weekend_style .travel_info_text br {display:none;}
+}
+
+/* 날짜별 */
+.weekend20210923 {max-width:700px; margin:0 auto;}
+.weekend20210923 img {width:100%; margin:0;}
+.weekend20210923 div, .weekend20210923 ul, .weekend20210923 li {box-sizing: border-box; list-style: none;}
+.weekend20210923 .slick-arrow {position: absolute; z-index: 4; top: 45%; transform: translateY(-50%); font-size: 0;}
+.weekend20210923 .slick-arrow:before {font-family: "xeicon"; font-size: 40px; color: #4c79fa; transition: color .2s; }
+.weekend20210923 .slick-arrow.slick-prev { left: 3%; }
+.weekend20210923 .slick-arrow.slick-prev::before { content: '\e93c'; }
+.weekend20210923 .slick-arrow.slick-next { right: 3%; }
+.weekend20210923 .slick-arrow.slick-next::before { content: '\e93f'; }
+.weekend20210923 .slick-arrow.slick-disabled {display: none !important;}
+.weekend20210923 .slick-dots {display: inline-block; width: 100%; font-size: 0; text-align: center; margin: 20px 0;}
+.weekend20210923 .slick-dots li {display: inline-block; list-style: none;}
+.weekend20210923 .slick-dots button {position: relative; width: 30px; height: 30px; transition:all 0.2s;}
+.weekend20210923 .slick-dots button:before {content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background:#999; width: 15px; height: 15px; box-sizing: border-box; font-size: 0; line-height: 0; border-radius: 10px; transition: all 0.3s;}
+.weekend20210923 .slick-dots .slick-active button {width: 30px;}
+.weekend20210923 .slick-dots .slick-active button:before {background:#4c79fa; width: 30px;}
+.weekend20210923 .weekend_section1 {background-color: #ebeef9;}
+.weekend20210923 .weekend_section2 {background-color: #eefaf5;}
+.weekend20210923 .weekend_section2 .slick-arrow:before {color: #00da83;}
+.weekend20210923 .weekend_section2 .slick-dots .slick-active button:before {background:#00da83;}
+.weekend20210923 .weekend_section3 {background-color: #eef8fb;}
+.weekend20210923 .weekend_section3 .slick-arrow:before {color: #00D9FD;}
+.weekend20210923 .weekend_section3 .slick-dots .slick-active button:before {background:#00D9FD;}
+
+.weekend20211112 {max-width:750px; margin:0 auto;}
+.weekend20211112 img {width:100%; margin:0;}
+.weekend20211112 .weekend_slider .slider_tab {padding:0; font-size:0; line-height:0;}
+.weekend20211112 .weekend_slider .slider_tab > div {max-width:750px; margin:0 auto;}
+.weekend20211112 .weekend_slider .slider_tab:after {content:''; display:block; clear:both;}
+.weekend20211112 .weekend_slider .slider_tab .slick-track {width:auto !important;}
+.weekend20211112 .weekend_slider .slider_tab .slick-slide {max-width:250px !important; width: 33.3333333% !important; text-align: center;}
+.weekend20211112 .weekend_slider .slider_tab.t2 .slick-slide {max-width:100% !important; width: 50% !important;}
+.weekend20211112 .weekend_slider .slider_tab .slick-slide > div {padding:0;}
+.weekend20211112 .weekend_slider .slider_tab button {box-sizing:border-box; border:none; background:none; padding:0 0; display:inline-block; font-size:0; line-height:0; text-align:left;}
+.weekend20211112 .weekend_slider .slider_tab button img:nth-child(1) {display:block;}
+.weekend20211112 .weekend_slider .slider_tab button img:nth-child(2) {display:none;}
+.weekend20211112 .weekend_slider .slider_tab .slick-current button img:nth-child(1) {display:none;}
+.weekend20211112 .weekend_slider .slider_tab .slick-current button img:nth-child(2) {display:block;}
+.weekend20211112 .weekend_slider .slider_tab .slick-track {transform:translate3d(0, 0, 0) !important;}
+.weekend20211112 .weekend_slider .slider_con {padding:0 0 0 ;}
+.weekend20211112 .weekend_slider .slider_con .slick-slide {text-align: center;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info {padding: 0 4%;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info:after {content:''; display:block; clear:both;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wrow {position: relative; display: block;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wrow:after {content:''; display:block; clear:both;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol {float: left; width: calc(100%/3);}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol button img:nth-child(1) {display:block;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol button img:nth-child(2) {display:none;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol.on button img:nth-child(1) {display:none;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol.on button img:nth-child(2) {display:block;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol div {position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: none; padding-bottom: 3%;}
+.weekend20211112 .weekend_slider .slider_con .weekend_section_info .wcol.on div {display: block;}
+
+.info20211115 {max-width:790px; margin:0 auto;}
+.info20211115 img {max-width:100%; margin:0;}
+.info20211115 .info_slider .slider_tab {position: relative; padding:0; font-size:0; line-height:0; margin-bottom: 4px;}
+.info20211115 .info_slider .slider_tab .slick-track {transform:translate3d(0, 0, 0) !important;}
+.info20211115 .info_slider .slider_tab > div {width:100%; margin:0 auto; padding: 0 !important;}
+.info20211115 .info_slider .slider_tab:after {content:''; display:block; clear:both;}
+.info20211115 .info_slider .slider_tab .slick-track {width:auto !important;}
+.info20211115 .info_slider .slider_tab .slick-slide {width:20% !important; padding: 0 2px;}
+.info20211115 .info_slider .slider_tab button {box-sizing:border-box; border:none; background:none; padding:0 0; display:inline-block; font-size:0; line-height:0; text-align:left;}
+.info20211115 .info_slider .slider_tab button img:nth-child(1) {display:block;}
+.info20211115 .info_slider .slider_tab button img:nth-child(2) {display:none;}
+.info20211115 .info_slider .slider_tab .slick-current button img:nth-child(1) {display:none;}
+.info20211115 .info_slider .slider_tab .slick-current button img:nth-child(2) {display:block;}
+.info20211115 .info_slider .slider_con {padding: 0 !important;}
+.info20211115 .info_box_txt {padding-top: 30px;}
+.info20211115 .info_box_txt ul li:first-child {display: block;}
+.info20211115 .info_box_txt ul li {display: none;}
+
+.weekend20211203 {max-width:750px; margin:0 auto;}
+.weekend20211203 img {width:100%; margin:0;}
+.weekend20211203 .weekend_slider .slider_tab {padding:0; font-size:0; line-height:0;}
+.weekend20211203 .weekend_slider .slider_tab > div {max-width:750px; margin:0 auto;}
+.weekend20211203 .weekend_slider .slider_tab:after {content:''; display:block; clear:both;}
+.weekend20211203 .weekend_slider .slider_tab .slick-track {width:auto !important;}
+.weekend20211203 .weekend_slider .slider_tab .slick-slide {max-width:250px !important; width: 33.3333333% !important; text-align: center;}
+.weekend20211203 .weekend_slider .slider_tab.t2 .slick-slide {max-width:100% !important; width: 50% !important;}
+.weekend20211203 .weekend_slider .slider_tab .slick-slide > div {padding:0;}
+.weekend20211203 .weekend_slider .slider_tab button {box-sizing:border-box; border:none; background:none; padding:0 0; display:inline-block; font-size:0; line-height:0; text-align:left;}
+.weekend20211203 .weekend_slider .slider_tab button img:nth-child(1) {display:block;}
+.weekend20211203 .weekend_slider .slider_tab button img:nth-child(2) {display:none;}
+.weekend20211203 .weekend_slider .slider_tab .slick-current button img:nth-child(1) {display:none;}
+.weekend20211203 .weekend_slider .slider_tab .slick-current button img:nth-child(2) {display:block;}
+.weekend20211203 .weekend_slider .slider_tab .slick-track {transform:translate3d(0, 0, 0) !important;}
+.weekend20211203 .weekend_slider .slider_con {padding:0 0 0 ;}
+.weekend20211203 .weekend_slider .slider_con .slick-slide {text-align: center;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab {padding: 0 4%;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab:after {content:''; display:block; clear:both;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab > li {float: left; width: calc(100%/2); list-style: none; padding: 0;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab.tcol4 > li {width: calc(100%/4);}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab > li > a > img:nth-child(1) {display:block;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab > li a > img:nth-child(2) {display:none;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab > li.active > a > img:nth-child(1) {display:none;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab > li.active > a > img:nth-child(2) {display:block;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab_wrap {padding: 0 4%; position: relative;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab_wrap .weekend_section_tab_cont {display: none; margin-bottom: 4%;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab_wrap .weekend_section_tab_cont:first-child {display: block;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab_cont .weekend_section_tab {padding: 0; position: absolute; z-index: 2; left: 4%; right: 4%;}
+.weekend20211203 .weekend_slider .slider_con .weekend_section_tab_wrap .weekend_section_tab_wrap {padding: 0 0;}
+
+.weekend20211209 {max-width:750px; margin:0 auto; border: 1px solid #eae9ee; box-sizing: content-box;}
+.weekend20211209 img {width:100%; margin:0;}
+.weekend20211209 .weekend_slider .slider_tab {padding:0; font-size:0; line-height:0;}
+.weekend20211209 .weekend_slider .slider_tab > div {max-width:750px; margin:0 auto;}
+.weekend20211209 .weekend_slider .slider_tab:after {content:''; display:block; clear:both;}
+.weekend20211209 .weekend_slider .slider_tab .slick-track {width:auto !important;}
+.weekend20211209 .weekend_slider .slider_tab .slick-slide {max-width:250px !important; text-align: center;}
+.weekend20211209 .weekend_slider .slider_tab.t2 .slick-slide {max-width:100% !important; width: 50% !important;}
+.weekend20211209 .weekend_slider .slider_tab.t3 .slick-slide {max-width:100% !important; width: 33.3333333% !important;}
+.weekend20211209 .weekend_slider .slider_tab .slick-slide > div {padding:0;}
+.weekend20211209 .weekend_slider .slider_tab button {box-sizing:border-box; border:none; background:none; padding:0 0; display:inline-block; font-size:0; line-height:0; text-align:left;}
+.weekend20211209 .weekend_slider .slider_tab button img:nth-child(1) {display:block;}
+.weekend20211209 .weekend_slider .slider_tab button img:nth-child(2) {display:none;}
+.weekend20211209 .weekend_slider .slider_tab .slick-current button img:nth-child(1) {display:none;}
+.weekend20211209 .weekend_slider .slider_tab .slick-current button img:nth-child(2) {display:block;}
+.weekend20211209 .weekend_slider .slider_tab .slick-track {transform:translate3d(0, 0, 0) !important;}
+.weekend20211209 .weekend_slider .slider_con {padding:0 0 0 ;}
+.weekend20211209 .weekend_slider .slider_con .slick-slide {text-align: center;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab {padding: 0 4%; font-size: 0; line-height: 0;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab:after {content:''; display:block; clear:both;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab > li {float: left; width: calc(100%/2); list-style: none; padding: 0; background-color: #f7fae7;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab.tcol5 > li {width: calc(100%/5);}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab > li > a > img:nth-child(1) {display:block;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab > li a > img:nth-child(2) {display:none;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab > li.active > a > img:nth-child(1) {display:none;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab > li.active > a > img:nth-child(2) {display:block;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab_wrap {padding: 0 4% 2% 4%; position: relative;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab_wrap .weekend_section_tab_cont {display: none; margin-bottom: 4%;}
+.weekend20211209 .weekend_slider .slider_con .weekend_section_tab_wrap .weekend_section_tab_cont:first-child {display: block;}
+
+.info20220217 .freefontwrap:before{content:"";display:block;vertical-align:middle; max-width:792px;height:83px;background:url('https://www.korea.kr/newsWeb/resources/temp/images/000225/fontfree_00.gif') 0 0  no-repeat; background-size: 100% auto;}
+.info20220217 .freefontwrap{max-width:792px;background:url('https://www.korea.kr/newsWeb/resources/temp/images/000225/fontfree_02.gif') 0 0 repeat-y; margin:0 auto; background-size: 100% auto;}
+.info20220217 .freefontwrap .content_img {position: relative; box-sizing: border-box; padding: 0 5% 0 9%;}
+.info20220217 .freefontwrap .content_img a.zoom {position: absolute; bottom: 30px; right: 5%; width: 29px; height: 0; padding-top: 29px; display: none; background: url('https://www.korea.kr/newsWeb/resources/temp/images/000226/zoom.png') top right no-repeat; overflow: hidden; cursor: pointer;}
+.info20220217 .freefontwrap .longdesc {position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: polygon(0 0, 0 0, 0 0);}
+.info20220217 .freefontwrap .btn_group {width: 100%; padding: 30px 0 27px; overflow: hidden; text-align: center; box-sizing: border-box;}
+.info20220217 .freefontwrap .btn_group .btn {min-width: 100px; padding: 0; border: 0; vertical-align: middle; background: none; display: inline-block; color: #fff; background:#99754f; padding:15px 18px; font-size:18px; letter-spacing:-0.5px; border-radius: 3px; height: auto;}
+.info20220217 .freefontwrap .freefont{max-width:670px; margin:10px 7% 0 12%;position:relative;}
+.info20220217 .freefontwrap .freefont:after{clear: both; content: "";display: block;}
+.info20220217 .freefontwrap:after{content:"";display:block;vertical-align:middle;max-width:792px;height:70px;background:url('https://www.korea.kr/newsWeb/resources/temp/images/000225/fontfree_03.gif') 0 bottom  no-repeat; background-size: 100% auto;}
+.info20220217 .freefontwrap .freefont.kogl{border:1px solid #49abda; border-radius:3px; margin-bottom: 30px; display: block;}
+.info20220217 .freefontwrap .freefont.ofl{border:1px solid #a68562; border-radius:3px;}
+.info20220217 .freefontwrap .freefont .title{width:100%; text-align:center;margin:0; padding:10px 0; line-height: 1;}
+.info20220217 .freefontwrap .freefont .title.blue{background:#53b1dc;}
+.info20220217 .freefontwrap .freefont .title.brown{background:#a68562;}
+.info20220217 .freefontwrap .freefont .new, .info20220217 .freefontwrap .freefont .old{margin:0; padding:10px 12px; box-sizing: border-box; width: 100%;}
+.info20220217 .freefontwrap .freefont .new.blue{background:#dfe3ec; border-bottom:1px solid #49abda;}
+.info20220217 .freefontwrap .freefont .new a{border-radius:7px; border:1px solid #d9475c; background:#f7f6f2; width: calc(25% - 8px); text-align:center;}
+.info20220217 .freefontwrap .freefont .old a{border-radius: 7px; border: 1px solid #84b3c5; width: calc(25% - 8px); text-align:center;}
+.info20220217 .freefontwrap .freefont .title span{color:#fff; font-weight:500; display:inline-block; padding-right:8px; line-height: 1; vertical-align: middle;}
+.info20220217 .freefontwrap .freefont .title a{display: inline-block; vertical-align: middle;}
+.info20220217 .freefontwrap .freefont .title img{vertical-align:middle; margin-top:-3px;}
+
+.info20220217 .freefontwrap .freefont .new.brown{background:#e1d6ca; border-bottom:1px solid #a68562;}
+.info20220217 .freefontwrap .freefont .add{position:absolute; top:0; left:0; z-index:10; margin: 0;}
+.info20220217 .freefontwrap .freefont .newadd{margin:-1px 5px 0 -2px;}
+.info20220217 .freefontwrap .freefont .new a, .info20220217 .freefontwrap .freefont .old a {display:inline-block; margin:5px 0;}
+.info20220217 .freefontwrap .freefont .new a img,.info20220217 .freefontwrap .freefont .old a img{vertical-align:middle; margin: 0;}
+
+@media all and (max-width:768px) {
+    .info20220217 .freefontwrap{width:100%; background-size:100%; margin-top:-10px;}
+    .info20220217 .freefontwrap .freefont{width:86%; position:relative; margin:0 0 0 9%;}
+    .info20220217 .freefontwrap .freefont .title img, .info20220217 .freefontwrap .freefont .add{width:auto !important;}
+    .info20220217 .freefontwrap .content_img a.zoom{bottom:0px; display: block;}
+    .info20220217 .freefontwrap:before{width:100%; background-size:100%; height:55px;}
+    .info20220217 .freefontwrap:after{width:100%; background-size:100%; height:65px;}
+}
+
+@media all and (max-width:480px) {
+    .info20220217 .freefontwrap{}
+    .info20220217 .freefontwrap .freefont .add{width:20% !important;}
+    .info20220217 .freefontwrap:before{height:30px;}
+    .info20220217 .freefontwrap:after{height:30px;}
+	.info20220217 .freefontwrap .btn_group {padding: 30px 5% 27px 9%;}
+    .info20220217 .freefontwrap .btn_group a{display:block; width:100%; margin:0 auto;}
+    .info20220217 .freefontwrap .btn_group .btn + .btn{margin:10px auto;}
+    .info20220217 .freefontwrap .btn_group .btn {padding:10px 15px; font-size: 14px !important;}
+    .info20220217 .freefontwrap .freefont .newadd{margin:2px 5px 0 3px;}
+    .info20220217 .freefontwrap .freefont .new a, .info20220217 .freefontwrap .freefont .old a {width: calc(50% - 8px); margin:3px 0;}
+	.info20220217 .freefontwrap .freefont .title span{font-size: 14px !important;}
+}
+
+.weekend202120317 {max-width:750px; margin:0 auto; box-sizing: content-box;}
+.weekend202120317 img {max-width:100%; margin:0; width: 100%;}
+.weekend202120317 .top {background-size: cover; padding: 0 2% 2% 2%; background-position: 50% 0;}
+.weekend202120317 .top .title {margin-bottom: 53%;}
+.weekend202120317 .road {background-size: cover; background-position: 50% 0; background-repeat: no-repeat; padding: 0 2% 2% 2%;}
+.weekend202120317 .road .title {max-width: 500px; text-align: center; padding: 0 10% 0 10%; margin: 0 auto;}
+.weekend202120317 .road .list {display: flex; justify-content: center; flex-wrap: wrap;}
+.weekend202120317 .road .list:after {content:''; display:block; clear:both;}
+.weekend202120317 .road .list li {width: 46%; max-width: 300px; padding: 2%;}
+
+@media all and (max-width:375px) {
+	.weekend202120317 .road .list {padding: 0 8%;}
+    .weekend202120317 .road .list li {width: 100%; padding: 5%;}
+}
+
+.weekend202120318 {max-width:750px; margin:0 auto; box-sizing: content-box;}
+.weekend202120318 img {max-width:100%; margin:0;}
+.weekend202120318 .weekend_tab {}
+.weekend202120318 .weekend_tab ul {display: flex; flex-wrap: wrap; padding: 0; margin: 0;}
+.weekend202120318 .weekend_tab ul li {max-width: 50%; line-height: 0; list-style: none;}
+.weekend202120318 .weekend_tab ul li button img:nth-child(2) {display: none;}
+.weekend202120318 .weekend_tab ul li.active button img:nth-child(1) {display: none !important;}
+.weekend202120318 .weekend_tab ul li.active button img:nth-child(2) {display: block !important;}
+.weekend202120318 .weekend_tab_cont_wrap > div {display: none;}
+.weekend202120318 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+.weekend202120318 #fPeriod  {background-color: #f1f1f1; box-sizing: content-box;}
+.weekend202120318 #fPeriod .weekend_tab {}
+.weekend202120318 #fPeriod .weekend_tab ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 4%; margin: 0;}
+.weekend202120318 #fPeriod .weekend_tab ul > li {max-width: calc(100% / 3 - 4% ); padding: 0 2%; box-sizing: content-box; list-style: none;}
+.weekend202120318 #fPeriod .weekend_tab_cont {padding: 0 1.33333333333% 1.33333333333% 1.33333333333%;}
+.weekend202120318 #fTravel  {position: relative; background-color: #f1f1f1; box-sizing: content-box; padding: 0;}
+.weekend202120318 #fTravel .weekend_tab {position: absolute; left: 0; right: 0;}
+.weekend202120318 #fTravel .weekend_tab ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 4% 0; margin: 0;}
+.weekend202120318 #fTravel .weekend_tab ul > li {max-width: calc(100% / 4 - 2% ); padding: 0 1%; box-sizing: content-box; list-style: none;}
+.weekend202120318 #fTravel .weekend_tab_cont_wrap {}
+.weekend202120318 #fTravel .weekend_tab_cont {padding: 20% 0 3% 0; background-size: cover; background-position: 50% 0;}
+.weekend202120318 #fTravel .weekend_tab_cont .text {display: block; text-align: center; padding: 0 4%; margin-bottom: 3%; border: none;}
+.weekend202120318 #fTravel .weekend_tab_cont .list {display: flex; justify-content: center; flex-wrap: wrap; padding: 0;}
+.weekend202120318 #fTravel .weekend_tab_cont .list li {width: 46%; max-width: 335px; padding: 1%; list-style: none;}
+.weekend202120318 .hid {position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; border: 0;}
+
+@media all and (max-width:720px) {
+	.weekend202120318 #fPeriod  {padding: 0;}
+	.weekend202120318 #fPeriod .weekend_tab ul {padding: 4% 14%;}
+	.weekend202120318 #fTravel .weekend_tab ul {padding: 4%;}
+	.weekend202120318 #fTravel .weekend_tab_cont .list {padding: 0 2%;}
+}
+
+.weekend20220610 {max-width:750px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR';}
+.weekend20220610 img {max-width:100%; margin:0;}
+.weekend20220610 .hid {position: absolute; left: -10000%; top: 0; overflow: hidden; width: 0; height: 0; font-size: 0; line-height: 0; text-indent: -10000px;}
+.weekend20220610 .weekend_tab {background-color: #73e9fb;}
+.weekend20220610 .weekend_tab ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 0 2%; margin: 0;}
+.weekend20220610 .weekend_tab ul li {width: calc(100% / 4); list-style: none; text-align: center;}
+.weekend20220610 .weekend_tab ul li button {color: #00d8fa; font-weight: 400; font-size: 22px; padding: 20px; width: 100%; box-sizing: border-box;}
+.weekend20220610 .weekend_tab ul li.active button {font-weight: 400; background-color: #e9fffd;}
+.weekend20220610 .weekend_tab_cont_wrap .weekend_tab_cont {display: none; position: relative;}
+.weekend20220610 .weekend_tab_cont_wrap .weekend_tab_cont a {position: absolute; display: block; z-index: 2;}
+.weekend20220610 .weekend_tab_cont_wrap .weekend_tab_cont a span {position: absolute; left: -10000%; top: 0; overflow: hidden; width: 0; height: 0; font-size: 0; line-height: 0; text-indent: -10000px;}
+.weekend20220610 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+
+.weekend20220610 .map1_1 {top: 31.18%; bottom: 58.81%; left: 53.86%; right: 4.26%;}
+.weekend20220610 .map1_2 {top: 48.01%; bottom: 41.88%; left: 57.06%; right: 6%;}
+.weekend20220610 .map1_3 {top: 60.29%; bottom: 29.60%; left: 5.6%; right: 57.46%;}
+.weekend20220610 .map1_4 {top: 63.36%; bottom: 26.53%; left: 57.06%; right: 2.93%;}
+.weekend20220610 .map1_5 {top: 77.22%; bottom: 12.67%; left: 4.13%; right: 58.66%;}
+.weekend20220610 .map1_6 {top: 85.14%; bottom: 4.75%; left: 56%; right: 4%;}
+
+.weekend20220610 .map2_1 {top: 27.62%; bottom: 62.27%; left: 56.53%; right: 4.26%;}
+.weekend20220610 .map2_2 {top: 30.49%; bottom: 59.40%; left: 3.33%; right: 57.6%;}
+.weekend20220610 .map2_3 {top: 45.94%; bottom: 43.96%; left: 26.13%; right: 38.26%;}
+.weekend20220610 .map2_4 {top: 56.73%; bottom: 33.16%; left: 56.4%; right: 3.6%;}
+.weekend20220610 .map2_5 {top: 73.66%; bottom: 16.23%; left: 3.06%; right: 59.73%;}
+.weekend20220610 .map2_6 {top: 78.01%; bottom: 11.78%; left: 52.13%; right: 6.53%;}
+
+.weekend20220610 .map3_1 {top: 31.18%; bottom: 58.72%; left: 50%; right: 6.26%;}
+.weekend20220610 .map3_2 {top: 41.58%; bottom: 48.31%; left: 6.26%; right: 49.33%;}
+.weekend20220610 .map3_3 {top: 44.05%; bottom: 45.84%; left: 55.73%; right: 2.66%;}
+.weekend20220610 .map3_4 {top: 52.97%; bottom: 36.93%; left: 6.13%; right: 55.46%;}
+.weekend20220610 .map3_5 {top: 68.11%; bottom: 21.78%; left: 57.2%; right: 4.13%;}
+.weekend20220610 .map3_6 {top: 78.01%; bottom: 11.78%; left: 6.13%; right: 53.33%;}
+
+.weekend20220610 .map4_1 {top: 38.41%; bottom: 51.38%; left: 59.46%; right: 2.13%;}
+.weekend20220610 .map4_2 {top: 49.20%; bottom: 40.49%; left: 1.86%; right: 56.66%;}
+.weekend20220610 .map4_3 {top: 58.51%; bottom: 31.38%; left: 50.8%; right: 7.6%;}
+.weekend20220610 .map4_4 {top: 69.20%; bottom: 20.69%; left: 17.73%; right: 40.26%;}
+.weekend20220610 .map4_5 {top: 87.82%; bottom: 1.88%; left: 2.13%; right: 60.66%;}
+.weekend20220610 .map4_6 {top: 87.12%; bottom: 2.27%; left: 50.4%; right: 9.06%;}
+
+.weekend20221007_info {max-width:792px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000261/bg.jpg '); background-repeat: repeat-y; background-size: contain;}
+.weekend20221007_info img {max-width:100%; margin:0;}
+.weekend20221007_info .hid {position: absolute; left: -10000%; top: 0; overflow: hidden; width: 0; height: 0; font-size: 0; line-height: 0; text-indent: -10000px;}
+.weekend20221007_info .weekend_tab {margin-top: -10%;}
+.weekend20221007_info .weekend_tab ul {display: flex; justify-content: left; margin: 0; padding: 0 6%;}
+.weekend20221007_info .weekend_tab ul li {list-style: none; text-align: center; padding: 0 2px; font-size: 0; line-height: 0;}
+.weekend20221007_info .weekend_tab ul li button {color: #00d8fa; width: 100%; box-sizing: border-box;}
+.weekend20221007_info .weekend_tab ul li button img:first-child {display: none;}
+.weekend20221007_info .weekend_tab ul li button img:last-child {display: block;}
+.weekend20221007_info .weekend_tab ul li.active button img:first-child {display: block;}
+.weekend20221007_info .weekend_tab ul li.active button img:last-child {display: none;}
+.weekend20221007_info .weekend_tab_cont_wrap {margin-top: -2px;}
+.weekend20221007_info .weekend_tab_cont_wrap .weekend_tab_cont {display: none; position: relative; background-color: #dd542e;}
+.weekend20221007_info .weekend_tab_cont_wrap .weekend_tab_cont a {position: absolute; display: block; z-index: 2;}
+.weekend20221007_info .weekend_tab_cont_wrap .weekend_tab_cont a span {position: absolute; left: -10000%; top: 0; overflow: hidden; width: 0; height: 0; font-size: 0; line-height: 0; text-indent: -10000px;}
+.weekend20221007_info .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+.weekend20221007_info .weekend_tab_cont_wrap .weekend_tab_cont .box {padding: 0 7.57575757576% 7.57575757576% 7.57575757576%;}
+.weekend20221007_info .slick-dots {font-size:0; text-align:center; display: block; position: absolute; bottom: -37px; width: 100%; display: none !important;}
+.weekend20221007_info .slick-dots li {display:inline-block; padding: 0 3px;}
+.weekend20221007_info .slick-dots button {position:relative; width: 10px;  height:37px; font-size:0;}
+.weekend20221007_info .slick-dots button:before {content:''; position:absolute; left:50%; top:50%; background:#fff; transform: translate(-50%, -50%); width:10px; height:10px; box-sizing:border-box; font-size:0; line-height:0; border-radius:10px; transition:all 0.3s;}
+.weekend20221007_info .slick-dots .slick-active button {width: 20px;}
+.weekend20221007_info .slick-dots .slick-active button:before {width: 100%; background:#ffd157;}
+.weekend20221007_info .weekend_slider_type1 .slide {background-color: #ebebeb;}
+.weekend20221007_info .weekend_slider_type1 .slick-arrow {position: absolute; top: 0; bottom: 0; width: 7.57575757576%; text-indent: -10000px; background-repeat: no-repeat; background-position: 50% 50%; background-size: 19px auto; opacity: 1; transition:all 0.3s;}
+.weekend20221007_info .weekend_slider_type1 .slick-arrow.slick-prev {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000261/left.png'); left: -7.57575757576%;}
+.weekend20221007_info .weekend_slider_type1 .slick-arrow.slick-next {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000261/right.png '); right: -7.57575757576%;;}
+.weekend20221007_info .weekend_slider_type1 .slick-arrow.slick-disabled {opacity: 0;}
+
+@media all and (max-width:400px) {
+	.weekend20221007_info .weekend_slider_type1 .slick-arrow {background-size: 10px auto;}
+}
+
+.weekend20221213 .weekend_tab {}
+.weekend20221213 .weekend_tab ul {display: flex; justify-content: left; margin: 0.5% -0.5%;}
+.weekend20221213 .weekend_tab ul li {list-style: none; text-align: center; padding: 0.5%; width: calc(100% / 4);}
+.weekend20221213 .weekend_tab ul li button {color: #00d8fa; width: 100%; box-sizing: border-box;}
+.weekend20221213 .weekend_tab ul li button .photo {position: relative; overflow: hidden; width: 100%; height: 0; padding-bottom: 66.71428571429%}
+.weekend20221213 .weekend_tab ul li button .photo img { width: 100%; height: 100%;  position: absolute;  left: 0;  top: 0; object-fit: cover;}
+.weekend20221213 .weekend_tab_cont_wrap {margin-top: 40px;}
+.weekend20221213 .weekend_tab_cont_wrap .weekend_tab_cont {display: none; position: relative;}
+.weekend20221213 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+.weekend20221213 .weekend_tab_cont_wrap .weekend_tab_cont .photo {position: relative; overflow: hidden; width: 100%; height: 0; padding-bottom: 66.71428571429%}
+.weekend20221213 .weekend_tab_cont_wrap .weekend_tab_cont .photo img { width: 100%; height: 100%;  position: absolute;  left: 0;  top: 0; object-fit: cover;}
+
+/* 여행 가볼만한곳 */
+.weekend_style.places {}
+.weekend_style.places a[target='_blank'] {background: none; padding: 0; border: none;}
+.weekend_style.places .travel_places_tit {position: relative; margin-top: 0; margin-bottom: -2.5%; z-index: 2; left: 50%; transform: translateX(-50%); width: 640px; text-align: center;}
+.weekend_style.places .travel_places_tit.st1 {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000281/01_btn.png'); background-repeat: no-repeat; background-size: contain; background-position: left bottom;}
+.weekend_style.places .travel_places_img {position: relative; left: 50%; transform: translateX(-50%); width:720px;max-width:720px; display: block;}
+.weekend_style.places .travel_places_img > figcaption b {font-weight: normal; padding: 15px 0; border-bottom: 1px solid #dee2e6; font-size: 0.983rem; color: #495057; line-height: 1.4; word-break: keep-all; font-weight: 400; display: block;}
+.weekend_style.places .travel_places_info {margin-top: 35px; padding: 10px; background: linear-gradient(-45deg, #dee2e6 25%, #fff 0, #fff 50%, #dee2e6 0, #dee2e6 75%, #fff 0 ); background-size:4px 4px;}
+.weekend_style.places .travel_places_info ul {background-color: #fff; padding: 15px;}
+.weekend_style.places .travel_places_info ul li {display: flex;}
+.weekend_style.places .travel_places_info ul li span {display: inline-block; }
+.weekend_style.places .travel_places_info ul li span:first-child {white-space: nowrap;}
+.weekend_style.places .travel_places_info ul li span:last-child {margin-right: auto; padding-left: 5px;}
+.weekend_style.places .travel_places_info + .travel_places_tit {margin-top: 10px;}
+@media all and (max-width:800px) {
+	.weekend_style.places .travel_places_tit {width: calc(100% + 10px);}
+	.weekend_style.places .travel_places_img {width: calc(100% + 30px);}
+	.weekend_style.places .travel_places_img > figcaption b {margin: 0 15px;}
+}
+
+.editorContents .weekend_style.places .travel_places_img > figcaption b {font-size: 12pt;}
+
+
+.weekend20230420 {max-width:800px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.weekend20230420 li {list-style: none !important;}
+.weekend20230420 img {margin: 0;}
+.weekend20230420 .top {}
+.weekend20230420 .top_title {text-align: center; padding: 60px 0; background-color: #fafbfc;}
+
+.weekend20230420 .map {background-color: #fafbfc; text-align: center;}
+.weekend20230420 .weekend_tab img {width: 100%; margin: 0 auto;}
+.weekend20230420 .weekend_tab {position: relative;}
+.weekend20230420 .weekend_tab ul li {margin-top: 20px; list-style: none; padding: 0; margin: 0;}
+.weekend20230420 .weekend_tab ul li button {position: absolute; width: 135px; height: 55.5px; background-size: 135px auto; background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000285/travel0420_map_btn.png'); text-indent: -9999px;}
+.weekend20230420 .weekend_tab ul li button span {position: absolute; width: 1px; height: 1px; overflow: hidden; padding: 0; margin: -1px; border: 0;}
+.weekend20230420 .weekend_tab ul li:nth-child(1) button {background-position: 0 0px; top: 7.5%; left: 12.5%;}
+.weekend20230420 .weekend_tab ul li:nth-child(2) button {background-position: 0 -111px; top: 4.5%; left: 56%;}
+.weekend20230420 .weekend_tab ul li:nth-child(3) button {background-position: 0 -222px; top: 30%; left: 10.5%;}
+.weekend20230420 .weekend_tab ul li:nth-child(4) button {background-position: 0 -333px; top: 62.5%; left: 8.5%;}
+.weekend20230420 .weekend_tab ul li:nth-child(5) button {background-position: 0 -444px; top: 48%; left: 73%;}
+.weekend20230420 .weekend_tab ul li:nth-child(6) button {background-position: 0 -555px; top: 84.5%; left: 40%;}
+.weekend20230420 .weekend_tab ul li:nth-child(1).active button {background-position: 0 -55px;}
+.weekend20230420 .weekend_tab ul li:nth-child(2).active button {background-position: 0 -166px;}
+.weekend20230420 .weekend_tab ul li:nth-child(3).active button {background-position: 0 -277px;}
+.weekend20230420 .weekend_tab ul li:nth-child(4).active button {background-position: 0 -388px;}
+.weekend20230420 .weekend_tab ul li:nth-child(5).active button {background-position: 0 -499px;}
+.weekend20230420 .weekend_tab ul li:nth-child(6).active button {background-position: 0 -610px;}
+
+.weekend20230420 .weekend_tab_cont_wrap {padding-bottom: 5%;}
+.weekend20230420 .weekend_tab_cont_wrap .weekend_tab_cont {display: none;}
+.weekend20230420 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+
+.weekend20230420 .weekend_tab_cont .box {position: relative; height: auto; overflow-y: unset; padding: 0;}
+.weekend20230420 .weekend_tab_cont .box .tit {position: absolute; display: block; text-align: center; width: 100%; margin-top: -4%;}
+.weekend20230420 .weekend_tab_cont .box .tit img {width: 70%;}
+.weekend20230420 .weekend_tab_cont .box > ul {width: 100%; margin: 0 auto; background: #f4f5f7; border: 1px solid #e8ebee; border-radius: 15px; padding: 5% 20px 10px 20px; text-align: left; box-sizing:border-box;}
+.weekend20230420 .weekend_tab_cont .box > ul > li {background-color: #fff; border: 1px solid #e5e5e5; margin: 10px 0; border-radius: 10px; padding: 18px 14px 18px 25px;}
+.weekend20230420 .weekend_tab_cont .box > ul > li > ul {margin: 0; padding: 0;}
+.weekend20230420 .weekend_tab_cont .box > ul > li > ul > li {display: inline-block; text-indent: -10px; padding-left: 20px; width: 100%;}
+.weekend20230420 .weekend_tab_cont .box > ul > li > ul > li strong {font-size: 17px; margin-bottom: 5px; display: block;}
+.weekend20230420 .weekend_tab_cont .box > ul > li > ul > li a {display: inline-block; padding: 5px 0;}
+.weekend20230420 .weekend_tab_cont .box > ul > li > ul > li a[target='_blank'] {background: url('https://www.korea.kr/newsWeb/resources/temp/images/000196/blank2_on_.png') right 56% no-repeat; padding-right: 15px;}
+.weekend20230420 .weekend_tab_cont:nth-child(1) strong {color: #fe90da;}
+.weekend20230420 .weekend_tab_cont:nth-child(2) strong {color: #03c988;}
+.weekend20230420 .weekend_tab_cont:nth-child(3) strong {color: #8d7cf6;}
+.weekend20230420 .weekend_tab_cont:nth-child(4) strong {color: #f47575;}
+.weekend20230420 .weekend_tab_cont:nth-child(5) strong {color: #fe90da;}
+.weekend20230420 .weekend_tab_cont:nth-child(6) strong {color: #fe90da;}
+
+.weekend20230420 .info {background-color: #e8e7fc; padding: 40px 30px 5px 30px;}
+.weekend20230420 .info .tit {margin-bottom: 80px;}
+.weekend20230420 .info > ul {display: flex; flex-wrap: wrap; justify-content: space-between; flex-direction: column; padding: 0; margin: 0;}
+.weekend20230420 .info > ul > li {/*width: calc(50% - 10px);*/ width: 100%; border: 1px solid #7e78ff; background-color: #fff; position: relative; box-sizing: border-box; margin-bottom: 60px; border-radius: 15px; padding: 24px 20px;}
+.weekend20230420 .info > ul > li > span {display: block; margin-bottom: 10px;}
+.weekend20230420 .info > ul > li span img {width: 60%;}
+.weekend20230420 .info > ul > li > ul {padding: 0; margin: 0;}
+.weekend20230420 .info > ul > li > ul > li {display: flex; margin-top: 5px;}
+.weekend20230420 .info > ul > li > ul > li strong {white-space: nowrap; padding-right: 10px; color: #000;}
+.weekend20230420 .info > ul > li > ul > li span {display: inline-block;}
+.weekend20230420 .info  > ul > li:before {content: ""; display: block; width: 60px; height: 30px; border-radius: 30px 30px 0 0; background-color: #7e78ff; background-size: 20px auto; background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000286/travel0420_map_info_icon.png'); background-repeat: no-repeat; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);}
+.weekend20230420 .info  > ul > li:nth-child(1):before {background-position: 50% -92px;}
+.weekend20230420 .info  > ul > li:nth-child(2):before {background-position: 50% -62px;}
+.weekend20230420 .info  > ul > li:nth-child(3):before {background-position: 50% -30px;}
+.weekend20230420 .info  > ul > li:nth-child(4):before {background-position: 50% 0;}
+
+.weekend20230420 .noti {font-size: 12px; color: #7e78ff; padding-bottom: 15px; text-align: center;}
+
+body.mobile .weekend20230420{width: calc(100% + 30px);}
+body.mobile .weekend20230420 .info > ul > li span img {width: 100%;}
+
+@media all and (max-width:600px) {
+
+	.weekend20230420 .weekend_tab ul li button {width: 90px; height: 37px; background-size: 90px auto;}
+	.weekend20230420 .weekend_tab ul li:nth-child(1) button {background-position: 0 0px; top: 7.5%; left: 12.5%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(2) button {background-position: 0 -74px; top: 4.5%; left: 56%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(3) button {background-position: 0 -148px; top: 30%; left: 10.5%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(4) button {background-position: 0 -222px; top: 62.5%; left: 8.5%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(5) button {background-position: 0 -296px; top: 48%; left: 68%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(6) button {background-position: 0 -370px; top: 84.5%; left: 40%;}
+	.weekend20230420 .weekend_tab ul li:nth-child(1).active button {background-position: 0 -37px;}
+	.weekend20230420 .weekend_tab ul li:nth-child(2).active button {background-position: 0 -111px;}
+	.weekend20230420 .weekend_tab ul li:nth-child(3).active button {background-position: 0 -185px;}
+	.weekend20230420 .weekend_tab ul li:nth-child(4).active button {background-position: 0 -259px;}
+	.weekend20230420 .weekend_tab ul li:nth-child(5).active button {background-position: 0 -333px;}
+	.weekend20230420 .weekend_tab ul li:nth-child(6).active button {background-position: 0 -407px;}
+
+	/*.weekend20230420 .info > ul {flex-direction: column;}*/
+	/*.weekend20230420 .info > ul > li {width: 100%;}*/
+	/*.weekend20230420 .info > ul > li span img {width: 70%;}*/
+}
+
+.weekend20230504 {max-width:800px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.weekend20230504 li {list-style: none !important;}
+.weekend20230504 img {margin: 0;}
+.weekend20230504 .top {margin-bottom: -10%;}
+.weekend20230504 .weekend_section {padding: 10% 0 7% 0;}
+.weekend20230504 .weekend_section .title {margin-bottom: 3%; padding: 0 3%;}
+.weekend20230504 .weekend_section ul {display: flex; flex-wrap: wrap; margin: 0 0; padding: 0 2%;}
+.weekend20230504 .weekend_section ul li {width: 50%; text-align: center; padding: 0 1%; box-sizing: border-box; margin-top: 5%;}
+.weekend20230504 .weekend_section ul li a {display: block;}
+.weekend20230504 .weekend_section ul li .thumb {margin-bottom: 5%; display: block; border-radius: 20px;}
+.weekend20230504 .weekend_section ul li strong {display: block; font-weight: 700; line-height: 1.3; margin-bottom: 10px;}
+.weekend20230504 .weekend_section ul li .txt1 {display: inline-block; font-size: 16px; padding: 5px 15px; border-radius: 20px; margin: 5px 0;}
+.weekend20230504 .weekend_section ul li .txt2 {display: block; line-height: 1.3; margin-top: 10px;}
+.weekend20230504 .weekend_section.s1 {background-color: #ffec9b;}
+.weekend20230504 .weekend_section.s2 {background-color: #ffcedb;}
+.weekend20230504 .weekend_section.s3 {background-color: #d9daff;}
+.weekend20230504 .weekend_section.s4 {background-color: #d5f5ff;}
+.weekend20230504 .weekend_section.s5 {background-color: #d7f6e3;}
+.weekend20230504 .weekend_section.s1 ul li .txt1 {background-color: #f7d64c;}
+.weekend20230504 .weekend_section.s2 ul li .txt1 {background-color: #ffacc2;}
+.weekend20230504 .weekend_section.s3 ul li .txt1 {background-color: #b6b8ff;}
+.weekend20230504 .weekend_section.s4 ul li .txt1 {background-color: #a5e8fd;}
+.weekend20230504 .weekend_section.s5 ul li .txt1 {background-color: #a8ebc2;}
+body.mobile .weekend20230504{width: calc(100% + 30px);}
+
+.weekend20230602 {max-width:800px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px; }
+.weekend20230602 li {list-style: none !important;}
+.weekend20230602 img {margin: 0;}
+.weekend20230602 .weekend_section {padding: 0 1.875%; background-color: #eafaf7;}
+.weekend20230602 .weekend_section ul {display: flex; justify-content: center; flex-wrap: wrap; margin: 0 0; padding: 0 0; font-size: 0; line-height: 0;}
+.weekend20230602 .weekend_section ul li {text-align: center; padding: 0 0; box-sizing: border-box; margin: 0; font-size: 0;}
+.weekend20230602 .weekend_section.s1 ul li {width: 20%;}
+.weekend20230602 .weekend_section.s1 ul li a {display: block;}
+.weekend20230602 .weekend_section.s1 ul li a img:nth-child(2) {display: none;}
+.weekend20230602 .weekend_section.s1 ul li a:hover img:nth-child(1) {display: none !important;}
+.weekend20230602 .weekend_section.s1 ul li a:hover img:nth-child(2) {display: block !important;}
+.weekend20230602 .weekend_section.s2 {padding: 0 1.625%;}
+.weekend20230602 .weekend_section.s2 ul li {width: 11.11111111%;}
+.weekend20230602 .weekend_section.s2 ul li a {display: block;}
+.weekend20230602 .weekend_section.s2 ul li a img:nth-child(2) {display: none;}
+.weekend20230602 .weekend_section.s2 ul li a:hover img:nth-child(1) {display: none !important;}
+.weekend20230602 .weekend_section.s2 ul li a:hover img:nth-child(2) {display: block !important;}
+.weekend20230602 .weekend_section.s3 {padding-bottom: 5%;}
+body.mobile .weekend20230602{width: calc(100% + 30px);}
+
+.weekend20230623 {max-width:800px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.weekend20230623 ul {font-size: 0;}
+.weekend20230623 li {list-style: none !important;}
+.weekend20230623 img {margin: 0;}
+.weekend20230623 .top {background-color: #fff4dd; text-align: center;}
+.weekend20230623 .weekend_tab {background-color: #57f3bc;}
+.weekend20230623 .weekend_tab ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 0; margin: 0;}
+.weekend20230623 .weekend_tab ul li {position: relative; width: calc(100% / 4); list-style: none; text-align: center;}
+.weekend20230623 .weekend_tab ul li ~ li:before {content: ''; display: inline-block; width: 1px; height: 100%; background-color: #fff; position: absolute; top: 0; left: 0;}
+.weekend20230623 .weekend_tab ul li.active:after {content: ''; display: block; width: 40px; height: 20px; background-repeat: no-repeat; position: absolute; top: 99%; left: 50%; transform: translateX(-50%);}
+.weekend20230623 .weekend_tab ul li button {display: block; text-indent: -9999px; width: 100%; height: 10vw; max-height: 80px; background-position: 50% 0%; background-repeat: no-repeat; background-size: 100% auto;}
+.weekend20230623 .weekend_tab ul li:nth-child(1) button {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_a.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(2) button {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_b.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(3) button {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_c.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(4) button {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_d.png');}
+.weekend20230623 .weekend_tab ul li.active button {background-position: 50% 100%;}
+.weekend20230623 .weekend_tab ul li:nth-child(1).active {background-color: #ff5c58;}
+.weekend20230623 .weekend_tab ul li:nth-child(1).active:after {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_i01.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(2).active {background-color: #2ec1ac;}
+.weekend20230623 .weekend_tab ul li:nth-child(2).active:after {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_i02.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(3).active {background-color: #26baee;}
+.weekend20230623 .weekend_tab ul li:nth-child(3).active:after {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_i03.png');}
+.weekend20230623 .weekend_tab ul li:nth-child(4).active {background-color: #ff865e;}
+.weekend20230623 .weekend_tab ul li:nth-child(4).active:after {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/tab_i04.png');}
+.weekend20230623 .tit {margin: 8% 0 5% 0;}
+.weekend20230623 .weekend_tab_cont_wrap .weekend_tab_cont {display: none; position: relative;}
+.weekend20230623 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+.weekend20230623 .weekend_slider_type1 {margin: 0 -10px;}
+.weekend20230623 .weekend_slider_type1 .slide {padding: 0 10px; position: relative;}
+.weekend20230623 .weekend_slider_type1 .slide img {z-index: 1;}
+.weekend20230623 .weekend_slider_type1 .slide a {text-indent: -9999px; width: 50%; height: 100%; position: absolute; top: 0; bottom: 0; display: block; z-index: 2;}
+.weekend20230623 .weekend_slider_type1 .slide img + a {left: 0; right: 50%;}
+.weekend20230623 .weekend_slider_type1 .slide img + a + a {left: 50%; right: 0;}
+.weekend20230623 .slick-dots {font-size:0; text-align:center; display: block; position: absolute; bottom: -37px; width: 100%;}
+.weekend20230623 .slick-dots li {display:inline-block; padding: 0 3px;}
+.weekend20230623 .slick-dots button {position:relative; width: 10px;  height:37px; font-size:0;}
+.weekend20230623 .slick-dots button:before {content:''; position:absolute; left:50%; top:50%; background:#d9d9d9; transform: translate(-50%, -50%); width:10px; height:10px; box-sizing:border-box; font-size:0; line-height:0; border-radius:10px; transition:all 0.3s;}
+.weekend20230623 .slick-dots .slick-active button {width: 20px;}
+.weekend20230623 .slick-dots .slick-active button:before {width: 100%; background:#1d1d26;}
+.weekend20230623 .slick-arrow {position: absolute; top: 0; bottom: 0; width: 7.57575757576%; text-indent: -10000px; background-repeat: no-repeat; background-position: 50% 50%; background-size: 19px auto; opacity: 1; transition:all 0.3s;}
+.weekend20230623 .slick-arrow.slick-prev {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/left.png'); left: -7.57575757576%;}
+.weekend20230623 .slick-arrow.slick-next {background-image: url('https://www.korea.kr/newsWeb/resources/temp/images/000294/right.png'); right: -7.57575757576%;;}
+.weekend20230623 .slick-arrow.slick-disabled {opacity: 0;}
+.weekend20230623 .tip {background-color: #57f3bc; padding: 0 3%;}
+.weekend20230623 .tip ul {}
+.weekend20230623 .tip ul li {position: relative;}
+.weekend20230623 .tip img {z-index: 1;}
+.weekend20230623 .tip a {text-indent: -9999px; width: 50%; height: 100%; position: absolute; top: 0; bottom: 0; display: block; z-index: 2;}
+.weekend20230623 .tip img + a {left: 0; right: 50%;}
+.weekend20230623 .tip img + a + a {left: 50%; right: 0;}
+body.mobile .weekend20230623{width: calc(100% + 30px);}
+body.mobile .weekend20230623 .weekend_tab_cont_wrap {padding: 0 7%;}
+
+.info20230829 .freefontwrap {max-width: 800px; margin: 0 auto; box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.05); border: 1px solid #e2e2e2; background-color: #e6f9f7; padding: 60px 0 40px 0; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.info20230829 .freefontwrap img {margin: 0;}
+.info20230829 .freefontwrap .content_img {position: relative; box-sizing: border-box; padding: 0 5% 0 9%;}
+.info20230829 .freefontwrap .content_img a.zoom {position: absolute; bottom: 30px; right: 5%; width: 29px; height: 0; padding-top: 29px; display: none; background: url('https://www.korea.kr/newsWeb/resources/temp/images/000226/zoom.png') top right no-repeat; overflow: hidden; cursor: pointer;}
+.info20230829 .freefontwrap .longdesc {position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: polygon(0 0, 0 0, 0 0);}
+.info20230829 .freefontwrap .btn_group {width: 100%; padding: 30px 0 27px; overflow: hidden; text-align: center; box-sizing: border-box; display: flex; justify-content: center; flex-wrap:wrap;}
+.info20230829 .freefontwrap .btn_group .btn {min-width: 100px; padding: 0; border: 0; vertical-align: middle; display: inline-block; color: #fff; background:#255f6d; padding:15px 18px; font-size:18px; letter-spacing:-0.5px; border-radius: 3px; height: auto;}
+
+.info20230829 .freefontwrap .freefont{max-width:730px; margin:0 auto; position:relative; background-color: #fff; }
+.info20230829 .freefontwrap .btn_group .btn.color06 span{background:#255f6d; padding:15px 25px; font-size:18px;font-family: 'Noto Sans KR'; letter-spacing:-0.5px;}
+.info20230829 .freefontwrap .freefont:after{clear: both; content: "";display: block;}
+.info20230829 .freefontwrap .freefont.kogl{border:1px solid #00a589; border-radius:3px;}
+.info20230829 .freefontwrap .freefont.ofl{border:1px solid #e65a1d; border-radius:3px;}
+.info20230829 .freefontwrap .freefont .title{width:100%; text-align:center;margin:0; padding:10px 0; justify-content: center;}
+.info20230829 .freefontwrap .freefont .title.blue{background:#00a589;}
+.info20230829 .freefontwrap .freefont .title.brown{background:#e65a1d;}
+.info20230829 .freefontwrap .freefont .new, .info20230829 .freefontwrap .freefont .old{margin:0; padding:15px 12px; box-sizing: border-box; width: 100%;}
+.info20230829 .freefontwrap .freefont .new.blue{background:#e5f6f3; border-bottom:1px solid #00a589;}
+.info20230829 .freefontwrap .freefont .new li{border-radius:7px; border:1px solid #d9475c; background:#f7f6f2; width: calc(25% - 10px); text-align:center;}
+.info20230829 .freefontwrap .freefont .old li{border-radius: 7px; border: 1px solid #c4c4c4; width: calc(25% - 10px); text-align:center;}
+.info20230829 .freefontwrap .freefont .title span{color:#fff; font-weight:700; font-size: 20px; display:inline-block; padding-right:8px; }
+.info20230829 .freefontwrap .freefont .title img{vertical-align:middle; margin-top:-3px;}
+.info20230829 .freefontwrap .freefont ul {display:flex; flex-wrap: wrap; padding: 0; margin: 0; list-style: none;}
+.info20230829 .freefontwrap .freefont ul li {list-style: none;}
+
+.info20230829 .freefontwrap .freefont .new.brown{background:#fceee8; border-bottom:1px solid #a68562;}
+.info20230829 .freefontwrap .freefont .add{position:absolute; top:0; left:0; z-index:10;}
+.info20230829 .freefontwrap .freefont .newadd{margin:-1px 5px 0 -2px;}
+.info20230829 .freefontwrap .freefont .new li, .info20230829 .freefontwrap .freefont .old li{margin:6px 5px; box-sizing: border-box; padding:2px 0;}
+.info20230829 .freefontwrap .freefont .new a img,.info20230829 .freefontwrap .freefont .old a img{vertical-align:middle;}
+.info20230829 .freefontwrap .fontguide{ width:90%; margin:20px auto 0; font-size: 14px;}
+.info20230829 .freefontwrap .fontguide .tit02{position: relative; padding: 0 0 10px 20px;}
+.info20230829 .freefontwrap .fontguide .tit02:before {content: ""; position: absolute; top: 15px; left: 8px; display: block; width: 4px; height: 4px; margin-top: -6px; background: #3795cc;}
+
+body.mobile .info20230829 .freefontwrap {width: calc(100% + 30px); margin: 0;}
+
+@media all and (max-width:768px) {
+     /* 안심폰트변경 */
+    .info20230829 .freefontwrap{width:100%; padding:30px 0;}
+	.info20230829 .freefontwrap .freefont{width:95%; position:relative; }
+    .info20230829 .freefontwrap .freefont .title img, .info20230829 .freefontwrap .freefont .add{width:auto !important;}
+    .info20230829 .freefontwrap .content_img{width:90%; margin:2% 5%;}
+    .info20230829 .freefontwrap .content_img a.zoom{bottom:0px;}
+}
+
+@media all and (max-width:480px) {
+    /* 안심폰트변경*/
+	.info20230829 .freefontwrap .freefont .new, .info20230829 .freefontwrap .freefont .old{padding:15px 8px;}
+    .info20230829 .freefontwrap .content_img{width:96%; margin:2%;}
+    .info20230829 .freefontwrap .freefont .add{width:20% !important;}
+    .info20230829 .freefontwrap .btn_group a{display:block; width:90%; margin:0 auto;}
+    .info20230829 .freefontwrap .btn_group .btn + .btn{margin:10px auto;}
+    .info20230829 .freefontwrap .btn_group .btn.color06 span{padding:10px 15px;}
+    .info20230829 .freefontwrap .freefont .newadd{margin:2px 5px 0 3px;}
+    .info20230829 .freefontwrap .freefont .new li, .info20230829 .freefontwrap .freefont .old li {width: calc(50% - 12px); margin:6px 6px; padding:0;}
+}
+
+.weekend20231020 {max-width:800px; margin:0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.weekend20231020 li {list-style: none !important;}
+.weekend20231020 img {margin: 0; width: auto;}
+.weekend20231020 .top {}
+.weekend20231020 .weekend_section {padding: 0 0 0 0;}
+.weekend20231020 .weekend_section .title {padding: 0 0; text-align: center; display: block;}
+.weekend20231020 .weekend_section ul {display: flex; flex-wrap: wrap; margin: 0 0; padding: 0 2%;}
+.weekend20231020 .weekend_section ul li {width: 50%; text-align: center; padding: 0 1%; box-sizing: border-box; margin-top: 0%;}
+.weekend20231020 .weekend_section ul li a {display: block; position: relative; text-decoration: none;}
+.weekend20231020 .weekend_section ul li .thumb {position: relative; margin-bottom: 4%; display: block; border-radius: 15px; padding-bottom: 70.9219858156%; overflow: hidden;}
+.weekend20231020 .weekend_section ul li .thumb img {width: 100%; height: 100%; position: absolute; left: 0; top: 0; object-fit: cover;}
+.weekend20231020 .weekend_section ul li strong {font-weight: 700; line-height: 1.3; margin-bottom: 4%; font-size: 18px; min-height: 47px; display: flex; align-items: center; word-break: keep-all;}
+.weekend20231020 .weekend_section ul li .txt {display: block; font-size: 16px; padding: 4% 15px; margin: 5% 0; border-top: 1px dashed #dbd9d9;}
+.weekend20231020 .weekend_section ul li .txt span {display: inline-block; line-height: 1;}
+.weekend20231020 .weekend_section ul li .txt span:first-child {color: #ef5543; border-right: 1px solid #dbd9d9; padding-right: 1rem; margin-right: 1rem;}
+.weekend20231020 .weekend_section ul li em {background-color: #ef5543; position: absolute; left: 10px; top: 0; font-size: 13px; color: #fff; z-index: 2; padding: 3px 10px;}
+
+body.mobile .weekend20231020{width: calc(100% + 30px);}
+body.mobile .weekend20231020 .weekend_section ul li strong {font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; min-height: 38px; max-height: 38px; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;}
+body.mobile .weekend20231020 .weekend_section ul li .txt {font-size: 14px;}
+body.mobile .weekend20231020 .weekend_section ul li em {font-size: 12px;}
+
+.weekend20231110 {max-width: 800px; margin: 0 auto; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); width: 800px;}
+.weekend20231110 li {list-style: none !important; padding: 0; margin: 0;}
+.weekend20231110 img {margin: 0; width: auto;}
+.weekend20231110 .map_wrap {height: auto; background:#1b1534 url('https://www.korea.kr/newsWeb/resources/temp/images/000316/bg_map.png') center top / 100% 100% no-repeat;}
+.weekend20231110 .tab_wrap {padding: 0 8% 8% 8%; background: #1b1534 url('https://www.korea.kr/newsWeb/resources/temp/images/000316/bg_tab.png') center top / 100% no-repeat;}
+.weekend20231110 .tab_wrap .tab {}
+.weekend20231110 .tab_wrap .tab .sort {font-size: 12px; display: block; color: #ffec00; text-align: right; font-weight: 600; margin-bottom: 10px;}
+.weekend20231110 .tab_wrap .tab ul {display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;}
+.weekend20231110 .tab_wrap .tab ul li {width: calc((100% - 0px) / 5); box-sizing: border-box; padding: 5px;}
+.weekend20231110 .tab_wrap .tab ul li button {background-color: #1b1534; display: flex; width: 100%; height: 100%; box-sizing: border-box; justify-content: center; font-weight: 700; font-size: 16px; line-height: 40px; border: 1px solid #fff; border-radius:20px; color: #fff;}
+.weekend20231110 .tab_wrap .tab ul li.active button {background-color: #e45927; border: 1px solid #e45927;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont {display: none;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont:nth-child(1) {display: block;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont ul {display: flex; flex-wrap: wrap; justify-content: center;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li {width: calc((100% - 0px) / 3); display: flex; justify-content: center; box-sizing: border-box; padding: 15px 5px;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li a {display: block; height: 100%;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li a .box {border-color: #e45927;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li a .box .text .num {background-color: #e45927; color: #ffeb00;}
+
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box {display: flex; flex-direction: column; max-width: 200px; width: 100%; height: 100%; border-color: #b2b2b2; border-width: 3px; border-style: solid; box-sizing: border-box; border-radius: 15px; overflow: hidden; padding: 0;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .thumb {background-size: 20%; background-color: transparent;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text {position: relative; padding: 25px 5px 0 5px; background-color: #fff; height: 100px; color: #1d70b7; text-align: center; display: flex; flex-direction: column;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text .num {background-color: #666; color: #fff; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); display: block; width: 30px; height: 30px; line-height: 30px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 50%;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text .area {display: block; padding-bottom: 8px; font-size: 14px; font-weight: 700; line-height: 1;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text strong {color: #1d70b7; font-size: 16px; font-weight: 800; line-height: 20px; min-height: 40px; display: flex; align-items: center; justify-content: center;}
+.weekend20231110 .tab_wrap .tab_cont_t .cont > h4 {overflow: hidden; position: absolute; top: auto; left: -9999px; width: 1px; height: 1px; text-indent: -9999px;}
+
+body.mobile .weekend20231110 {width: calc(100% + 30px);}
+body.mobile .weekend20231110 .tab_wrap .tab_cont_t .cont li {padding: 10px;}
+
+@media all and (max-width:630px) {
+	body.mobile .weekend20231110 .tab_wrap {padding: 0 3% 3% 3%;}
+	body.mobile .weekend20231110 .tab_wrap .tab_cont_t .cont li {width: calc((100% - 0px) / 2);}
+}
+
+@media all and (max-width:420px) {
+	.weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text .area {font-size: 12px;}
+	body.mobile .weekend20231110 .tab_wrap .tab_cont_t .cont li .box .text strong {font-size: 13px;}
+}
+
+.Olympics2024paris {max-width: 640px; box-sizing: content-box; font-family: 'Noto Sans KR'; margin: 0 auto;}
+.Olympics2024paris li {list-style: none !important; padding: 0; margin: 0;}
+.Olympics2024paris img {margin: 0; width: auto;}
+.Olympics2024paris .tab_wrap {}
+.Olympics2024paris .tab_wrap .tab {}
+.Olympics2024paris .tab_wrap .tab .sort {font-size: 12px; display: block; color: #ffec00; text-align: right; font-weight: 600; margin-bottom: 10px;}
+.Olympics2024paris .tab_wrap .tab ul {display: flex; flex-wrap: wrap; justify-content: center; margin: 0 -5px 20px -5px; padding: 0;}
+.Olympics2024paris .tab_wrap .tab ul li {width: calc(100% / 4); box-sizing: border-box; padding: 5px;}
+.Olympics2024paris .tab_wrap .tab ul li button {background: #e9eaf0; display: flex; width: 100%; height: 100%; box-sizing: border-box; justify-content: center; font-weight: 400; font-size: 16px; border-radius:50px; color: #010101; padding: 12px; }
+.Olympics2024paris .tab_wrap .tab ul li.active button {background: linear-gradient(to right, #2b4ec2 0%, #183594 99%); color: #fff; position: relative;}
+.Olympics2024paris .tab_wrap .tab ul li.active button:after {content: ''; position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: url('../images/sub/player_tab_bg_cover.png') 0 0 no-repeat; background-size: cover; border-radius: 50px; }
+.Olympics2024paris .tab_wrap .tab ul li.active button span {position: relative; z-index: 2;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont {display: none;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont.active {display: block;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont ul {display: flex; flex-wrap: wrap; padding: 0; margin: 0; margin: 0 -7px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li {width: calc(100% / 3); box-sizing: border-box; padding: 10px 7px; display: none;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li.active {display: block;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont > h4 {overflow: hidden; position: absolute; top: auto; left: -9999px; width: 1px; height: 1px; text-indent: -9999px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player {position: relative; display: block; max-width: 204px; background: url('../images/sub/player_list_bg.png') 0 0 no-repeat; border-radius: 10px; margin: 0 auto;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player:after {content: ''; display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: url('../images/sub/player_list_bg_cover.png') 0 0 no-repeat; border-radius: 10px; background-size: cover;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player:before {content: ''; display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: url('../images/sub/player_list_bg_gr.png') 0 0 no-repeat; border-radius: 10px; background-size: cover; z-index: 2;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player img {border-radius: 10px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player .playerText {position: absolute; left: 15px; top: 15px; z-index: 3;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player .playerText em {font-size: 15px; color: #223985; font-weight: 400; display: block; line-height: 1;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player .playerText strong {font-size: 21px; color: #010101; font-weight: 600; display: block; line-height: 1; margin-top: 5px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player .playerThumb {position: relative; display: block; overflow: hidden; border-radius: 10px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont li .player .playerInfo {font-size: 12px; color: #d7d7d8; letter-spacing: -0.03em; position: absolute; right: 10px; bottom: 10px; z-index: 3; line-height: 1;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont .player_list_more {width: 100%; border: 1px solid #dcdee6; border-radius: 10px; padding: 10px; box-sizing: border-box; margin-top: 20px;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont .player_list_more span {font-size: 17px; color: #666666;  letter-spacing: -0.05em; line-height: 1;}
+.Olympics2024paris .tab_wrap .tab_cont_t .cont .player_list_more span:after {content:'\e941' ; font-family: "xeicon"; margin-left: 5px; font-size: 15px; color: #000;}
+
+body.mobile .Olympics2024paris {}
+body.mobile .Olympics2024paris .tab_wrap .tab_cont_t .cont li {padding: 10px;}
+
+@media all and (max-width:680px) {
+	.Olympics2024paris .tab_wrap .tab ul li {width: calc(100% / 3);}
+}
+
+@media all and (max-width:630px) {
+	body.mobile .Olympics2024paris .tab_wrap {}
+	body.mobile .Olympics2024paris .tab_wrap .tab_cont_t .cont li {width: calc((100% - 0px) / 2);}
+}
+
+@media all and (max-width:440px) {
+	.Olympics2024paris .tab_wrap .tab ul li {width: calc(100% / 2);}
+}
+
+.quoted {display: flex; align-items: stretch; justify-content: space-between; margin-bottom: 40px}
+.quoted .text {display: flex; align-items: center; font-family: "KoPubWorldBatang"; font-weight: 400; font-style: italic; letter-spacing: -0.025em; font-size: 18px; color: #2d2d2d; padding:40px; line-height: 32px; text-align:center; border: none; word-break: keep-all}
+.quoted .text span{position:relative}
+.quoted .text span:before,
+.quoted .text span:after {content: ''; display: inline-block; width:25px; height: 20px; background: url('../images/common/ico_quoted.svg') 0 0 no-repeat;}
+.quoted .text span:before {vertical-align: top; margin: -2px 10px 0 0;}
+.quoted .text span:after {vertical-align: bottom; margin: 0 0 -2px 10px; transform: rotate(180deg);}
+.quoted .photo figure {width: 200px;}
+.quoted .photo figcaption {padding:5px; line-height: 1;text-align:right}
+.quoted .photo figcaption b {font-size: 15px; color: #484747; letter-spacing: -0.025em; font-weight: 400; line-height: 21px; word-break: keep-all;text-align:center;display:block;}
+body.mobile .quoted {flex-direction: column; align-items: center; margin-bottom: 40px;}
+body.mobile .quoted .photo {order: -1; margin-bottom: 20px;}
+body.mobile .quoted .photo figure {width: 100%; text-align: center;}
+body.mobile .quoted .photo figure img {max-height: 238px;}
+body.mobile .quoted .text {font-size: 17px; line-height: 30px; padding: 0;}
+body.mobile .quoted .text span:before,
+body.mobile .quoted .text span:after {width: 25px; height: 19px;}
+body.mobile .quoted .text span:before {margin: -2px 5px 0 0;}
+body.mobile .quoted .text span:after {margin: 0 0 -2px 5px;}
+.editorContents .quoted .text {font-size: 17px !important;}
+
+@media all and (max-width:768px) {
+	.quoted {flex-direction: column; align-items: center; margin-bottom: 20px;}
+	.quoted .photo {order: -1; margin:0 auto 20px; text-align:center;}
+	.quoted .photo figure {width: 100%; text-align: center;}
+	.quoted .photo figure img {max-height: 238px;}
+	.quoted .text {font-size: 17px; line-height: 30px; padding: 0;}
+	.quoted .text span:before,
+	.quoted .text span:after {width: 25px; height: 19px;}
+	.quoted .text span:before {margin: -2px 5px 0 0;}
+	.quoted .text span:after {margin: 0 0 -2px 5px;}
+}
+
+.weekend20241008 {max-width: 800px; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; left: 50%; transform: translateX(-50%); height: 100%; width: 800px;}
+.weekend20241008 ul {margin: 0;}
+.weekend20241008 li {list-style: none !important; padding: 0; margin: 0;}
+.weekend20241008 img {margin: 0; width: auto;}
+.weekend20241008 .tab_wrap {background-color: #ffe5a6;}
+.weekend20241008 .tab_wrap .tab .sort {font-size: 12px; display: block; color: #ffec00; text-align: right; font-weight: 600;}
+.weekend20241008 .tab_wrap .tab ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 0;}
+.weekend20241008 .tab_wrap .tab ul li {width: calc((100% - 0px) / 3); box-sizing: border-box;}
+.weekend20241008 .tab_wrap .tab ul li button {background-color: #1b2021; display: flex; width: 100%; height: 100%; box-sizing: border-box; justify-content: center; align-items: center; font-weight: 700; font-size: 16px; line-height: 40px; color: #fff; padding: 10px; border-right: 1px solid #8d8d8d; border-bottom: 1px solid #8d8d8d;}
+.weekend20241008 .tab_wrap .tab ul li:nth-child(3) button {border-right: 0;}
+.weekend20241008 .tab_wrap .tab ul li:nth-child(3) ~ li button {border-bottom: 0;}
+.weekend20241008 .tab_wrap .tab ul li.active button {background-color: #f06400;}
+.weekend20241008 .tab_wrap .tab ul li button:focus {position: relative; z-index: 2; outline-offset: -5px; outline: 2px dotted #fff;}
+.weekend20241008 .tab_wrap .tab_cont_t {padding-bottom: 20px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont {position: relative;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont h4 {text-align: center; margin-bottom: 10px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont ul {display: flex; flex-wrap: wrap; justify-content: center; padding: 0 5px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont li {padding: 0 5px; margin-bottom: 10px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont li .area {position: relative;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont li .area button {position: absolute; bottom: 0; left: 0; text-indent: -9999px; width: 100%; padding-top: 23.32015810277%; height: 0;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop {position: absolute; top: 0; left: 0; right: 0; width: 100%; display: none; z-index: 1000; box-sizing: border-box; padding: 30px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop:after {content: ''; position: fixed; width: 100%; height: 100%; top: 0; left: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7);}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop.active {display: flex; justify-content: center;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop img {object-fit: contain; width: 100%; height: 100%; max-width: 500px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop > div {position: relative; z-index: 1000; display: inline-block;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .close {position: absolute; right: 0; top: 0; width: 12.64705882353%; padding-top: 11.71875%; opacity: 0.5; text-indent: -9999px; height: 0;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .alink {position: absolute; bottom: 0; left: 0; width: 100%; text-indent: -9999px; height: 7.109375%;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .alink:focus {outline-offset: -5px;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .alink.lk1 {bottom: 21.25%;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .alink.lk2 {bottom: 14.140625%;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont .layerpop .alink.lk3 {bottom: 7.03125%;}
+.weekend20241008 .tab_wrap .tab_cont_t .cont:last-child .layerpop {top: auto; bottom: 0;}
+body.mobile .weekend20241008 {width: calc(100% + 30px) !important;}
+@media all and (max-width:630px) {
+	body.mobile .weekend20231110 .tab_wrap {padding: 0 3% 3% 3%;}
+	body.mobile .weekend20231110 .tab_wrap .tab_cont_t .cont li {width: calc((100% - 0px) / 2);}
+}
+
+.weekend20250318 {max-width: 720px; box-sizing: content-box; font-family: 'Noto Sans KR'; position: relative; height: 100%; width: 100%;}
+.weekend20250318 img {position: relative; margin: 0;}
+.weekend20250318 .weekend_tab {z-index:10; height:auto; position: relative; margin-bottom: -8%;}
+.weekend20250318 .weekend_tab ul {display:flex;width:100%;border-radius:0;overflow:auto;box-shadow:2px 2px 4px 0 rgba(0,0,0,0.1);background:#F54EAA; padding: 0; margin: 0;}
+.weekend20250318 .weekend_tab ul li {flex:1; list-style: none;}
+.weekend20250318 .weekend_tab ul li button {position:relative;display:block;width:100%;height:76px;background:url('https://www.korea.kr/newsWeb/resources/temp/images/000378/travel_250318_quick1.png') 50% 0 / 100% auto no-repeat;text-indent:-9999px;}
+.weekend20250318 .weekend_tab ul li button:focus {outline: 2px dotted #fff; outline-offset: -4px;}
+.weekend20250318 .weekend_tab ul li.active button {background-position:0 -76px;}
+.weekend20250318 .weekend_tab ul li:nth-child(2) button {background-image:url('https://www.korea.kr/newsWeb/resources/temp/images/000378/travel_250318_quick2.png');}
+.weekend20250318 .weekend_tab ul li:nth-child(3) button {background-image:url('https://www.korea.kr/newsWeb/resources/temp/images/000378/travel_250318_quick3.png');}
+.weekend20250318 .weekend_tab_cont_wrap .weekend_tab_cont {display: none;}
+.weekend20250318 .weekend_tab_cont_wrap > div:nth-child(1) {display: block;}
+.weekend20250318 .weekend_tab_cont_wrap a:focus {outline-offset: 1px; position: relative; z-index: 2;}
+.weekend20250318 .box_flower {background:#FFDAF0;}
+.weekend20250318 .box_flower ul,
+.weekend20250318 .box_picnic ul {display: flex; flex-wrap: wrap; margin: 0; padding: 0;}
+.weekend20250318 .box_flower ul li,
+.weekend20250318 .box_picnic ul li {width: 50%; list-style: none;}
+.weekend20250318 .box_picnic {background:#C1E3FF;}
+.weekend20250318 .box_festival {padding:17% 0 8% 0;background:#E5DBFC url('https://www.korea.kr/newsWeb/resources/temp/images/000377/travel_250318_c_00_b.png') right 0 bottom / 90% auto no-repeat; position:relative;}
+.weekend20250318 .box_festival h4 {margin-bottom:20px;}
+.weekend20250318 .box_festival ul {display:flex; flex-wrap:wrap; padding:0 3%; margin: 0;}
+.weekend20250318 .box_festival ul li {flex:0 0 50%; padding: 2%; box-sizing: border-box; list-style: none;}
+.weekend20250318 .box_festival ul li > div {position:relative;display:block;}
+.weekend20250318 .box_festival ul li > div span {display:block;width:100%;position:absolute;left:50%;transform:translateX(-50%);bottom:10%;font-size:18px;font-weight:500;color:#1d1d1d;letter-spacing:-1px; text-align: center;}
+.weekend20250318 .box_festival p {font-size:15px;font-weight:700;width:100%;color:#000; margin-top: 5%; padding: 0 5%; text-align: center;}
+
+@media all and (max-width:720px) {
+	body.mobile .weekend20250318 .weekend_tab ul li.active button {background-position: 0 -11.11vw;}
+	body.mobile .weekend20250318 .weekend_tab ul li button  {height: 11.11vw;}
+	body.mobile .weekend20250318 .box_festival ul li > div span {font-size: 3.06vw;}
+	body.mobile .weekend20250318 .box_festival p {font-size:3.06vw;}
+}
