@@ -1,5 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './game.css';
+
+const API_URL = import.meta.env.VITE_API_URL || '';
+const WS_URL = import.meta.env.VITE_WS_URL || '';
+
+function getUserId() {
+  let id = localStorage.getItem('userId');
+  if (!id) { id = `user_${Math.random().toString(36).slice(2, 10)}`; localStorage.setItem('userId', id); }
+  return id;
+}
+function getNickname() {
+  let n = localStorage.getItem('nickname');
+  if (!n) { n = `익명_${Math.floor(Math.random() * 90000) + 10000}`; localStorage.setItem('nickname', n); }
+  return n;
+}
 
 export function GamePage() {
   const [game, setGame] = useState<any>(null);
@@ -7,59 +21,99 @@ export function GamePage() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isComplete, setIsComplete] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [myRank, setMyRank] = useState<any>(null);
+  const [ranking, setRanking] = useState<any[]>([]);
 
-  // 게임 데이터 로드 (임시 데이터)
+  // 게임 데이터 로드
   useEffect(() => {
-    const testGame = {
-      id: 1,
+    if (API_URL) {
+      fetch(`${API_URL}/api/games/today`)
+        .then(r => r.json())
+        .then(games => { if (games.length > 0) setGame(games[0]); })
+        .catch(() => setFallbackGame());
+    } else {
+      setFallbackGame();
+    }
+    loadRanking();
+  }, []);
+
+  function setFallbackGame() {
+    setGame({
+      id: 'game-001',
       title: '2026년 상반기 고용동향 발표',
       date: '2026.7.1.',
       department: '고용노동부',
       originalText: '고용노동부는 2026년 상반기 고용동향을 발표했다. 취업자 수는 전년 동기 대비 28만 명 증가했으며, 실업률은 2.8%로 전년 동기보다 0.3%포인트 하락했다.',
       modifiedText: '고용노동부는 2026년 상반기 고용동향을 발표했다. 취업자 수는 전년 동기 대비 28만 명 증가했으며, 실업률은 3.8%로 전년 동기보다 0.5%포인트 하락했다.',
-      errors: [
-        { index: 72, char: '3' },  // 2.8% → 3.8%
-        { index: 77, char: '5' }   // 0.3% → 0.5%
-      ]
-    };
-    setGame(testGame);
-  }, []);
+      errors: [{ index: 72, char: '3' }, { index: 77, char: '5' }],
+    });
+  }
+
+  function loadRanking() {
+    const userId = getUserId();
+    if (API_URL) {
+      fetch(`${API_URL}/api/rankings?userId=${userId}`)
+        .then(r => r.json())
+        .then(data => { setRanking(data.today || []); setMyRank(data.myRank); })
+        .catch(() => {});
+    }
+  }
 
   // 타이머
   useEffect(() => {
-    if (isComplete) return;
-    
-    if (timeLeft === 0) {
-      handleGameEnd();
-      return;
-    }
-    
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [timeLeft, isComplete]);
+    if (isComplete || !game) return;
+    if (timeLeft === 0) { handleGameEnd(found); return; }
+    const t = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    return () => clearTimeout(t);
+  }, [timeLeft, isComplete, game]);
 
-  const handleWordClick = (index: number) => {
-    if (isComplete) return;
-    
+  function handleWordClick(index: number) {
+    if (isComplete || !game) return;
     const isError = game.errors.some((e: any) => e.index === index);
-    
     if (isError) {
-      const newFound = new Set(found);
-      newFound.add(index);
-      setFound(newFound);
-
-      if (newFound.size === game.errors.length) {
-        handleGameEnd();
-      }
+      const next = new Set(found);
+      next.add(index);
+      setFound(next);
+      if (next.size === game.errors.length) handleGameEnd(next);
     }
-  };
+  }
 
-  const handleGameEnd = () => {
+  function handleGameEnd(foundSet: Set<number>) {
     setIsComplete(true);
     setShowResult(true);
-  };
+    submitScore(foundSet);
+  }
 
-  if (!game) return <div>로딩중...</div>;
+  function submitScore(foundSet: Set<number>) {
+    const userId = getUserId();
+    const nickname = getNickname();
+    const points = foundSet.size * 20;
+    const payload = {
+      userId, nickname,
+      gameId: game.id,
+      foundCount: foundSet.size,
+      totalErrors: game.errors.length,
+      timeSpent: 30 - timeLeft,
+      points,
+    };
+    if (API_URL) {
+      fetch(`${API_URL}/api/scores`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.rankings) {
+            setRanking(data.rankings.today || []);
+            setMyRank(data.rankings.myRank);
+          }
+        })
+        .catch(() => {});
+    }
+  }
+
+  if (!game) return <div className="loading">로딩중...</div>;
 
   const score = found.size * 20;
 
@@ -90,7 +144,6 @@ export function GamePage() {
       <div className="page-layout">
         {/* 메인 콘텐츠 */}
         <main className="main-content">
-          {/* 제목 영역 */}
           <div className="title-section">
             <div className="top-buttons">
               <button className="btn-share">공유</button>
@@ -98,53 +151,42 @@ export function GamePage() {
               <button className="btn-print">인쇄</button>
               <button className="btn-list">목록</button>
             </div>
-
             <h1 className="title">{game.title}</h1>
-            
             <div className="meta">
               <span className="date">{game.date}</span>
               <span className="separator">|</span>
               <span className="department">{game.department}</span>
             </div>
-
             <hr className="divider" />
           </div>
 
-          {/* 게임 섹션 */}
           <div className="game-section">
             <div className="game-instruction">
               <span className="icon">📋</span>
               <span>이 보도자료의 본문을 확인하시고 오류를 찾아주세요.</span>
             </div>
 
-            {/* 텍스트 비교 */}
             <div className="text-comparison">
-              {/* 원문 */}
               <div className="original-box">
                 <div className="label">【원문】</div>
                 <div className="text">{game.originalText}</div>
               </div>
 
-              {/* 게임 본문 */}
               <div className="game-text-box">
                 <div className="label-row">
                   <div className="label">【본문 - 오류 찾기】</div>
-                  <div className="timer">
+                  <div className={`timer ${timeLeft <= 10 ? 'timer-urgent' : ''}`}>
                     0:{timeLeft.toString().padStart(2, '0')}
                   </div>
                 </div>
 
                 <div className="text interactive">
                   {game.modifiedText.split('').map((char: string, i: number) => {
-                    const isError = game.errors.some((e: any) => e.index === i);
                     const isFound = found.has(i);
-                    
                     return (
                       <span
                         key={i}
-                        className={`char ${isError ? 'error-word' : ''} ${
-                          isFound ? 'found' : ''
-                        }`}
+                        className={`char ${isFound ? 'found' : ''}`}
                         onClick={() => handleWordClick(i)}
                       >
                         {char}
@@ -153,7 +195,6 @@ export function GamePage() {
                   })}
                 </div>
 
-                {/* 진행 상황 */}
                 <div className="game-progress">
                   <span className="found">
                     발견: <strong>{found.size}/{game.errors.length}</strong>
@@ -162,7 +203,6 @@ export function GamePage() {
               </div>
             </div>
 
-            {/* 결과 화면 */}
             {showResult && (
               <div className="game-result">
                 <div className="result-success">
@@ -176,34 +216,31 @@ export function GamePage() {
 
                 <div className="result-ranking">
                   <div className="rank-item">
-                    <span>실시간 순위</span>
-                    <strong>#234</strong>
+                    <span>오늘 순위</span>
+                    <strong>{myRank?.today ? `#${myRank.today}` : '-'}</strong>
                   </div>
                   <div className="rank-item">
-                    <span>오늘 순위</span>
-                    <strong>#45</strong>
+                    <span>전체 순위</span>
+                    <strong>{myRank?.all ? `#${myRank.all}` : '-'}</strong>
                   </div>
                 </div>
 
                 <div className="result-actions">
-                  <button className="btn-next">다음 보도자료</button>
-                  <button className="btn-save">점수 저장</button>
+                  <button className="btn-next" onClick={() => window.location.reload()}>
+                    다음 보도자료
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* 하단 정보 */}
           <div className="metadata">
             <div className="meta-divider"></div>
             <span>조회수 1,234</span>
             <span className="separator">|</span>
             <span>공감 45</span>
-            <span className="separator">|</span>
-            <span>공유 12</span>
           </div>
 
-          {/* 이전/다음 */}
           <div className="nav-posts">
             <button className="btn-prev">← 이전기사</button>
             <button className="btn-next-post">다음기사 →</button>
@@ -212,46 +249,31 @@ export function GamePage() {
 
         {/* 우측 사이드바 */}
         <aside className="sidebar">
-          {/* 정책 NOW */}
-          <div className="sidebar-section">
-            <h3>정책 NOW</h3>
-            <div className="policy-banner">
-              <img src="/banner1.jpg" alt="banner" />
-            </div>
-          </div>
-
-          {/* 오늘의 미션 */}
           <div className="sidebar-section">
             <h3>오늘의 게임 진행도</h3>
             <div className="progress-info">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: '33%' }}></div>
+                <div className="progress-fill" style={{ width: isComplete ? '100%' : '0%' }}></div>
               </div>
-              <div className="progress-text">3/3 진행</div>
-              <div className="progress-score">최고 점수: 240점</div>
+              <div className="progress-score">점수: {score}점</div>
             </div>
           </div>
 
-          {/* 실시간 인기뉴스 */}
           <div className="sidebar-section">
-            <h3>실시간 인기뉴스</h3>
+            <h3>오늘 순위 TOP5</h3>
             <div className="news-list">
-              <div className="news-item">
-                <span className="rank">1</span>
-                <a href="#news1">영화 할인권부터 단기 육아휴직까지…</a>
-              </div>
-              <div className="news-item">
-                <span className="rank">2</span>
-                <a href="#news2">자도 자도 피곤하다면? 수면무호흡증…</a>
-              </div>
-              <div className="news-item">
-                <span className="rank">3</span>
-                <a href="#news3">7월부터 공공기관 승용차 2부제 해제</a>
-              </div>
+              {ranking.slice(0, 5).map((r: any, i: number) => (
+                <div className="news-item" key={r.userId}>
+                  <span className="rank">{i + 1}</span>
+                  <span style={{ fontSize: '13px' }}>{r.nickname} — {r.points}pt</span>
+                </div>
+              ))}
+              {ranking.length === 0 && (
+                <div className="news-item"><span style={{ fontSize: '12px', color: '#999' }}>아직 기록 없음</span></div>
+              )}
             </div>
           </div>
 
-          {/* 실시간 채팅 */}
           <ChatWidget />
         </aside>
       </div>
@@ -259,54 +281,81 @@ export function GamePage() {
   );
 }
 
-// 간단한 채팅 위젯
+// ─── 채팅 위젯 ───────────────────────────────────────────
 function ChatWidget() {
-  const [messages, setMessages] = useState<any[]>([
-    { type: 'system', text: '익명_12345님이 입장했습니다.' },
-    { type: 'chat', nickname: '익명_12345', text: '재미있네요!' },
-    { type: 'chat', nickname: '익명_54321', text: '화이팅!!' }
-  ]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
+  const [online, setOnline] = useState(1);
+  const wsRef = useRef<WebSocket | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = () => {
-    if (input.trim()) {
-      setMessages([
-        ...messages,
-        { type: 'chat', nickname: '익명_99999', text: input }
-      ]);
-      setInput('');
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    if (!WS_URL) return;
+    const ws = new WebSocket(WS_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'join', userId: getUserId(), nickname: getNickname() }));
+    };
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (data.type === 'online_count') { setOnline(data.count); return; }
+      setMessages(prev => [...prev.slice(-100), data]);
+    };
+    ws.onclose = () => {};
+    return () => ws.close();
+  }, []);
+
+  function handleSend() {
+    if (!input.trim()) return;
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: 'chat', message: input.trim() }));
+    } else {
+      // 로컬 모드
+      setMessages(prev => [...prev, {
+        type: 'chat', nickname: getNickname(),
+        userId: getUserId(), text: input.trim(),
+        messageId: Date.now(), timestamp: new Date().toISOString(), message: input.trim(),
+      }]);
     }
-  };
+    setInput('');
+  }
 
   return (
     <div className="chat-widget">
       <div className="chat-header">
         <h3>실시간 채팅</h3>
-        <span className="user-count">(5명)</span>
+        <span className="user-count">({online}명)</span>
       </div>
-      
       <div className="chat-messages">
-        {messages.map((msg, i) => (
-          <div key={i} className={`message ${msg.type}`}>
+        {messages.length === 0 && (
+          <div className="message system"><span className="system-msg">채팅을 시작해보세요!</span></div>
+        )}
+        {messages.map((msg: any) => (
+          <div key={msg.messageId} className={`message ${msg.type}`}>
             {msg.type === 'system' ? (
-              <span className="system-msg">{msg.text}</span>
+              <span className="system-msg">{msg.message}</span>
             ) : (
               <>
                 <span className="nickname">{msg.nickname}</span>
-                <span className="text">{msg.text}</span>
+                <span className="text">{msg.message}</span>
               </>
             )}
           </div>
         ))}
+        <div ref={bottomRef} />
       </div>
-
       <div className="chat-input">
         <input
           type="text"
           placeholder="메시지 입력..."
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
         />
         <button onClick={handleSend}>전송</button>
       </div>
