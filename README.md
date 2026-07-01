@@ -1,30 +1,50 @@
-# 연말정산 행동 추천기 (정적 index 구조)
+# React + TypeScript + Vite
 
-연봉 + 최소 공제 입력 + 현재 사용액(선택)만으로
-카드/현금 목표, 연금저축/IRP, ISA 운용 가이드를 3가지 시나리오로 제공합니다.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 파일 구조
+Currently, two official plugins are available:
 
-- `index.html`: 단일 페이지 UI + SEO 메타/JSON-LD
-- `style.css`: 모바일 우선 스타일
-- `main.js`: 상수/추천 로직/탭/체크리스트(localStorage)
-- `ads.txt`: AdSense 인증 정보
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 로컬 실행
+## Expanding the ESLint configuration
 
-```bash
-python3 -m http.server 8080
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-`http://localhost:8080` 접속
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-## Cloudflare Pages 배포
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-1. GitHub 저장소 연결
-2. Build command: 비워두기 또는 `echo "static"`
-3. Output directory: `/`
-4. 브랜치 push 시 자동 배포
-
-## 고지
-
-본 서비스는 참고용 가이드이며, 실제 공제/세액은 개인 상황과 세법 적용 시점에 따라 달라질 수 있습니다.
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
