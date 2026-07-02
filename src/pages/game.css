@@ -231,8 +231,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .game-hint strong { color: #1d1d1d; opacity: 1; }
 
 /* ── 오타 글자 ── */
-.typo { cursor: pointer; border-radius: 2px; transition: background 0.12s; }
-.typo:hover { background: #fff3cd; box-shadow: inset 0 0 0 1px #ffe082; }
+.typo { cursor: text; border-radius: 2px; }
 .typo.found { background: #ffcdd2; color: #c62828; font-weight: 600; cursor: default; }
 
 /* ── 결과 ── */
