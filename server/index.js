@@ -3,7 +3,15 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { randomUUID } from 'crypto';
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { getGames, getGameById, saveScore, getRankings, addGames } from './db.js';
+import { startScheduler, runPopularScraper, runScraper } from './scraper.js';
+
+const __dir = dirname(fileURLToPath(import.meta.url));
+const ARTICLES_FILE = join(__dir, 'data', 'articles.json');
+const POPULAR_FILE  = join(__dir, 'data', 'popular_news.json');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -41,6 +49,33 @@ app.get('/api/rankings', (req, res) => {
 app.post('/api/games', (req, res) => {
   const added = addGames(req.body);
   res.json({ added });
+});
+
+// 수동 스크래핑 테스트: 브라우저에서 GET /api/scrape/test
+app.get('/api/scrape/test', async (_, res) => {
+  try {
+    const result = await runScraper();
+    res.json({ ok: true, added: result.length, articles: result.map(a => ({ newsId: a.newsId, title: a.title, errorCount: a.errorCount })) });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get('/api/popular-news', (_, res) => {
+  try {
+    if (!existsSync(POPULAR_FILE)) return res.json([]);
+    res.json(JSON.parse(readFileSync(POPULAR_FILE, 'utf-8')));
+  } catch { res.json([]); }
+});
+
+app.get('/api/articles/today', (_, res) => {
+  try {
+    if (!existsSync(ARTICLES_FILE)) return res.json([]);
+    const all = JSON.parse(readFileSync(ARTICLES_FILE, 'utf-8'));
+    const today = new Date().toISOString().slice(0, 10);
+    const todayArticles = all.filter(a => a.scrapedAt === today && a.isActive);
+    res.json(todayArticles.length > 0 ? todayArticles : all.filter(a => a.isActive).slice(-5));
+  } catch { res.json([]); }
 });
 
 // ─── WebSocket ───────────────────────────────────────────
@@ -97,4 +132,16 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  startScheduler();
+
+  // 서버 시작 시 즉시 1회 스크래핑
+  runScraper().then(result => {
+    console.log('✅ 시작 스크래핑 결과:', result.length, '개 기사');
+    result.forEach(a => console.log(' -', a.title));
+  }).catch(err => {
+    console.error('❌ 시작 스크래핑 실패:', err.message);
+  });
+  runPopularScraper().catch(err => console.error('❌ 인기뉴스 실패:', err.message));
+});

@@ -40,7 +40,7 @@ export default function App() {
       <ChatWidget />
 
       <footer className="bg-[#003a70] text-white text-center text-xs py-4 mt-8">
-        <p>정책브리핑 게임 | 정책 오류 찾기</p>
+        <p>정잭브리핑 게임 | 틀린 글자 찾기</p>
       </footer>
     </div>
   );

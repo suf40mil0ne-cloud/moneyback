@@ -20,20 +20,15 @@ export default function App() {
     window.scrollTo(0, 0);
   }
 
+  if (currentGame) return <GamePage initialGameId={currentGame.gameId} />;
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Header />
-
-      {currentGame ? (
-        <GamePage />
-      ) : (
-        <HomePage onSelectGame={handleSelectGame} />
-      )}
-
+      <HomePage onSelectGame={handleSelectGame} />
       <ChatWidget />
-
-      <footer className="bg-[#003a70] text-white text-center text-xs py-4 mt-8">
-        <p>정책브리핑 게임 | 정책 오류 찾기</p>
+      <footer className="bg-[#1d1d1d] text-white text-center text-xs py-4 mt-8">
+        <p>정부부리핑 | 틀린글자 찾기</p>
       </footer>
     </div>
   );
